@@ -1,6 +1,6 @@
 import mongoose, { Mongoose } from "mongoose";
 
-import "../../database";
+import "../database";
 import logger from "./logger";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
@@ -15,7 +15,6 @@ interface MongooseCache {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var mongoose: MongooseCache;
 }
 

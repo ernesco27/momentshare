@@ -9,8 +9,11 @@
 }
 
 @theme {
-  --color-primary-100: #fff1e6;
-  --color-primary-500: #ff7000;
+  --color-primary-50: #fffbeb;
+  --color-primary-100: #fef3c7;
+  --color-primary-500: #f59e0b;
+  --color-primary-900: #78350f;
+  --color-primary-950: #451a03;
 
   --color-dark-100: #000000;
   --color-dark-200: #0f1117;
@@ -264,7 +267,7 @@
 }
 
 @utility primary-gradient {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #d97706 0%, #fcd34d 100%);
 }
 
 @utility dark-gradient {
@@ -289,7 +292,7 @@
 }
 
 @utility primary-text-gradient {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #d97706 0%, #fcd34d 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -15,17 +15,11 @@ const inter = localFont({
   weight: "100 200 300 400 500 600 700 800 900",
 });
 
-const spaceGrotesk = localFont({
-  src: "./fonts/SpaceGroteskVF.ttf",
-  variable: "--font-space-grotesk",
-  weight: "300 400 500 600 700 ",
-});
-
 export const metadata: Metadata = {
   title: "MomentShare",
   description: "Capture, Share, and Relive Your Memories with MomentShare",
   icons: {
-    icon: "/images/site-logo.svg",
+    icon: "/images/Logo.svg",
   },
 };
 
@@ -36,9 +30,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
     <html lang="en" suppressHydrationWarning>
       <head></head>
       <SessionProvider session={session}>
-        <body
-          className={`${inter.className} ${spaceGrotesk.variable} } antialiased`}
-        >
+        <body className={`${inter.className} antialiased`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
