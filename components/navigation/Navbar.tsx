@@ -34,7 +34,10 @@ const Navbar = async () => {
       </div>
 
       <div className="flex-between gap-5">
-        <Theme />
+        <div className="hidden md:flex">
+          <Theme />
+        </div>
+
         <div className="flex gap-3">
           {!userId ? (
             <>

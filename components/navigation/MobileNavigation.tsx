@@ -5,6 +5,7 @@ import { auth, signOut } from "@/auth";
 import ROUTES from "@/constants/route";
 
 import NavLinks from "./NavLinks";
+import Theme from "./Theme";
 import { Button } from "../ui/button";
 import {
   Sheet,
@@ -33,12 +34,15 @@ const MobileNavigation = async () => {
         className="background-light900_dark200 border-none p-5"
       >
         <SheetTitle className="hidden">Navigation</SheetTitle>
-        <Link href="/" className="flex items-center gap-1">
-          <Image src="/images/Logo.svg" alt="Logo" width={100} height={100} />
-        </Link>
+        <div className="flex flex-between">
+          <Link href="/" className="flex items-center gap-1">
+            <Image src="/images/Logo.svg" alt="Logo" width={100} height={100} />
+          </Link>
+          <Theme />
+        </div>
         <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto ">
           <SheetClose asChild>
-            <section className="flex h-full flex-col gap-6 pt-16">
+            <section className="flex h-full flex-col gap-6 pt-8">
               <NavLinks isMobileNav userId={userId!} />
             </section>
           </SheetClose>
