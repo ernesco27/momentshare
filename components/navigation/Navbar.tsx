@@ -56,7 +56,17 @@ const Navbar = async () => {
                   imageUrl={session.user?.image}
                 />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent
+                align="end"
+                className="background-light900_dark200"
+              >
+                <DropdownMenuItem>
+                  <Button className="small-medium  min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none cursor-pointer primary-gradient">
+                    <Link href={ROUTES.SIGN_IN}>
+                      <span className="paragraph-semibold">Dashboard</span>
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <form
                     action={async () => {
@@ -75,9 +85,7 @@ const Navbar = async () => {
                         height={20}
                         className="invert-colors"
                       />
-                      <span className="max-lg:hidden text-dark300_light900">
-                        Log Out
-                      </span>
+                      <span className="text-dark300_light900">Log Out</span>
                     </Button>
                   </form>
                 </DropdownMenuItem>
