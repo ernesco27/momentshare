@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
 };
 
-const RootLayout = async ({ children }: { children: ReactNode }) => {
+const layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
 
   return (
@@ -46,4 +46,4 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default RootLayout;
+export default layout;
