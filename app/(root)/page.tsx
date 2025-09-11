@@ -1,3 +1,9 @@
+import Hero from "@/components/modules/home/Hero";
+
 export default function Home() {
-  return <div className="text-3xl">Home page</div>;
+  return (
+    <section className="">
+      <Hero />
+    </section>
+  );
 }

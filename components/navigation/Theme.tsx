@@ -20,7 +20,7 @@ const ModeToggle = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="default" size="icon">
+        <Button variant="default" size="icon" className="no-focus">
           <Image
             src="/icons/moon.svg"
             alt="Moon"

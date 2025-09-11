@@ -8,6 +8,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --wave-width: 80vw;
+  --wave-color: #f59e0b; /* single wave color */
+  --wave-opacity-1: 1; /* top layer */
+  --wave-opacity-2: 0.6; /* middle layer */
+  --wave-opacity-3: 0.3; /* back layer */
 }
 
 @theme {
@@ -390,4 +396,26 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+#waves {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: var(--wave-width);
+
+  /* mix-blend-mode: screen; /* try: multiply, overlay, lighten, darken */
+}
+#layer1 {
+  fill: var(--wave-color);
+  opacity: var(--wave-opacity-1);
+}
+#layer2 {
+  fill: var(--wave-color);
+  opacity: var(--wave-opacity-2);
+}
+#layer3 {
+  fill: var(--wave-color);
+  opacity: var(--wave-opacity-3);
 }
