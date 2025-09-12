@@ -9,7 +9,7 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  --wave-width: 80vw;
+  --wave-width: 100vw;
   --wave-color: #f59e0b; /* single wave color */
   --wave-opacity-1: 1; /* top layer */
   --wave-opacity-2: 0.6; /* middle layer */
@@ -399,9 +399,9 @@ body {
 }
 
 #waves {
-  position: fixed;
+  /* position: relative;
   top: 0;
-  right: 0;
+  right: 0; */
   height: 100%;
   width: var(--wave-width);
 

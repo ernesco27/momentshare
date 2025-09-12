@@ -91,29 +91,32 @@ const Hero = () => {
       ref={ref}
       className="relative min-h-screen py-32 lg:px-28 overflow-hidden invisible  hero"
     >
-      <div className="relative inset-0 z-0">
-        <svg
-          viewBox="0 0 300 600"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-          id="waves"
-        >
-          <path
-            id="layer3"
-            d="M160,0 C180,100 170,200 160,300 C150,400 180,500 160,600 L300,600 L300,0 Z"
-          />
+      <div className="absolute inset-0 z-0 top-0 right-0">
+        <div className="relative w-full">
+          <svg
+            viewBox="0 0 300 600"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+            id="waves"
+            className="relative top-0 right-0 max-h-screen"
+          >
+            <path
+              id="layer3"
+              d="M160,0 C180,100 170,200 160,300 C150,400 180,500 160,600 L300,600 L300,0 Z"
+            />
 
-          <path
-            id="layer2"
-            d="M160,0 C180,100 170,200 160,300 C150,400 180,500 160,600 L300,600 L300,0 Z"
-            transform="scale(1,-1) translate(0,-600)"
-          />
+            <path
+              id="layer2"
+              d="M160,0 C180,100 170,200 160,300 C150,400 180,500 160,600 L300,600 L300,0 Z"
+              transform="scale(1,-1) translate(0,-600)"
+            />
 
-          <path
-            id="layer1"
-            d="M170,0 C190,80 180,180 170,260 C160,360 190,460 170,600 L300,600 L300,0 Z"
-          />
-        </svg>
+            <path
+              id="layer1"
+              d="M170,0 C190,80 180,180 170,260 C160,360 190,460 170,600 L300,600 L300,0 Z"
+            />
+          </svg>
+        </div>
       </div>
       <div className="w-[450px] h-[650px]  absolute lg:top-[15%] min-md:bottom-0 right-0 z-10 max-sm:hidden">
         <Image src="/images/couple.png" alt="image of couple" fill />

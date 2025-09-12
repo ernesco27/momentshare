@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "MomentShare",
   description: "Capture, Share, and Relive Your Memories with MomentShare",
   icons: {
-    icon: "/images/Logo.svg",
+    icon: "/images/Favicon.svg",
   },
 };
 
