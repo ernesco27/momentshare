@@ -79,7 +79,7 @@ const Hero = () => {
         },
         "-=0.2"
       )
-      .from(".cta", { y: 30, duration: 0.8 }, "-=0.6");
+      .from(".cta", { y: 30, duration: 0.8 }, "-=0.8");
 
     return () => {
       if (tl) tl.kill();
@@ -89,7 +89,7 @@ const Hero = () => {
   return (
     <main
       ref={ref}
-      className="relative min-h-screen py-32 lg:px-28 overflow-hidden invisible  hero"
+      className="relative h-screen py-32 lg:px-28 overflow-hidden invisible  hero"
     >
       <div className="absolute inset-0 z-0 top-0 right-0">
         <div className="relative w-full">
@@ -118,24 +118,32 @@ const Hero = () => {
           </svg>
         </div>
       </div>
-      <div className="w-[450px] h-[650px]  absolute lg:top-[15%] min-md:bottom-0 right-0 z-10 max-sm:hidden">
-        <Image src="/images/couple.png" alt="image of couple" fill />
+      <div className="absolute w-[60vw]  lg:w-[30vw] max-w-[750px] aspect-[3/4] bottom-0 right-0 z-10 max-sm:hidden overflow-hidden">
+        <Image
+          src="/images/couple.png"
+          alt="image of couple"
+          fill
+          className="object-contain"
+        />
       </div>
-      <div className="flex flex-col justify-center p-8 lg:p-12">
-        <h2 className="text-dark200_light900 text-6xl max-lg:text-5xl font-bold mb-6 header-1">
+      <div className="flex flex-col  justify-center p-8 lg:p-12 mt-[10%] min-lg:mt-[5%]">
+        <h2 className="text-dark200_light900 text-4xl lg:text-6xl    font-bold mb-6 header-1">
           Relive Every Moment
         </h2>
-        <h3 className="text-6xl max-lg:text-5xl font-bold mb-6 primary-text-gradient header-2">
+        <h3 className="text-4xl lg:text-6xl font-bold mb-6 primary-text-gradient header-2">
           Even the Ones You Missed!
         </h3>
-        <p className="text-xl md:text-2xl text-dark400_light700 mb-8 max-w-md lg:max-w-3xl subtitle">
+        <p className="lg:text-xl  text-dark400_light700 mb-8 max-w-md lg:max-w-2xl  mt-4 subtitle">
           From laughter to behind-the-scenes magic — let your guests capture and
           share the authentic moments you might have missed. All in one simple,
           temporary photobook.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 cta">
           <Link href="/dashboard">
-            <Button size="lg" className="bg-primary-500 text-xl text-white ">
+            <Button
+              size="lg"
+              className="lg:h-[60px] bg-primary-500 text-md lg:text-2xl text-white cursor-pointer hover:bg-primary-900 transition-all duration-300 ease-in-out shadow-light100_dark100 "
+            >
               {userId ? "Go to Dashboard" : "Start Collecting Memories"}
             </Button>
           </Link>
