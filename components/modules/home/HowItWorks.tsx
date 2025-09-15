@@ -1,4 +1,13 @@
+"use client";
+
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
+import { useMediaQuery } from "react-responsive";
+
 import HowToCard from "@/components/cards/HowToCard";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const HowItWorks = () => {
   const steps = [
@@ -21,32 +30,44 @@ const HowItWorks = () => {
     },
   ];
 
+  const isMobile = useMediaQuery({
+    maxWidth: 768,
+  });
+
+  useGSAP(() => {
+    const tl = gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: ".howTo",
+          start: "top 50%",
+          end: "bottom top",
+        },
+      })
+      .from("#howTo-card", {
+        opacity: 0,
+        ease: "none",
+        duration: 1,
+        stagger: {
+          each: 0.2,
+          from: "start",
+        },
+      });
+
+    return () => {
+      if (tl) tl.kill();
+    };
+  }, [isMobile]);
+
   return (
-    <section className="py-16 px-6">
+    <section className="py-16 px-6 howTo">
       <h2 className="text-4xl font-bold text-center mb-12 primary-text-gradient">
         How It Works
       </h2>
       <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-        {/* <div className="p-6 rounded-2xl text-center background-dark400_light900 shadow-md">
-          <h3 className="text-xl font-semibold mb-3">1. Create Event</h3>
-          <p className="text-gray-600">
-            Organizers generate a unique QR code for their event in seconds.
-          </p>
-        </div>
-        <div className="p-6 bg-white rounded-2xl shadow-md text-center">
-          <h3 className="text-xl font-semibold mb-3">2. Guests Upload</h3>
-          <p className="text-gray-600">
-            Attendees scan the QR code and upload photos and videos instantly.
-          </p>
-        </div>
-        <div className="p-6 bg-white rounded-2xl shadow-md text-center">
-          <h3 className="text-xl font-semibold mb-3">3. Relive Memories</h3>
-          <p className="text-gray-600">
-            Organizers view all the shared moments, even the ones they missed.
-          </p>
-        </div> */}
         {steps.map((step, index) => (
-          <HowToCard key={index} {...step} />
+          <div id="howTo-card" key={index}>
+            <HowToCard key={index} {...step} />
+          </div>
         ))}
       </div>
     </section>
