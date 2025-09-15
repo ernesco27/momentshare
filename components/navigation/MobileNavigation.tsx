@@ -4,7 +4,7 @@ import Link from "next/link";
 import { auth, signOut } from "@/auth";
 import ROUTES from "@/constants/route";
 
-import NavLinks from "./NavLinks";
+import LinksWrapper from "./LinksWrapper";
 import Theme from "./Theme";
 import { Button } from "../ui/button";
 import {
@@ -43,7 +43,8 @@ const MobileNavigation = async () => {
         <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto ">
           <SheetClose asChild>
             <section className="flex h-full flex-col gap-6 pt-8">
-              <NavLinks isMobileNav userId={userId!} />
+              {/* <NavLinks isDashboard isMobileNav userId={userId!} /> */}
+              <LinksWrapper userId={userId!} />
             </section>
           </SheetClose>
           <div className="flex flex-col gap-3">
