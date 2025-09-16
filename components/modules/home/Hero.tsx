@@ -4,19 +4,21 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger, SplitText } from "gsap/all";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 // import { auth } from "@/auth";
 import { useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 
 import { Button } from "@/components/ui/button";
+import ROUTES from "@/constants/route";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const Hero = () => {
   // const session = await auth();
   // const userId = session?.user?.id;
+  const router = useRouter();
 
   const ref = useRef(null);
 
@@ -86,6 +88,14 @@ const Hero = () => {
     };
   }, [isMobile]);
 
+  const handleClick = () => {
+    if (userId) {
+      router.push(ROUTES.DASHBOARD(userId));
+    } else {
+      router.push(ROUTES.SIGN_IN);
+    }
+  };
+
   return (
     <main
       ref={ref}
@@ -139,14 +149,13 @@ const Hero = () => {
           temporary photobook.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 cta">
-          <Link href="/dashboard">
-            <Button
-              size="lg"
-              className="lg:h-[60px] bg-primary-500 text-md lg:text-2xl text-white cursor-pointer hover:bg-primary-900 transition-all duration-300 ease-in-out shadow-light100_dark100 "
-            >
-              {userId ? "Go to Dashboard" : "Start Collecting Memories"}
-            </Button>
-          </Link>
+          <Button
+            onClick={handleClick}
+            size="lg"
+            className="lg:h-[60px] bg-primary-500 text-md lg:text-2xl text-white cursor-pointer hover:bg-primary-900 transition-all duration-300 ease-in-out shadow-light100_dark100 "
+          >
+            {userId ? "Go to Dashboard" : "Start Collecting Memories"}
+          </Button>
         </div>
       </div>
     </main>

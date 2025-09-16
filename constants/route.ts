@@ -6,6 +6,7 @@ const ROUTES = {
   EVENTS: "/events",
   EVENT: (id: string) => `/events/${id}`,
   CREATE_EVENT: "/create-event",
+  DASHBOARD: (id: string) => `/dashboard/${id}`,
 };
 
 export default ROUTES;
