@@ -54,6 +54,7 @@ export async function signUpWithCredentials(
           provider: "credentials",
           providerAccountId: email,
           password: hashedPassword,
+          accountType: "STANDARD",
         },
       ],
       { session }

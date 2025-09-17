@@ -1,14 +1,17 @@
 import { model, models, Schema, Types } from "mongoose";
 
 export interface IEvent {
+  accountId: Types.ObjectId;
   title: string;
   description: string;
-  organizer: Types.ObjectId;
+  loc?: string;
+  coverImage?: string;
+  status: "DRAFT" | "ACTIVE" | "ENDED";
   qrCode: string;
+  eventUrl: string;
   startDate: Date;
-  endDate: Date;
+  endDate?: Date;
   expiryDate: Date;
-  mediaExpiryDays: number;
   maxUploadsPerAttendee: number;
 }
 
@@ -16,14 +19,21 @@ export interface IEventDoc extends IEvent, Document {}
 
 const EventSchema = new Schema<IEvent>(
   {
+    accountId: { type: Schema.Types.ObjectId, ref: "Account", required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
-    organizer: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    loc: { type: String },
+    coverImage: { type: String },
+    status: {
+      type: String,
+      enum: ["DRAFT", "ACTIVE", "ENDED"],
+      default: "DRAFT",
+    },
     qrCode: { type: String, required: true, unique: true },
+    eventUrl: { type: String, required: true, unique: true },
     startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
+    endDate: { type: Date },
     expiryDate: { type: Date, required: true },
-    mediaExpiryDays: { type: Number, required: true },
     maxUploadsPerAttendee: { type: Number, required: true },
   },
   { timestamps: true }

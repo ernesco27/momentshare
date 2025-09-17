@@ -43,7 +43,7 @@ const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981"];
 
 const MetricsCard = () => {
   return (
-    <Card className="card-wrapper">
+    <Card className="card-wrapper light-border">
       <CardHeader className=" space-y-0 pb-2">
         <CardTitle className="h2-semibold text-dark100_light900">
           <div className="flex-between gap-4 w-full">
@@ -64,7 +64,7 @@ const MetricsCard = () => {
       </CardHeader>
       <CardContent className="">
         <section className="grid md:grid-cols-2 gap-6">
-          <Card className="p-6">
+          <Card className="p-6 light-border">
             <h3 className="text-lg text-dark200_light900 font-semibold mb-4">
               Uploads Per Hour
             </h3>
@@ -78,7 +78,7 @@ const MetricsCard = () => {
             </ResponsiveContainer>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-6 light-border">
             <h3 className="text-lg text-dark200_light900  font-semibold mb-4">
               Top Contributors
             </h3>
@@ -109,7 +109,7 @@ const MetricsCard = () => {
             <h3 className="font-semibold text-dark200_light900 mb-2">
               Recent Media
             </h3>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            {/* <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
               {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
@@ -124,7 +124,7 @@ const MetricsCard = () => {
                   />
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
           <Button
             size="lg"

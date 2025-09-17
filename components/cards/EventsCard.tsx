@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 const EventsCard = () => {
   return (
-    <Card className="card-wrapper">
+    <Card className="card-wrapper light-border">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="h2-semibold text-dark100_light900">
           Events

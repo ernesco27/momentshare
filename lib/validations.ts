@@ -82,6 +82,10 @@ export const AccountSchema = z.object({
   providerAccountId: z
     .string()
     .min(1, { message: "Provider Account ID is required." }),
+  accountType: z.enum(["STANDARD", "PRO"]),
+  activePlan: z.string().optional(),
+  eventCredits: z.number().optional(),
+  planExpiryDate: z.date().optional(),
 });
 
 export const signInWithOAuthSchema = z.object({
@@ -122,23 +126,64 @@ export const createEventSchema = z.object({
     .string()
     .min(1, { message: "Description is required." })
     .max(500, { message: "Description cannot exceed 500 characters." }),
-  organizer: z.string().min(1, { message: "Organizer ID is required." }),
+  accountId: z.string().min(1, { message: "Account ID is required." }),
   qrCode: z.string().min(1, { message: "QR Code is required." }),
   startDate: z.date(),
-  endDate: z.date(),
+  endDate: z.date().optional(),
   expiryDate: z.date(),
-  mediaExpiryDays: z
-    .number()
-    .min(1, { message: "Media expiry days must be at least 1 day." }),
   maxUploadsPerAttendee: z
     .number()
     .min(1, { message: "Max uploads per attendee must be at least 1." }),
+  location: z.string().optional(),
+  coverImage: z.string().optional(),
+  status: z.enum(["DRAFT", "ACTIVE", "ENDED"]),
+  eventUrl: z.string().min(1, { message: "Event URL is required." }),
 });
 
-export const EditEvent = createEventSchema.extend({
+export const editEvent = createEventSchema.extend({
   eventId: z.string().min(1, { message: "Event ID is required." }),
 });
 
-export const GetEventSchema = z.object({
+export const getEventSchema = z.object({
   eventId: z.string().min(1, { message: "Event ID is required." }),
+});
+
+export const createPlanSchema = z.object({
+  name: z.enum(["FREE", "STANDARD", "PREMIUM", "PRO"]),
+  price: z.number().min(1, { message: "Price must be at least 1." }),
+  currency: z.enum(["GHS"]),
+  type: z.enum(["CREDIT", "SUBSCRIPTION"]),
+  credits: z.number().optional(),
+  durationDays: z.number().optional(),
+});
+
+export const editPlanSchema = createPlanSchema.extend({
+  planId: z.string().min(1, { message: "Plan ID is required." }),
+});
+
+export const getPlanSchema = z.object({
+  planId: z.string().min(1, { message: "Plan ID is required." }),
+});
+
+export const createTransactionSchema = z.object({
+  accountId: z.string().min(1, { message: "Account ID is required." }),
+  planId: z.string().min(1, { message: "Plan ID is required." }),
+  amount: z.number().min(1, { message: "Amount must be at least 1." }),
+  currency: z.enum(["GHS"]),
+  status: z.enum(["PENDING", "SUCCESS", "FAILED"]),
+  reference: z.string().min(1, { message: "Reference is required." }),
+});
+
+export const getTransactionSchema = z.object({
+  transactionId: z.string().min(1, { message: "Transaction ID is required." }),
+});
+
+export const createMediaSchema = z.object({
+  event: z.string().min(1, { message: "Event ID is required." }),
+  fileType: z.string().min(1, { message: "File type is required." }),
+  fileUrl: z.string().min(1, { message: "File URL is required." }),
+});
+
+export const getMediaSchema = z.object({
+  mediaId: z.string().min(1, { message: "Media ID is required." }),
 });

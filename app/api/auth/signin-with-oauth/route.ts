@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import slugify from "slugify";
 
-import { Account, User } from "@/database";
+import { Account, Plan, User } from "@/database";
 import handleError from "@/lib/handlers/error";
-import { ValidationError } from "@/lib/http-errors";
+import { NotFoundError, ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { signInWithOAuthSchema } from "@/lib/validations";
 import { APIErrorResponse } from "@/types/global";
@@ -66,6 +66,9 @@ export async function POST(request: Request) {
       }
     }
 
+    const freePlan = await Plan.findOne({ name: "FREE" });
+    if (!freePlan) throw new NotFoundError("Free plan");
+
     const existingAccount = await Account.findOne({
       userId: existingUser._id,
       provider,
@@ -81,6 +84,8 @@ export async function POST(request: Request) {
             image,
             provider,
             providerAccountId,
+            activePlan: freePlan._id,
+            eventCredits: freePlan.credits || 0,
           },
         ],
         { session }
