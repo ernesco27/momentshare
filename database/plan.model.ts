@@ -44,6 +44,15 @@ const PlanSchema = new Schema<IPlan>(
   { timestamps: true }
 );
 
+PlanSchema.virtual("features", {
+  ref: "PlanFeature",
+  localField: "_id",
+  foreignField: "planId",
+});
+
+PlanSchema.set("toObject", { virtuals: true });
+PlanSchema.set("toJSON", { virtuals: true });
+
 const Plan = models?.Plan || model<IPlan>("Plan", PlanSchema);
 
 export default Plan;

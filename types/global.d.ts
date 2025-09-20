@@ -36,6 +36,20 @@ interface User {
   image?: string;
 }
 
+interface Account {
+  _id: string;
+  userId: string;
+  name: string;
+  image?: string;
+  password?: string;
+  provider: string;
+  providerAccountId: string;
+  accountType: string;
+  activePlan?: string;
+  eventCredits?: number;
+  planExpiryDate?: Date;
+}
+
 interface Organizer {
   _id: string;
   name: string;
@@ -50,6 +64,5 @@ interface Event {
   startDate: Date;
   endDate: Date;
   expiryDate: Date;
-  mediaExpiryDays: number;
   maxUploadsPerAttendee: number;
 }

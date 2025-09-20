@@ -116,6 +116,13 @@ export const PaginatedSearchParamsSchema = z.object({
   sort: z.string().optional(),
 });
 
+export const eventFormSchema = z.object({
+  title: z.string().min(1, { message: "Title is required." }),
+  description: z.string().min(1, { message: "Description is required." }),
+  startDate: z.date(),
+  location: z.string().optional(),
+});
+
 export const createEventSchema = z.object({
   title: z
     .string()
@@ -186,4 +193,8 @@ export const createMediaSchema = z.object({
 
 export const getMediaSchema = z.object({
   mediaId: z.string().min(1, { message: "Media ID is required." }),
+});
+
+export const getAccountSchema = z.object({
+  userId: z.string().min(1, { message: "User ID is required." }),
 });

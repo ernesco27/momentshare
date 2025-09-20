@@ -1,19 +1,27 @@
-import { Calendar } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils";
 
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
-const DashCards = () => {
+interface CardProps {
+  heading: string;
+  description: string;
+  info: string | number;
+  accountType?: string;
+  otherClasses?: string;
+}
+
+const DashCards = ({ heading, description, info, otherClasses }: CardProps) => {
   return (
-    <Card className="card-wrapper !bg-purple-400 light-border">
+    <Card className={cn("card-wrapper light-border", otherClasses)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Total Events</CardTitle>
-        <Calendar className="h-4 w-4 text-muted-foreground" />
+        <CardTitle className="text-white text-md lg:h3-semibold">
+          {heading}
+        </CardTitle>
       </CardHeader>
       <CardContent className="text-center">
-        <div className="text-4xl font-bold">1</div>
-        <p className="text-xs text-muted-foreground mt-4">
-          Active photo collection events
+        <div className="text-4xl font-bold text-white">{info}</div>
+        <p className="text-xs lg:text-lg text-light400_light500 mt-4">
+          {description}
         </p>
       </CardContent>
     </Card>

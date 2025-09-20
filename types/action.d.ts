@@ -15,3 +15,15 @@ interface AuthCredentials {
   email: string;
   password: string;
 }
+interface getAccountParams {
+  userId: string;
+}
+
+interface getPlansParams {
+  planId: string;
+}
+
+export interface IPlanWithFeatures extends IPlan {
+  _id: string; // from Mongo
+  features: IPlanFeature[];
+}
