@@ -151,10 +151,6 @@ export const editEvent = createEventSchema.extend({
   eventId: z.string().min(1, { message: "Event ID is required." }),
 });
 
-export const getEventSchema = z.object({
-  eventId: z.string().min(1, { message: "Event ID is required." }),
-});
-
 export const createPlanSchema = z.object({
   name: z.enum(["FREE", "STANDARD", "PREMIUM", "PRO"]),
   price: z.number().min(1, { message: "Price must be at least 1." }),
@@ -196,5 +192,9 @@ export const getMediaSchema = z.object({
 });
 
 export const getAccountSchema = z.object({
+  userId: z.string().min(1, { message: "User ID is required." }),
+});
+
+export const getEventsSchema = PaginatedSearchParamsSchema.extend({
   userId: z.string().min(1, { message: "User ID is required." }),
 });

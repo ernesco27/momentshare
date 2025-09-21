@@ -47,22 +47,18 @@ interface Account {
   accountType: string;
   activePlan?: string;
   eventCredits?: number;
-  planExpiryDate?: Date;
-}
-
-interface Organizer {
-  _id: string;
-  name: string;
-  image: string;
+  planDuration?: number;
 }
 
 interface Event {
   title: string;
   description: string;
-  organizer: Organizer;
+  loc: string;
+  coverImage?: string;
+  organizer: Account;
   qrCode: string;
+  eventUrl: string;
   startDate: Date;
-  endDate: Date;
   expiryDate: Date;
   maxUploadsPerAttendee: number;
 }

@@ -27,3 +27,19 @@ export interface IPlanWithFeatures extends IPlan {
   _id: string; // from Mongo
   features: IPlanFeature[];
 }
+interface createEventParams {
+  title: string;
+  description: string;
+  loc?: string;
+  coverImage?: string;
+  qrCode: string;
+  eventUrl: string;
+  startDate: Date;
+  expiryDate: Date;
+  maxUploadsPerAttendee: number;
+}
+
+interface getEventsParams
+  extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
+  userId: string;
+}

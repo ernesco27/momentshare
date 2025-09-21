@@ -10,7 +10,7 @@ export interface IAccount {
   accountType: "STANDARD" | "PRO";
   activePlan: null;
   eventCredits?: number;
-  planExpiryDate?: Date;
+  planDuration?: number;
 }
 
 export interface IAccountDoc extends IAccount, Document {}
@@ -30,7 +30,7 @@ const AccountSchema = new Schema<IAccount>(
     },
     activePlan: { type: Schema.Types.ObjectId, ref: "Plan" },
     eventCredits: { type: Number, default: 1 },
-    planExpiryDate: { type: Date },
+    planDuration: { type: Number },
   },
   { timestamps: true }
 );

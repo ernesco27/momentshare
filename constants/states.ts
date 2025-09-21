@@ -23,8 +23,4 @@ export const EMPTY_EVENT = {
   title: "Ahh, No Events Yet!",
   message:
     "The event board is empty. Maybe it’s waiting for your exciting event to get things rolling",
-  button: {
-    text: "Create Event",
-    href: ROUTES.CREATE_EVENT,
-  },
 };
