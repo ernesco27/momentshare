@@ -13,8 +13,15 @@ export { gsap, ScrollTrigger, SplitText };
 
 //utility function for the number days before an event expires which is calculated as the date the event is created + the number of days of the subscribed package
 
-export const getEventExpiryDate = (eventDate: Date, days: number) => {
-  const expiryDate = new Date(eventDate);
-  expiryDate.setDate(expiryDate.getDate() + days);
-  return expiryDate;
-};
+export function getEventExpiryDate(
+  startDate: Date,
+  retentionDays?: number
+): Date | null {
+  if (!retentionDays || retentionDays <= 0) {
+    return null; // Unlimited or not specified
+  }
+
+  const expiry = new Date(startDate);
+  expiry.setDate(expiry.getDate() + retentionDays);
+  return expiry;
+}

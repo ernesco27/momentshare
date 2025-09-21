@@ -7,14 +7,14 @@ import {
   PopoverContent,
 } from "@radix-ui/react-popover";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2, UploadIcon, X } from "lucide-react";
+import { CalendarIcon, Loader2, UploadIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { CldUploadWidget } from "next-cloudinary";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Label } from "recharts";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -36,7 +36,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { FEATURE } from "@/constants";
 import ROUTES from "@/constants/route";
+import { IPlanFeature } from "@/database/planFeatures.model";
+import { createEvent } from "@/lib/actions/event.action";
 import { cn, getEventExpiryDate } from "@/lib/utils";
 import { eventFormSchema } from "@/lib/validations";
 import { ErrorResponse } from "@/types/global";
@@ -47,13 +50,15 @@ import { Textarea } from "../ui/textarea";
 interface CreateEventDialogProps {
   open: boolean;
   onClose: () => void;
-  onEventCreated: () => void;
+  planFeatures: IPlanFeature[];
+  accountId: string;
 }
 
 const EventCreationForm = ({
   open,
   onClose,
-  onEventCreated,
+  planFeatures,
+  accountId,
 }: CreateEventDialogProps) => {
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -72,119 +77,88 @@ const EventCreationForm = ({
 
   const router = useRouter();
 
-  // const handleFileChange = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const file = event.target.file;
-  //   if (!file) return;
+  const session = useSession();
+  const user = session?.data?.user;
 
-  //   const newFile = file as File;
-
-  //   // Validate file size
-  //   if (newFile.size > 2 * 1024 * 1024) {
-  //     toast.error(`File ${newFile.name} is too large. Maximum size is 2MB`);
-  //     return;
-  //   }
-
-  //   setCoverPhoto(newFile);
+  // const handleCreateEvent = async () => {
+  //   const maxUploads = planFeatures.find(
+  //     (feature) => feature.featureKey === "MAX_UPLOADS"
+  //   );
 
   //   try {
-  //     setUploading(true);
+  //     setIsSubmitting(true);
   //     const formData = new FormData();
-  //     // newFiles.forEach((file) => {
-  //     //   formData.append("files", file);
-  //     // });
-  //     formData.append("file", newFile);
-
-  //     const response = await fetch("/api/upload", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to upload images");
-  //     }
-
-  //     const data = await response.json();
-  //     setUploadedImage(data.image);
-  //     // setUploadedImages((prev) => [...prev, ...data.images]);
-  //     toast.success("Cover photo uploaded successfully");
-  //   } catch (error) {
-  //     toast.error(
-  //       error instanceof Error ? error.message : "Failed to upload images"
-  //     );
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // };
-
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   if (!user) return;
-
-  //   setIsSubmitting(true);
-
-  //   try {
-  //     const formData = new FormData(e.currentTarget);
   //     const title = formData.get("title") as string;
   //     const description = formData.get("description") as string;
-  //     const expiryDays = parseInt(formData.get("expiryDays") as string) || 7;
-
-  //     // Generate unique QR code
+  //     const loc = formData.get("location") as string;
+  //     const startDate = formData.get("startDate");
+  //     const coverImage = coverPhoto.secure_url;
   //     const qrCode = nanoid(12);
-  //     const expiresAt = addDays(new Date(), expiryDays).toISOString();
+  //     const expiryDate = getEventExpiryDate(new Date(), 7);
+  //     const maxUploadsPerAttendee = maxUploads?.limit;
+  //     const organizer = accountId;
 
-  //     const { error } = await supabase.from("events").insert({
-  //       organizer_id: user.id,
+  //     const result = await createEvent({
   //       title,
   //       description,
-  //       qr_code: qrCode,
-  //       expires_at: expiresAt,
+  //       loc,
+  //       startDate,
+  //       coverImage,
+  //       qrCode,
+  //       expiryDate,
+  //       maxUploadsPerAttendee,
+  //       organizer,
   //     });
 
-  //     if (error) throw error;
-
-  //     toast({
-  //       title: "Event created successfully!",
-  //       description: "Your event is ready to collect photos.",
-  //     });
-
-  //     onEventCreated();
+  //     if (result?.success) {
+  //       toast.success("Event created successfully!");
+  //       onClose();
+  //       router.push(ROUTES.EVENTS(user.id!));
+  //     }
   //   } catch (error) {
-  //     toast({
-  //       title: "Error creating event",
-  //       description: "Failed to create event. Please try again.",
-  //       variant: "destructive",
-  //     });
+  //     return error as ErrorResponse;
   //   } finally {
   //     setIsSubmitting(false);
   //   }
   // };
 
-  const handleSubmit = async () => {
+  const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
+    const maxUploads = planFeatures.find(
+      (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
+    );
+
+    const retentionDays = planFeatures.find(
+      (feature) => feature.featureKey === FEATURE.RETENTION_DAYS
+    );
+
     try {
       setIsSubmitting(true);
-      const formData = new FormData();
-      const title = formData.get("title") as string;
-      const description = formData.get("description") as string;
-      const location = formData.get("location") as string;
-      const startDate = formData.get("startDate");
-      const coverImage = coverPhoto.secure_url;
 
-      const qrCode = nanoid(12);
-      const expiryDate = getEventExpiryDate(new Date(), 7);
-      const maxUploadsPerAttendee = 4;
-      const accountId = "";
+      const result = await createEvent({
+        title: values.title,
+        description: values.description,
+        loc: values.location,
+        startDate: values.startDate,
+        coverImage: coverPhoto?.secure_url || "", // optional
+        qrCode: nanoid(12),
+        expiryDate: getEventExpiryDate(new Date(), retentionDays?.limit), // adjust duration if plan-based
+        maxUploadsPerAttendee: maxUploads?.limit || 0,
+        organizer: accountId,
+      });
+
+      if (result?.success) {
+        toast.success("Event created successfully!");
+        onClose();
+        router.push(ROUTES.EVENTS(user?.id!));
+      }
     } catch (error) {
-      return error as ErrorResponse;
+      console.error(error);
+      toast.error("Failed to create event");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCreateEvent = () => {
-    console.log("create event");
-  };
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-xl max-h-screen overflow-scroll my-6  background-light900_dark200">
@@ -197,28 +171,6 @@ const EventCreationForm = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="shadow-glow"
-            >
-              {isSubmitting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Create Event
-            </Button>
-          </div>
-        </form> */}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleCreateEvent)}
@@ -382,35 +334,25 @@ const EventCreationForm = ({
                     }}
                   </CldUploadWidget>
                 )}
-
-                {/* {coverPhoto && (
-                  <div className="flex gap-4 flex-wrap">
-                    <div className="relative group">
-                      <div className="w-[100px] h-[100px] bg-gray-200 rounded-md overflow-hidden">
-                        <Image
-                          src={URL.createObjectURL(coverPhoto)}
-                          alt="Cover Photo"
-                          width={100}
-                          height={100}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <Button
-                        // onClick={() => removeImage(index)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )} */}
               </div>
             </div>
             <div className="flex justify-end space-x-3 pt-4">
-              <Button className="bg-red-700 text-light-900" type="button">
+              <Button
+                className="bg-red-700 text-light-900"
+                type="button"
+                disabled={isSubmitting}
+                onClick={onClose}
+              >
                 Discard
               </Button>
-              <Button className="bg-green-700 text-light-900" type="submit">
+              <Button
+                className="bg-green-700 text-light-900"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Publish Event
               </Button>
             </div>

@@ -1,6 +1,7 @@
 "use server";
 
-import { Account, User } from "@/database";
+import { Account } from "@/database";
+import { getAccountParams } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 
 import action from "../handlers/action";
@@ -9,7 +10,7 @@ import { getAccountSchema } from "../validations";
 
 export const getAccount = async (
   params: getAccountParams
-): Promise<ActionResponse<{ account: Account }>> => {
+): Promise<ActionResponse<Account>> => {
   const validationResult = await action({ params, schema: getAccountSchema });
 
   if (validationResult instanceof Error) {
@@ -17,7 +18,6 @@ export const getAccount = async (
   }
 
   const { userId } = validationResult.params!;
-  console.log("userId", userId);
 
   try {
     const account = await Account.findOne({ userId });

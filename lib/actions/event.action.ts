@@ -130,6 +130,7 @@ export const getEvents = async (
     const totalEvents = await Event.countDocuments({ organizer: account._id });
 
     const events = await Event.find({ organizer: account._id })
+      .populate("organizer")
       .skip(skip)
       .limit(limit)
       .sort({ startDate: -1 });

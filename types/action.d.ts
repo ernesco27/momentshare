@@ -23,7 +23,7 @@ interface getPlansParams {
   planId: string;
 }
 
-export interface IPlanWithFeatures extends IPlan {
+interface IPlanWithFeatures extends IPlan {
   _id: string; // from Mongo
   features: IPlanFeature[];
 }
@@ -42,4 +42,9 @@ interface createEventParams {
 interface getEventsParams
   extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
   userId: string;
+}
+
+interface ApiError {
+  message: string;
+  details?: Record<string, string[]>;
 }

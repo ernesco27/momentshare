@@ -1,24 +1,30 @@
 import Dashboard from "@/components/modules/dashboard/Dashboard";
 import { getAccount } from "@/lib/actions/account.action";
+import { getEvents } from "@/lib/actions/event.action";
 import { getPlan } from "@/lib/actions/plan.action";
 import { RouteParams } from "@/types/global";
 
 const DashboardPage = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  const { success, data: account, error } = await getAccount({ userId: id });
+  const { data: account } = await getAccount({ userId: id });
 
-  const { name, accountType, activePlan, eventCredits } = account!;
-  const {
-    success: planSuccess,
-    data: plan,
-    error: planError,
-  } = await getPlan({ planId: activePlan });
+  const { name, accountType, activePlan, eventCredits, planDuration, _id } =
+    account!;
 
-  const { name: planName, duration } = plan!;
+  const [planResponse, eventResponse] = await Promise.all([
+    getPlan({ planId: activePlan }),
+    getEvents({ userId: id }),
+  ]);
+
+  const { name: planName } = planResponse.data!;
+  const { success: eventSuccess, data, error: eventError } = eventResponse!;
+
+  const events = data?.events || [];
+  const planFeatures = planResponse.data?.features || [];
 
   console.log("account!:", account);
-  console.log("plan:", plan);
+  console.log("planFeatures:", planFeatures);
 
   return (
     <>
@@ -26,8 +32,13 @@ const DashboardPage = async ({ params }: RouteParams) => {
         name={name}
         accountType={accountType}
         planName={planName}
-        duration={duration}
+        planDuration={planDuration}
         eventCredits={eventCredits}
+        events={events!}
+        EventError={eventError}
+        EventSuccess={eventSuccess}
+        planFeatures={planFeatures}
+        accountId={_id}
       />
     </>
   );

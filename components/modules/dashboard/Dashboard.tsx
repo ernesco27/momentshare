@@ -8,21 +8,34 @@ import EventsCard from "@/components/cards/EventsCard";
 import MetricsCard from "@/components/cards/MetricsCard";
 import EventCreationForm from "@/components/forms/EventCreationForm";
 import { Button } from "@/components/ui/button";
+import { IPlanFeature } from "@/database/planFeatures.model";
+import { ApiError } from "@/types/action";
+import { Event } from "@/types/global";
 
 interface Props {
   name: string;
   accountType: string;
   planName: string;
-  duration: string;
+  planDuration: string;
   eventCredits: number;
+  events: Event[];
+  EventError?: ApiError;
+  EventSuccess: boolean;
+  planFeatures: IPlanFeature[];
+  accountId: string;
 }
 
 const Dashboard = ({
   name,
   accountType,
   planName,
-  duration,
+  planDuration,
   eventCredits,
+  events,
+  EventError,
+  EventSuccess,
+  planFeatures,
+  accountId,
 }: Props) => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -81,7 +94,7 @@ const Dashboard = ({
               otherClasses="bg-[#fde68a]!"
               heading={`Active Plan - ${planName}`}
               accountType={accountType}
-              info={accountType === "STANDARD" ? eventCredits : duration}
+              info={accountType === "STANDARD" ? eventCredits : planDuration}
               description={
                 accountType === "STANDARD" ? "Event Credits Left" : "Days Left"
               }
@@ -89,13 +102,22 @@ const Dashboard = ({
           </div>
         </section>
         <div className="mt-8">
-          <EventsCard />
+          <EventsCard
+            events={events}
+            error={EventError}
+            success={EventSuccess}
+          />
         </div>
         <div className="mt-8">
           <MetricsCard />
         </div>
       </main>
-      <EventCreationForm open={showCreateDialog} />
+      <EventCreationForm
+        open={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+        planFeatures={planFeatures}
+        accountId={accountId}
+      />
     </div>
   );
 };
