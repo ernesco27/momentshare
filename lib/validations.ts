@@ -120,7 +120,7 @@ export const eventFormSchema = z.object({
   title: z.string().min(1, { message: "Title is required." }),
   description: z.string().min(1, { message: "Description is required." }),
   startDate: z.date(),
-  location: z.string().optional(),
+  location: z.string().min(1, { message: "Location is required." }),
 });
 
 export const createEventSchema = z.object({
@@ -133,18 +133,17 @@ export const createEventSchema = z.object({
     .string()
     .min(1, { message: "Description is required." })
     .max(500, { message: "Description cannot exceed 500 characters." }),
-  accountId: z.string().min(1, { message: "Account ID is required." }),
+  organizer: z.string().min(1, { message: "Account ID is required." }),
   qrCode: z.string().min(1, { message: "QR Code is required." }),
+  qrImage: z.string().min(1, { message: "QR Image is required." }),
+  eventUrl: z.string().min(1, { message: "Event URL is required." }),
   startDate: z.date(),
-  endDate: z.date().optional(),
   expiryDate: z.date(),
   maxUploadsPerAttendee: z
     .number()
     .min(1, { message: "Max uploads per attendee must be at least 1." }),
-  location: z.string().optional(),
+  loc: z.string().min(1, { message: "Location is required." }),
   coverImage: z.string().optional(),
-  status: z.enum(["DRAFT", "ACTIVE", "ENDED"]),
-  eventUrl: z.string().min(1, { message: "Event URL is required." }),
 });
 
 export const editEvent = createEventSchema.extend({
@@ -197,4 +196,8 @@ export const getAccountSchema = z.object({
 
 export const getEventsSchema = PaginatedSearchParamsSchema.extend({
   userId: z.string().min(1, { message: "User ID is required." }),
+});
+
+export const getEventSchema = z.object({
+  eventId: z.string().min(1, { message: "Event ID is required." }),
 });

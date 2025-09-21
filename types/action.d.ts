@@ -30,18 +30,24 @@ interface IPlanWithFeatures extends IPlan {
 interface createEventParams {
   title: string;
   description: string;
-  loc?: string;
+  loc: string;
   coverImage?: string;
   qrCode: string;
+  qrImage: string;
   eventUrl: string;
   startDate: Date;
   expiryDate: Date;
   maxUploadsPerAttendee: number;
+  organizer: string;
 }
 
 interface getEventsParams
   extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
   userId: string;
+}
+
+interface getEventParams {
+  eventId: string;
 }
 
 interface ApiError {

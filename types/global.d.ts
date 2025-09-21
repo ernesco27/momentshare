@@ -57,6 +57,7 @@ interface Event {
   coverImage?: string;
   organizer: Account;
   qrCode: string;
+  qrImage: string;
   eventUrl: string;
   startDate: Date;
   expiryDate: Date;

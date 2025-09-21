@@ -1,14 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, UploadIcon } from "lucide-react";
-import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -42,23 +36,21 @@ import { IPlanFeature } from "@/database/planFeatures.model";
 import { createEvent } from "@/lib/actions/event.action";
 import { cn, getEventExpiryDate } from "@/lib/utils";
 import { eventFormSchema } from "@/lib/validations";
-import { ErrorResponse } from "@/types/global";
 
 import { Calendar } from "../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Textarea } from "../ui/textarea";
 
 interface CreateEventDialogProps {
   open: boolean;
   onClose: () => void;
   planFeatures: IPlanFeature[];
-  accountId: string;
 }
 
 const EventCreationForm = ({
   open,
   onClose,
   planFeatures,
-  accountId,
 }: CreateEventDialogProps) => {
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -80,48 +72,6 @@ const EventCreationForm = ({
   const session = useSession();
   const user = session?.data?.user;
 
-  // const handleCreateEvent = async () => {
-  //   const maxUploads = planFeatures.find(
-  //     (feature) => feature.featureKey === "MAX_UPLOADS"
-  //   );
-
-  //   try {
-  //     setIsSubmitting(true);
-  //     const formData = new FormData();
-  //     const title = formData.get("title") as string;
-  //     const description = formData.get("description") as string;
-  //     const loc = formData.get("location") as string;
-  //     const startDate = formData.get("startDate");
-  //     const coverImage = coverPhoto.secure_url;
-  //     const qrCode = nanoid(12);
-  //     const expiryDate = getEventExpiryDate(new Date(), 7);
-  //     const maxUploadsPerAttendee = maxUploads?.limit;
-  //     const organizer = accountId;
-
-  //     const result = await createEvent({
-  //       title,
-  //       description,
-  //       loc,
-  //       startDate,
-  //       coverImage,
-  //       qrCode,
-  //       expiryDate,
-  //       maxUploadsPerAttendee,
-  //       organizer,
-  //     });
-
-  //     if (result?.success) {
-  //       toast.success("Event created successfully!");
-  //       onClose();
-  //       router.push(ROUTES.EVENTS(user.id!));
-  //     }
-  //   } catch (error) {
-  //     return error as ErrorResponse;
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
     const maxUploads = planFeatures.find(
       (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
@@ -140,10 +90,8 @@ const EventCreationForm = ({
         loc: values.location,
         startDate: values.startDate,
         coverImage: coverPhoto?.secure_url || "", // optional
-        qrCode: nanoid(12),
         expiryDate: getEventExpiryDate(new Date(), retentionDays?.limit), // adjust duration if plan-based
         maxUploadsPerAttendee: maxUploads?.limit || 0,
-        organizer: accountId,
       });
 
       if (result?.success) {
@@ -311,6 +259,12 @@ const EventCreationForm = ({
                 ) : (
                   <CldUploadWidget
                     uploadPreset="momentshare"
+                    options={{
+                      maxFiles: 1,
+                      maxFileSize: 2 * 1024 * 1024, // 2MB
+                      clientAllowedFormats: ["png", "jpeg", "jpg"],
+                      folder: "MomentShare/events",
+                    }}
                     onSuccess={(result, widget) => {
                       setCoverPhoto(result.info);
                       widget.close();

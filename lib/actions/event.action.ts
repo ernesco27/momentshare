@@ -1,15 +1,21 @@
 "use server";
 
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
+import QRCode from "qrcode";
 
 import { Account, Event } from "@/database";
-import { createEventParams, getEventsParams } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 
+import cloudinary from "../cloudinary";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { NotFoundError } from "../http-errors";
-import { createEventSchema, getEventsSchema } from "../validations";
+import {
+  createEventSchema,
+  getEventSchema,
+  getEventsSchema,
+} from "../validations";
 
 export const createEvent = async (
   params: createEventParams
@@ -29,8 +35,6 @@ export const createEvent = async (
     description,
     loc,
     coverImage,
-    qrCode,
-    eventUrl,
     startDate,
     expiryDate,
     maxUploadsPerAttendee,
@@ -47,6 +51,16 @@ export const createEvent = async (
     if (!existingAccount) {
       throw new NotFoundError("Account");
     }
+
+    const qrCode = nanoid(12);
+    const eventUrl = `{process.env.NEXT_PUBLIC_BASE_URL}/events/${qrCode}`;
+    const qrDataUrl = await QRCode.toDataURL(eventUrl);
+
+    const uploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
+      folder: "MomentShare/qr_codes",
+      public_id: qrCode,
+      resource_type: "image",
+    });
 
     // Pre-check based on account type
     if (existingAccount.accountType === "STANDARD") {
@@ -71,6 +85,7 @@ export const createEvent = async (
           loc,
           coverImage,
           qrCode,
+          qrImage: uploadResponse.secure_url,
           eventUrl,
           startDate,
           expiryDate,
@@ -143,6 +158,37 @@ export const getEvents = async (
         events: JSON.parse(JSON.stringify(events)),
         isNext,
       },
+      status: 200,
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const getEvent = async (
+  params: getEventParams
+): Promise<ActionResponse<Event>> => {
+  const validationResult = await action({
+    params,
+    schema: getEventSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { eventId } = validationResult.params!;
+
+  try {
+    const event = await Event.findById(eventId).populate("organizer");
+
+    if (!event) {
+      throw new NotFoundError("Event");
+    }
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(event)),
       status: 200,
     };
   } catch (error) {
