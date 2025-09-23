@@ -53,13 +53,17 @@ export const createEvent = async (
     }
 
     const qrCode = nanoid(12);
-    const eventUrl = `{process.env.NEXT_PUBLIC_BASE_URL}/events/${qrCode}`;
+    const eventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/events/${qrCode}`;
     const qrDataUrl = await QRCode.toDataURL(eventUrl);
 
     const uploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
-      folder: "MomentShare/qr_codes",
+      folder: `MomentShare/qr_codes/${userId}`, // each user has their own folder
       public_id: qrCode,
       resource_type: "image",
+      context: {
+        userId: userId,
+        accountId: existingAccount._id.toString(),
+      },
     });
 
     // Pre-check based on account type
@@ -86,6 +90,7 @@ export const createEvent = async (
           coverImage,
           qrCode,
           qrImage: uploadResponse.secure_url,
+          qrPublicId: uploadResponse.public_id,
           eventUrl,
           startDate,
           expiryDate,

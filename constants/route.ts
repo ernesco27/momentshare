@@ -4,7 +4,7 @@ const ROUTES = {
   SIGN_UP: "/sign-up",
   PROFILE: (id: string) => `/profile/${id}`,
 
-  EVENTS: (id: string) => `/events/${id}`,
+  EVENTS: "/events",
   CREATE_EVENT: "/create-event",
   DASHBOARD: (id: string) => `/dashboard/${id}`,
 };

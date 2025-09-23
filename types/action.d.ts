@@ -34,6 +34,7 @@ interface createEventParams {
   coverImage?: string;
   qrCode: string;
   qrImage: string;
+  qrPublicId: string;
   eventUrl: string;
   startDate: Date;
   expiryDate: Date;

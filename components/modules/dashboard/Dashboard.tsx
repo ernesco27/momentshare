@@ -2,6 +2,7 @@
 
 import { BadgeCheck } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import DashCards from "@/components/cards/DashCards";
 import EventsCard from "@/components/cards/EventsCard";
@@ -40,6 +41,12 @@ const Dashboard = ({
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const handleCreateEvent = () => {
+    if (eventCredits === 0 && accountType === "STANDARD") {
+      toast.error(
+        "You have no event credits left. Please upgrade your plan to create more events."
+      );
+      return;
+    }
     setShowCreateDialog(true);
   };
 

@@ -8,6 +8,7 @@ export interface IEvent {
   coverImage?: string;
   qrCode: string;
   qrImage: string;
+  qrPublicId: string;
   eventUrl: string;
   startDate: Date;
   expiryDate: Date;
@@ -25,6 +26,7 @@ const EventSchema = new Schema<IEvent>(
     coverImage: { type: String },
     qrCode: { type: String, required: true, unique: true },
     qrImage: { type: String, required: true },
+    qrPublicId: { type: String, required: true, unique: true },
     eventUrl: { type: String, required: true, unique: true },
     startDate: { type: Date, required: true },
     expiryDate: { type: Date, required: true },

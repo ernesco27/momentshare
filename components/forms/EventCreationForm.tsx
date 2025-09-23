@@ -69,8 +69,8 @@ const EventCreationForm = ({
 
   const router = useRouter();
 
-  const session = useSession();
-  const user = session?.data?.user;
+  // const session = useSession();
+  // const user = session?.data?.user;
 
   const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
     const maxUploads = planFeatures.find(
@@ -81,8 +81,23 @@ const EventCreationForm = ({
       (feature) => feature.featureKey === FEATURE.RETENTION_DAYS
     );
 
+    const expiryDate = getEventExpiryDate(
+      values.startDate,
+      retentionDays?.limit
+    );
+
     try {
       setIsSubmitting(true);
+
+      console.log("Form Values:", {
+        title: values.title,
+        description: values.description,
+        loc: values.location,
+        startDate: values.startDate,
+        coverImage: coverPhoto?.secure_url || "", // optional
+        expiryDate: expiryDate, // adjust duration if plan-based
+        maxUploadsPerAttendee: maxUploads?.limit || 0,
+      });
 
       const result = await createEvent({
         title: values.title,
@@ -90,14 +105,14 @@ const EventCreationForm = ({
         loc: values.location,
         startDate: values.startDate,
         coverImage: coverPhoto?.secure_url || "", // optional
-        expiryDate: getEventExpiryDate(new Date(), retentionDays?.limit), // adjust duration if plan-based
+        expiryDate: expiryDate, // adjust duration if plan-based
         maxUploadsPerAttendee: maxUploads?.limit || 0,
       });
 
       if (result?.success) {
         toast.success("Event created successfully!");
         onClose();
-        router.push(ROUTES.EVENTS(user?.id!));
+        router.push(ROUTES.EVENTS);
       }
     } catch (error) {
       console.error(error);
@@ -227,9 +242,7 @@ const EventCreationForm = ({
                           field.value ? new Date(field.value) : undefined
                         }
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => date < new Date()}
                         captionLayout="dropdown"
                       />
                     </PopoverContent>
