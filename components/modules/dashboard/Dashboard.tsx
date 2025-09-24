@@ -10,8 +10,7 @@ import MetricsCard from "@/components/cards/MetricsCard";
 import EventCreationForm from "@/components/forms/EventCreationForm";
 import { Button } from "@/components/ui/button";
 import { IPlanFeature } from "@/database/planFeatures.model";
-import { ApiError } from "@/types/action";
-import { Event } from "@/types/global";
+import { GlobalEvent } from "@/types/global";
 
 interface Props {
   name: string;
@@ -19,7 +18,7 @@ interface Props {
   planName: string;
   planDuration: string;
   eventCredits: number;
-  events: Event[];
+  events: GlobalEvent[];
   EventError?: ApiError;
   EventSuccess: boolean;
   planFeatures: IPlanFeature[];
@@ -123,7 +122,6 @@ const Dashboard = ({
         open={showCreateDialog}
         onClose={() => setShowCreateDialog(false)}
         planFeatures={planFeatures}
-        accountId={accountId}
       />
     </div>
   );

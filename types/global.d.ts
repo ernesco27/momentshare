@@ -36,7 +36,7 @@ interface User {
   image?: string;
 }
 
-interface Account {
+interface GlobalAccount {
   _id: string;
   userId: string;
   name: string;
@@ -50,7 +50,8 @@ interface Account {
   planDuration?: number;
 }
 
-interface Event {
+interface GlobalEvent {
+  _id: string;
   title: string;
   description: string;
   loc: string;

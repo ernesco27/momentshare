@@ -26,14 +26,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { EMPTY_EVENT } from "@/constants/states";
-import { Event } from "@/types/global";
-
-interface EventWithId extends Event {
-  _id: string;
-}
+import { GlobalEvent } from "@/types/global";
 
 interface EventProps {
-  events: EventWithId[];
+  events: GlobalEvent[];
   hasMore: boolean;
   success: boolean;
   error?: ApiError;
@@ -48,7 +44,7 @@ const EventsListContainer = ({
   console.log("EventsListContainer events:", events);
   const [isDeleting, setIsDeleting] = useState(false);
   return (
-    <main className="flex min-h-screen flex-1 flex-col px-6 py-36 max-md:pb-14 sm:px-14 ">
+    <main className="flex min-h-screen flex-1 flex-col px-6 py-36 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
       <h1 className="mb-6 h1-bold font-bold primary-text-gradient">
         Your Events
       </h1>

@@ -19,7 +19,7 @@ import { ErrorResponse, RouteParams } from "@/types/global";
 const EventDetailsPage = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  const { success, data: event, error } = getEvent({ eventId: id });
+  const { data: event } = await getEvent({ eventId: id });
 
   const {
     title,
@@ -178,16 +178,16 @@ const EventDetailsPage = async ({ params }: RouteParams) => {
                 <h3 className="font-medium mb-2">Event Details:</h3>
                 <div className="space-y-1 text-sm text-muted-foreground">
                   <p>
-                    <strong>Title:</strong> {event.title}
+                    <strong>Title:</strong> {title}
                   </p>
-                  {event.description && (
+                  {description && (
                     <p>
-                      <strong>Description:</strong> {event.description}
+                      <strong>Description:</strong> {description}
                     </p>
                   )}
                   <p>
                     <strong>Expires:</strong>{" "}
-                    {new Date(event.expires_at).toLocaleDateString()}
+                    {new Date(expiryDate).toLocaleDateString()}
                   </p>
                   <p>
                     <strong>Status:</strong> {isExpired ? "Expired" : "Active"}

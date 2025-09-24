@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import QRCode from "qrcode";
 
 import { Account, Event } from "@/database";
-import { ActionResponse, ErrorResponse } from "@/types/global";
+import { ActionResponse, ErrorResponse, GlobalEvent } from "@/types/global";
 
 import cloudinary from "../cloudinary";
 import action from "../handlers/action";
@@ -19,7 +19,7 @@ import {
 
 export const createEvent = async (
   params: createEventParams
-): Promise<ActionResponse<Event>> => {
+): Promise<ActionResponse<GlobalEvent>> => {
   const validationResult = await action({
     params,
     schema: createEventSchema,
@@ -126,7 +126,7 @@ export const createEvent = async (
 
 export const getEvents = async (
   params: getEventsParams
-): Promise<ActionResponse<{ events: Event[]; isNext: boolean }>> => {
+): Promise<ActionResponse<{ events: GlobalEvent[]; isNext: boolean }>> => {
   const validationResult = await action({
     params,
     schema: getEventsSchema,
@@ -172,7 +172,7 @@ export const getEvents = async (
 
 export const getEvent = async (
   params: getEventParams
-): Promise<ActionResponse<Event>> => {
+): Promise<ActionResponse<GlobalEvent>> => {
   const validationResult = await action({
     params,
     schema: getEventSchema,

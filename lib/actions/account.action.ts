@@ -1,8 +1,7 @@
 "use server";
 
 import { Account } from "@/database";
-import { getAccountParams } from "@/types/action";
-import { ActionResponse, ErrorResponse } from "@/types/global";
+import { ActionResponse, ErrorResponse, GlobalAccount } from "@/types/global";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -10,7 +9,7 @@ import { getAccountSchema } from "../validations";
 
 export const getAccount = async (
   params: getAccountParams
-): Promise<ActionResponse<Account>> => {
+): Promise<ActionResponse<GlobalAccount>> => {
   const validationResult = await action({ params, schema: getAccountSchema });
 
   if (validationResult instanceof Error) {

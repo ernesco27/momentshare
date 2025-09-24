@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { CalendarIcon, Loader2, UploadIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { CldUploadWidget } from "next-cloudinary";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -69,9 +68,6 @@ const EventCreationForm = ({
 
   const router = useRouter();
 
-  // const session = useSession();
-  // const user = session?.data?.user;
-
   const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
     const maxUploads = planFeatures.find(
       (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
@@ -89,23 +85,13 @@ const EventCreationForm = ({
     try {
       setIsSubmitting(true);
 
-      console.log("Form Values:", {
-        title: values.title,
-        description: values.description,
-        loc: values.location,
-        startDate: values.startDate,
-        coverImage: coverPhoto?.secure_url || "", // optional
-        expiryDate: expiryDate, // adjust duration if plan-based
-        maxUploadsPerAttendee: maxUploads?.limit || 0,
-      });
-
       const result = await createEvent({
         title: values.title,
         description: values.description,
         loc: values.location,
         startDate: values.startDate,
-        coverImage: coverPhoto?.secure_url || "", // optional
-        expiryDate: expiryDate, // adjust duration if plan-based
+        coverImage: coverPhoto?.secure_url || "",
+        expiryDate: expiryDate,
         maxUploadsPerAttendee: maxUploads?.limit || 0,
       });
 

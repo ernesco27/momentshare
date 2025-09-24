@@ -16,12 +16,8 @@ export { gsap, ScrollTrigger, SplitText };
 export function getEventExpiryDate(
   startDate: Date,
   retentionDays?: number
-): Date | null {
-  if (!retentionDays || retentionDays <= 0) {
-    return null; // Unlimited or not specified
-  }
-
+): Date {
   const expiry = new Date(startDate);
-  expiry.setDate(expiry.getDate() + retentionDays);
+  expiry.setDate(expiry.getDate() + retentionDays!);
   return expiry;
 }

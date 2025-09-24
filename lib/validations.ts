@@ -133,11 +133,6 @@ export const createEventSchema = z.object({
     .string()
     .min(1, { message: "Description is required." })
     .max(500, { message: "Description cannot exceed 500 characters." }),
-  // organizer: z.string().min(1, { message: "Account ID is required." }),
-  // qrCode: z.string().min(1, { message: "QR Code is required." }),
-  // qrImage: z.string().min(1, { message: "QR Image is required." }),
-  // qrPublicId: z.string().min(1, { message: "QR Public ID is required." }),
-  // eventUrl: z.string().min(1, { message: "Event URL is required." }),
   startDate: z.date(),
   expiryDate: z.date(),
   maxUploadsPerAttendee: z

@@ -32,14 +32,9 @@ interface createEventParams {
   description: string;
   loc: string;
   coverImage?: string;
-  qrCode: string;
-  qrImage: string;
-  qrPublicId: string;
-  eventUrl: string;
   startDate: Date;
   expiryDate: Date;
   maxUploadsPerAttendee: number;
-  organizer: string;
 }
 
 interface getEventsParams
