@@ -2,6 +2,7 @@
 
 import { format, isAfter } from "date-fns";
 import { Calendar, Eye, Image, QrCode, Share2, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import DataRenderer from "@/components/DataRenderer";
@@ -25,6 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import ROUTES from "@/constants/route";
 import { EMPTY_EVENT } from "@/constants/states";
 import { GlobalEvent } from "@/types/global";
 
@@ -43,6 +45,12 @@ const EventsListContainer = ({
 }: EventProps) => {
   console.log("EventsListContainer events:", events);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const router = useRouter();
+
+  const handleViewDetails = (id: string) => {
+    router.push(ROUTES.EVENT(id));
+  };
   return (
     <main className="flex min-h-screen flex-1 flex-col px-6 py-36 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
       <h1 className="mb-6 h1-bold font-bold primary-text-gradient">
@@ -103,7 +111,7 @@ const EventsListContainer = ({
 
                     <div className="flex items-center space-x-2">
                       <Button
-                        onClick={() => {}}
+                        onClick={() => handleViewDetails(event._id!)}
                         variant="outline"
                         size="sm"
                         className="btn flex-1 primary-dark-gradient text-white hover:shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:hover:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out cursor-pointer"
