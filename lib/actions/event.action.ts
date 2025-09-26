@@ -14,6 +14,7 @@ import { NotFoundError } from "../http-errors";
 import {
   createEventSchema,
   getEventSchema,
+  getEventSchemaQR,
   getEventsSchema,
 } from "../validations";
 
@@ -37,7 +38,8 @@ export const createEvent = async (
     coverImage,
     startDate,
     expiryDate,
-    maxUploadsPerAttendee,
+    maxUploads,
+    themeColor,
   } = validationResult.params!;
 
   const userId = validationResult!.session!.user!.id;
@@ -53,7 +55,7 @@ export const createEvent = async (
     }
 
     const qrCode = nanoid(12);
-    const eventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/events/${qrCode}`;
+    const eventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/events/upload/${qrCode}`;
     const qrDataUrl = await QRCode.toDataURL(eventUrl);
 
     const uploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
@@ -94,7 +96,8 @@ export const createEvent = async (
           eventUrl,
           startDate,
           expiryDate,
-          maxUploadsPerAttendee,
+          maxUploads,
+          themeColor,
         },
       ],
       { session }
@@ -186,6 +189,37 @@ export const getEvent = async (
 
   try {
     const event = await Event.findById(eventId).populate("organizer");
+
+    if (!event) {
+      throw new NotFoundError("Event");
+    }
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(event)),
+      status: 200,
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const getEventByQR = async (
+  params: getEventParamsQR
+): Promise<ActionResponse<GlobalEvent>> => {
+  const validationResult = await action({
+    params,
+    schema: getEventSchemaQR,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { qrCode } = validationResult.params!;
+
+  try {
+    const event = await Event.findOne({ qrCode }).populate("organizer");
 
     if (!event) {
       throw new NotFoundError("Event");

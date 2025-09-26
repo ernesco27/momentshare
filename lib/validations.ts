@@ -121,6 +121,7 @@ export const eventFormSchema = z.object({
   description: z.string().min(1, { message: "Description is required." }),
   startDate: z.date(),
   location: z.string().min(1, { message: "Location is required." }),
+  themeColor: z.string().min(1, { message: "Theme color is required." }),
 });
 
 export const createEventSchema = z.object({
@@ -135,11 +136,12 @@ export const createEventSchema = z.object({
     .max(500, { message: "Description cannot exceed 500 characters." }),
   startDate: z.date(),
   expiryDate: z.date(),
-  maxUploadsPerAttendee: z
+  maxUploads: z
     .number()
     .min(1, { message: "Max uploads per attendee must be at least 1." }),
   loc: z.string().min(1, { message: "Location is required." }),
   coverImage: z.string().optional(),
+  themeColor: z.string().min(1, { message: "Theme color is required." }),
 });
 
 export const editEvent = createEventSchema.extend({
@@ -196,4 +198,8 @@ export const getEventsSchema = PaginatedSearchParamsSchema.extend({
 
 export const getEventSchema = z.object({
   eventId: z.string().min(1, { message: "Event ID is required." }),
+});
+
+export const getEventSchemaQR = z.object({
+  qrCode: z.string().min(1, { message: "qrCode is required." }),
 });

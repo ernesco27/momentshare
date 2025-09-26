@@ -58,6 +58,7 @@ const EventCreationForm = ({
       description: "",
       startDate: new Date(),
       location: "",
+      themeColor: "",
     },
   });
 
@@ -92,7 +93,8 @@ const EventCreationForm = ({
         startDate: values.startDate,
         coverImage: coverPhoto?.secure_url || "",
         expiryDate: expiryDate,
-        maxUploadsPerAttendee: maxUploads?.limit || 0,
+        maxUploads: maxUploads?.limit || 0,
+        themeColor: values.themeColor,
       });
 
       if (result?.success) {
@@ -186,6 +188,30 @@ const EventCreationForm = ({
                   <FormDescription className="body-regular text-light-500 mt-2.5">
                     Be specific and imagine you&apos;re giving info to another
                     person
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="themeColor"
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full">
+                  <FormLabel className="paragraph-semibold text-dark400_light800">
+                    Theme Color <span className="text-primary-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="color"
+                      className="h-12 w-20 p-1 cursor-pointer rounded border"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="body-regular text-light-500 mt-2.5">
+                    Select your event&apos;s theme color to personalize the
+                    experience.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

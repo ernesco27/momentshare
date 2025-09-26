@@ -34,7 +34,8 @@ interface createEventParams {
   coverImage?: string;
   startDate: Date;
   expiryDate: Date;
-  maxUploadsPerAttendee: number;
+  maxUploads: number;
+  themeColor: string;
 }
 
 interface getEventsParams
@@ -44,6 +45,10 @@ interface getEventsParams
 
 interface getEventParams {
   eventId: string;
+}
+
+interface getEventParamsQR {
+  qrCode: string;
 }
 
 interface ApiError {

@@ -12,7 +12,9 @@ export interface IEvent {
   eventUrl: string;
   startDate: Date;
   expiryDate: Date;
-  maxUploadsPerAttendee: number;
+  maxUploads: number;
+  themeColor: string;
+  media?: Types.ObjectId[];
 }
 
 export interface IEventDoc extends IEvent, Document {}
@@ -30,7 +32,9 @@ const EventSchema = new Schema<IEvent>(
     eventUrl: { type: String, required: true, unique: true },
     startDate: { type: Date, required: true },
     expiryDate: { type: Date, required: true },
-    maxUploadsPerAttendee: { type: Number, required: true },
+    maxUploads: { type: Number, required: true },
+    themeColor: { type: String, required: true },
+    media: [{ type: Schema.Types.ObjectId, ref: "Media" }],
   },
   { timestamps: true }
 );

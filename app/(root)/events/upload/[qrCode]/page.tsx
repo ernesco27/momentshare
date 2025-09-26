@@ -1,11 +1,15 @@
 import UploadContainer from "@/components/UploadContainer";
-import { getEvent } from "@/lib/actions/event.action";
+import { getEventByQR } from "@/lib/actions/event.action";
 import { RouteParams } from "@/types/global";
 
 const UploadPage = async ({ params }: RouteParams) => {
-  const { id } = await params;
+  const { qrCode } = await params;
 
-  const { success, data: event, error } = await getEvent({ eventId: id });
+  const {
+    success,
+    data: event,
+    error,
+  } = await getEventByQR({ qrCode: qrCode });
 
   console.log("event:", event);
 
