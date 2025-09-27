@@ -55,3 +55,12 @@ interface ApiError {
   message: string;
   details?: Record<string, string[]>;
 }
+
+interface createEventMediaParams {
+  eventId: string;
+  media: {
+    fileUrl: string;
+    fileType: string;
+    publicId: string;
+  }[];
+}

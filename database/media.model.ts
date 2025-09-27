@@ -1,18 +1,20 @@
 import { model, models, Schema, Types } from "mongoose";
 
 export interface IMedia {
-  event: Types.ObjectId;
+  eventId: Types.ObjectId;
   fileType: string;
   fileUrl: string;
+  publicId?: string;
 }
 
 export interface IMediaDoc extends IMedia, Document {}
 
 const MediaSchema = new Schema<IMedia>(
   {
-    event: { type: Schema.Types.ObjectId, ref: "Event", required: true },
+    eventId: { type: Schema.Types.ObjectId, ref: "Event", required: true },
     fileType: { type: String, required: true },
     fileUrl: { type: String, required: true },
+    publicId: { type: String },
   },
   { timestamps: true }
 );

@@ -178,10 +178,15 @@ export const getTransactionSchema = z.object({
   transactionId: z.string().min(1, { message: "Transaction ID is required." }),
 });
 
+export const uploadedFileSchema = z.object({
+  fileUrl: z.string().url(),
+  fileType: z.string().nonempty(),
+  publicId: z.string().nonempty(),
+});
+
 export const createMediaSchema = z.object({
-  event: z.string().min(1, { message: "Event ID is required." }),
-  fileType: z.string().min(1, { message: "File type is required." }),
-  fileUrl: z.string().min(1, { message: "File URL is required." }),
+  eventId: z.string().nonempty(),
+  media: z.array(uploadedFileSchema).min(1, "At least one file is required"),
 });
 
 export const getMediaSchema = z.object({

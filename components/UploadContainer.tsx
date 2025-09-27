@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { generateUploadSignature } from "@/lib/actions/generateUploadSignature.action";
+import { createEventMedia } from "@/lib/actions/media.action";
 import handleError from "@/lib/handlers/error";
 import { cn } from "@/lib/utils";
 import { ErrorResponse, GlobalEvent } from "@/types/global";
@@ -69,7 +71,44 @@ const UploadContainer = ({ event }: { event: GlobalEvent }) => {
 
     setSubmitting(true);
     try {
-      //   await submitMedia({ eventId: event._id, files: photos });  //server action
+      // 1. Get signature from server
+      const { timestamp, signature, cloudName, apiKey, folder } =
+        await generateUploadSignature(event._id);
+
+      // 2. Upload all files to Cloudinary
+      const uploadResults = await Promise.all(
+        photos.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("api_key", apiKey!);
+          formData.append("timestamp", timestamp.toString());
+          formData.append("signature", signature);
+          formData.append("folder", `${folder}`);
+
+          const res = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (!res.ok) {
+            const err = await res.text();
+            throw new Error(`Cloudinary error: ${err}`);
+          }
+          return res.json();
+        })
+      );
+
+      await createEventMedia({
+        eventId: event._id,
+        media: uploadResults.map((r) => ({
+          fileType: r.format,
+          fileUrl: r.secure_url,
+          publicId: r.public_id,
+        })),
+      });
       toast.success("Photos uploaded successfully!");
       setPhotos([]);
     } catch (error) {
@@ -170,16 +209,24 @@ const UploadContainer = ({ event }: { event: GlobalEvent }) => {
 
               {photos.length > 0 && (
                 <div className="flex-center gap-4 flex-wrap">
-                  {photos.map((photo, index) => (
+                  {photos.map((file, index) => (
                     <div key={index} className="relative group p-2">
-                      <div className="w-[100px] h-[100px] bg-gray-200 rounded-md overflow-hidden">
-                        <Image
-                          src={URL.createObjectURL(photo)}
-                          alt={`Event photo ${index + 1}`}
-                          width={100}
-                          height={100}
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="w-[100px] h-[100px] bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+                        {file.type.startsWith("image/") ? (
+                          <Image
+                            src={URL.createObjectURL(file)}
+                            alt={`Event file ${index + 1}`}
+                            width={100}
+                            height={100}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <video
+                            src={URL.createObjectURL(file)}
+                            className="w-full h-full object-cover"
+                            controls
+                          />
+                        )}
                       </div>
                       <Button
                         type="button"
