@@ -40,7 +40,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
     qrImage,
     eventUrl,
     startDate,
-    maxUploadsPerAttendee,
+    maxUploads,
   } = event!;
 
   const isExpired = event ? new Date(expiryDate) < new Date() : false;
@@ -391,7 +391,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
                     Upload Limit
                   </h3>
                   <p className="text-dark400_light900 text-center my-2 h1-bold font-bold">
-                    {maxUploadsPerAttendee}
+                    {maxUploads}
                   </p>
                 </div>
               </div>

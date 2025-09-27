@@ -50,6 +50,13 @@ interface GlobalAccount {
   planDuration?: number;
 }
 
+interface Media {
+  _id: string;
+  event: Event;
+  fileType: string;
+  fileUrl: string;
+}
+
 interface GlobalEvent {
   _id: string;
   title: string;
@@ -62,5 +69,7 @@ interface GlobalEvent {
   eventUrl: string;
   startDate: Date;
   expiryDate: Date;
-  maxUploadsPerAttendee: number;
+  maxUploads: number;
+  themeColor: string;
+  media: Media[];
 }
