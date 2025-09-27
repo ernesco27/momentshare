@@ -154,6 +154,7 @@ export const getEvents = async (
 
     const events = await Event.find({ organizer: account._id })
       .populate("organizer")
+      .populate("media")
       .skip(skip)
       .limit(limit)
       .sort({ startDate: -1 });
@@ -188,7 +189,9 @@ export const getEvent = async (
   const { eventId } = validationResult.params!;
 
   try {
-    const event = await Event.findById(eventId).populate("organizer");
+    const event = await Event.findById(eventId)
+      .populate("organizer")
+      .populate("media");
 
     if (!event) {
       throw new NotFoundError("Event");

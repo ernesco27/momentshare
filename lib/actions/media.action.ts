@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 
-import { Media } from "@/database";
+import { Event, Media } from "@/database";
 import { ActionResponse, ErrorResponse, GlobalMedia } from "@/types/global";
 
 import cloudinary from "../cloudinary";
@@ -36,7 +36,13 @@ export const createEventMedia = async (
         fileUrl: file.fileUrl,
         publicId: file.publicId,
       })),
-      { session, ordered: true } // 👈 always safe for transactions
+      { session, ordered: true }
+    );
+
+    await Event.findByIdAndUpdate(
+      eventId,
+      { $push: { media: { $each: mediaDocs.map((doc) => doc._id) } } },
+      { session }
     );
 
     // Track uploaded public IDs for rollback
