@@ -53,8 +53,6 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
   const handleShare = async () => {
     if (!event) return;
 
-    // const uploadUrl = `${window.location.origin}/upload/${event.qr_code}`;
-
     if (navigator.share) {
       try {
         await navigator.share({
@@ -215,47 +213,48 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
   };
 
   return (
-    <div className="flex min-h-screen flex-1 flex-col px-6 py-36 max-md:pb-14 sm:px-14 max-w-5xl mx-auto ">
+    <div className="flex min-h-screen flex-1 flex-col px-6 pt-25 max-md:pb-14 sm:px-14 max-w-5xl mx-auto ">
       <div className="mx-auto px-4 py-8 w-full">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="flex-between w-full mb-6">
             <Button
               variant="outline"
-              size="sm"
-              className="mr-4 primary-gradient cursor-pointer"
+              size="lg"
+              className=" primary-gradient cursor-pointer w-[150px]"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              Dashboard
             </Button>
             <Button
               variant="outline"
-              size="sm"
-              className="mr-4 primary-dark-gradient hover:primary-gradient cursor-pointer shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out"
+              className="primary-gradient hover:primary-dark-gradient cursor-pointer shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out w-[150px]"
             >
               <DownloadIcon className="h-4 w-4 mr-2 " />
-              Download Event Media
+              Download Media
             </Button>
           </div>
           {coverImage && (
-            <div className="w-full h-[40vh] rounded-lg mb-8">
+            <div className="relative w-full max-lg:h-[20vh] max-sm:h-[20vh] h-[300px] rounded-lg mb-8 overflow-hidden">
               <Image
                 src={coverImage}
                 alt="Event Cover"
-                width={800}
-                height={400}
                 fill
-                className="object-cover"
                 priority
+                className="object-cover"
               />
             </div>
           )}
 
           <div className="flex items-center mb-8 w-full">
             <div className="flex flex-col items-center w-full">
-              <h1 className="h1-bold primary-text-gradient">{title}</h1>
+              <h1 className="h2-bold text-center lg:h1-bold primary-text-gradient">
+                {title}
+              </h1>
               {description && (
-                <p className="text-dark400_light900 text-wrap">{description}</p>
+                <p className="text-dark400_light900 text-wrap text-center mt-4">
+                  {description}
+                </p>
               )}
             </div>
           </div>
@@ -267,7 +266,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
                 <Camera className="h-5 w-5" />
                 <span>Scan to Upload Photos/Videos</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs lg:text-sm mt-2 text-center">
                 {isExpired
                   ? "This event has expired and is no longer accepting uploads"
                   : "Attendees can scan this QR code to upload their photos/videos instantly"}
@@ -362,8 +361,8 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
               </div>
 
               {/* Event Details */}
-              <div className="text-left flex flex-wrap gap-4  rounded-lg p-4 light-border space-y-2 primary-gradient">
-                <div className="flex-1">
+              <div className="flex flex-col lg:flex-row justify-between gap-4  rounded-lg p-4 light-border space-y-2 primary-gradient">
+                <div className="text-left">
                   <h3 className="font-medium mb-2 h3-bold">Event Details:</h3>
                   <div className="space-y-1 paragrapher-regular text-light-900">
                     <p>
@@ -385,7 +384,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
                     </p>
                   </div>
                 </div>
-                <div className="rounded-lg background-light900_dark200 p-4 shadow-light-100">
+                <div className="rounded-lg background-light900_dark200 p-4 shadow-light-100 ">
                   <h3 className="h3-semibold mb-2 text-center text-light400_light500">
                     Upload Limit
                   </h3>

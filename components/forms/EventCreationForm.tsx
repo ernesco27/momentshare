@@ -13,13 +13,6 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Form,
   FormControl,
   FormDescription,
@@ -40,17 +33,11 @@ import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Textarea } from "../ui/textarea";
 
-interface CreateEventDialogProps {
-  open: boolean;
-  onClose: () => void;
+interface CreateEvent {
   planFeatures: IPlanFeature[];
 }
 
-const EventCreationForm = ({
-  open,
-  onClose,
-  planFeatures,
-}: CreateEventDialogProps) => {
+const EventCreationForm = ({ planFeatures }: CreateEvent) => {
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
@@ -99,7 +86,7 @@ const EventCreationForm = ({
 
       if (result?.success) {
         toast.success("Event created successfully!");
-        onClose();
+
         router.push(ROUTES.EVENTS);
       }
     } catch (error) {
@@ -111,234 +98,233 @@ const EventCreationForm = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-xl max-h-screen overflow-scroll my-6  background-light900_dark200">
-        <DialogHeader>
-          <DialogTitle className="text-xl text-dark100_light900">
-            Create New Event
-          </DialogTitle>
-          <DialogDescription className="paragraph-medium text-dark400_light500">
-            Set up a new memories collection event for your attendees.
-          </DialogDescription>
-        </DialogHeader>
+    <div className="mt-10">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleCreateEvent)}
+          className="flex w-full flex-col gap-10"
+        >
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Event Title <span className="text-primary-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px]  border"
+                    placeholder="Jane's Birthday"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className="body-regular text-light-500 mt-2.5">
+                  Be specific and imagine you&apos;re giving info to another
+                  person
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Event Description <span className="text-primary-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px]  border"
+                    placeholder="A little info about the event"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Event Location <span className="text-primary-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px]  border"
+                    placeholder="Location of event"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className="body-regular text-light-500 mt-2.5">
+                  Be specific and imagine you&apos;re giving info to another
+                  person
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleCreateEvent)}
-            className="flex w-full flex-col gap-10"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Event Title <span className="text-primary-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px]  border"
-                      placeholder="Jane's Birthday"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="body-regular text-light-500 mt-2.5">
-                    Be specific and imagine you&apos;re giving info to another
-                    person
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Event Description{" "}
-                    <span className="text-primary-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px]  border"
-                      placeholder="A little info about the event"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Event Location <span className="text-primary-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px]  border"
-                      placeholder="Location of event"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="body-regular text-light-500 mt-2.5">
-                    Be specific and imagine you&apos;re giving info to another
-                    person
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="themeColor"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Theme Color <span className="text-primary-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="color"
-                      className="h-12 w-20 p-1 cursor-pointer rounded border"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="body-regular text-light-500 mt-2.5">
-                    Select your event&apos;s theme color to personalize the
-                    experience.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Event Date <span className="text-primary-500">*</span>
-                  </FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal text-dark400_light500",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 background-light900_dark200 text-dark200_light900"
-                      align="start"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={
-                          field.value ? new Date(field.value) : undefined
-                        }
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date()}
-                        captionLayout="dropdown"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription className="body-regular text-light-500 mt-2.5">
-                    Be specific and imagine you&apos;re giving info to another
-                    person
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-2">
-              <FormLabel className="paragraph-semibold text-dark400_light800">
-                Cover Photo (Optional)
-              </FormLabel>
-              <div className="space-y-4">
-                {coverPhoto ? (
-                  <div className="border rounded-md w-full h-[200px] cursor-pointer overflow-hidden">
-                    <Image
-                      src={coverPhoto?.secure_url}
-                      alt="cover photo"
-                      fill
-                    />
-                  </div>
-                ) : (
-                  <CldUploadWidget
-                    uploadPreset="momentshare"
-                    options={{
-                      maxFiles: 1,
-                      maxFileSize: 2 * 1024 * 1024, // 2MB
-                      clientAllowedFormats: ["png", "jpeg", "jpg"],
-                      folder: "MomentShare/events",
-                    }}
-                    onSuccess={(result, widget) => {
-                      setCoverPhoto(result.info);
-                      widget.close();
-                    }}
+          <FormField
+            control={form.control}
+            name="themeColor"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Theme Color <span className="text-primary-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="color"
+                    className="h-12 w-20 p-1 cursor-pointer rounded border"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className="body-regular text-light-500 mt-2.5">
+                  Select your event&apos;s theme color to personalize the
+                  experience.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="startDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Event Date <span className="text-primary-500">*</span>
+                </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal text-dark400_light500",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(new Date(field.value), "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto p-0 background-light900_dark200 text-dark200_light900"
+                    align="start"
                   >
-                    {({ open }) => {
-                      return (
-                        <div
-                          className="flex flex-col justify-center border rounded-md w-full h-[200px] text-lg text-gray-500 items-center gap-2 cursor-pointer"
-                          onClick={() => open()}
-                        >
-                          <UploadIcon className="w-6 h-6" />
-                          <span>
-                            {uploading ? "Uploading..." : "Upload photo"}
-                          </span>
-                          <p className="text-xs text-black font-medium">
-                            Browse (1 Photo - Max size 2MB)
-                          </p>
-                        </div>
-                      );
-                    }}
-                  </CldUploadWidget>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                className="bg-red-700 text-light-900"
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={field.onChange}
+                      disabled={(date) => date < new Date()}
+                      captionLayout="dropdown"
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormDescription className="body-regular text-light-500 mt-2.5">
+                  Be specific and imagine you&apos;re giving info to another
+                  person
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormLabel className="paragraph-semibold text-dark400_light800">
+            Cover Photo (Optional)
+          </FormLabel>
+
+          {coverPhoto ? (
+            <div className="relative w-full h-[200px] border rounded-md overflow-hidden">
+              <Image
+                src={coverPhoto?.secure_url}
+                alt="cover photo"
+                fill
+                className="object-cover"
+              />
+              {/* Remove button overlay */}
+              <button
                 type="button"
-                disabled={isSubmitting}
-                onClick={onClose}
+                onClick={() => setCoverPhoto(null)}
+                className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded hover:bg-black/80"
               >
-                Discard
-              </Button>
-              <Button
-                className="bg-green-700 text-light-900"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Publish Event
-              </Button>
+                Remove
+              </button>
             </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+          ) : (
+            <CldUploadWidget
+              uploadPreset="momentshare"
+              options={{
+                sources: ["local"],
+                multiple: false,
+                maxFiles: 1,
+                maxFileSize: 2 * 1024 * 1024, // 2MB
+                clientAllowedFormats: ["png", "jpeg", "jpg"],
+                folder: "MomentShare/cover_images",
+              }}
+              onSuccess={(result, { widget }) => {
+                setCoverPhoto(result?.info);
+                setUploading(false);
+                widget.close();
+              }}
+              onClose={() => setUploading(false)}
+              onError={() => {
+                toast.error("Failed to upload image. Please try again.");
+                setUploading(false);
+              }}
+            >
+              {({ open }) => (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex flex-col justify-center w-full h-[200px] border text-lg text-gray-500 items-center gap-2"
+                  onClick={() => open()}
+                >
+                  <UploadIcon className="w-6 h-6" />
+                  <span>{uploading ? "Uploading..." : "Upload photo"}</span>
+                  <p className="text-xs text-black font-medium">
+                    Browse (1 Photo - Max size 2MB)
+                  </p>
+                </Button>
+              )}
+            </CldUploadWidget>
+          )}
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button
+              className="bg-red-700 text-light-900"
+              type="button"
+              disabled={isSubmitting}
+              // onClick={onClose}
+            >
+              Discard
+            </Button>
+            <Button
+              className="bg-green-700 text-light-900"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Publish Event
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };
 

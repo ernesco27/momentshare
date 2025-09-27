@@ -6,7 +6,7 @@ const ROUTES = {
 
   EVENTS: "/events",
   EVENT: (id: string) => `/events/${id}`,
-  CREATE_EVENT: "/create-event",
+  CREATE_EVENT: (id: string) => `/events/create-event/${id}`,
   DASHBOARD: (id: string) => `/dashboard/${id}`,
 };
 

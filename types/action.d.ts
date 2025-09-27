@@ -24,7 +24,8 @@ interface getPlansParams {
 }
 
 interface IPlanWithFeatures extends IPlan {
-  _id: string; // from Mongo
+  _id: string;
+  name: string;
   features: IPlanFeature[];
 }
 interface createEventParams {

@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -16,13 +17,13 @@ interface Props {
   name: string;
   accountType: string;
   planName: string;
-  planDuration: string;
+  planDuration: number;
   eventCredits: number;
   events: GlobalEvent[];
   EventError?: ApiError;
   EventSuccess: boolean;
   planFeatures: IPlanFeature[];
-  accountId: string;
+  id: string;
 }
 
 const Dashboard = ({
@@ -34,10 +35,9 @@ const Dashboard = ({
   events,
   EventError,
   EventSuccess,
-  planFeatures,
-  accountId,
+  id,
 }: Props) => {
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const router = useRouter();
 
   const handleCreateEvent = () => {
     if (eventCredits === 0 && accountType === "STANDARD") {
@@ -46,7 +46,7 @@ const Dashboard = ({
       );
       return;
     }
-    setShowCreateDialog(true);
+    router.push(`/events/create-event/${id}`);
   };
 
   return (
@@ -118,11 +118,6 @@ const Dashboard = ({
           <MetricsCard />
         </div>
       </main>
-      <EventCreationForm
-        open={showCreateDialog}
-        onClose={() => setShowCreateDialog(false)}
-        planFeatures={planFeatures}
-      />
     </div>
   );
 };

@@ -9,11 +9,11 @@ const DashboardPage = async ({ params }: RouteParams) => {
 
   const { data: account } = await getAccount({ userId: id });
 
-  const { name, accountType, activePlan, eventCredits, planDuration, _id } =
+  const { name, accountType, activePlan, eventCredits, planDuration } =
     account!;
 
   const [planResponse, eventResponse] = await Promise.all([
-    getPlan({ planId: activePlan }),
+    getPlan({ planId: activePlan! }),
     getEvents({ userId: id }),
   ]);
 
@@ -32,13 +32,13 @@ const DashboardPage = async ({ params }: RouteParams) => {
         name={name}
         accountType={accountType}
         planName={planName}
-        planDuration={planDuration}
-        eventCredits={eventCredits}
+        planDuration={planDuration!}
+        eventCredits={eventCredits!}
         events={events!}
         EventError={eventError}
         EventSuccess={eventSuccess}
         planFeatures={planFeatures}
-        accountId={_id}
+        id={id}
       />
     </>
   );
