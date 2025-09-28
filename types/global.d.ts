@@ -73,4 +73,5 @@ interface GlobalEvent {
   maxUploads: number;
   themeColor: string;
   media: GlobalMedia[];
+  totalMedia?: number;
 }

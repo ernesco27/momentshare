@@ -22,5 +22,9 @@ export const DEFAULT_ERROR = {
 export const EMPTY_EVENT = {
   title: "Ahh, No Events Yet!",
   message:
-    "The event board is empty. Maybe it’s waiting for your exciting event to get things rolling",
+    "Your event board is empty. Maybe it’s waiting for your upcoming event to get things rolling",
+  button: {
+    text: "Go To Dashboard",
+    href: ROUTES.HOME,
+  },
 };

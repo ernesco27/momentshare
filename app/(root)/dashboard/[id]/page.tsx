@@ -21,10 +21,12 @@ const DashboardPage = async ({ params }: RouteParams) => {
   const { success: eventSuccess, data, error: eventError } = eventResponse!;
 
   const events = data?.events || [];
+  const totalMedia = data?.totalMedia || 0;
+  const totalMaxUploads = data?.totalMaxUploads || 0;
+  const totalEvents = data?.totalEvents || 0;
   const planFeatures = planResponse.data?.features || [];
 
-  console.log("account!:", account);
-  console.log("planFeatures:", planFeatures);
+  console.log("events:", events);
 
   return (
     <>
@@ -39,6 +41,9 @@ const DashboardPage = async ({ params }: RouteParams) => {
         EventSuccess={eventSuccess}
         planFeatures={planFeatures}
         id={id}
+        totalMedia={totalMedia}
+        totalMaxUploads={totalMaxUploads}
+        totalEvents={totalEvents}
       />
     </>
   );

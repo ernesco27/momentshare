@@ -2,15 +2,14 @@
 
 import { BadgeCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
 import DashCards from "@/components/cards/DashCards";
 import EventsCard from "@/components/cards/EventsCard";
 import MetricsCard from "@/components/cards/MetricsCard";
-import EventCreationForm from "@/components/forms/EventCreationForm";
 import { Button } from "@/components/ui/button";
 import { IPlanFeature } from "@/database/planFeatures.model";
+import { AverageUploads, engagementRate } from "@/lib/utils";
 import { GlobalEvent } from "@/types/global";
 
 interface Props {
@@ -24,6 +23,9 @@ interface Props {
   EventSuccess: boolean;
   planFeatures: IPlanFeature[];
   id: string;
+  totalMedia: number;
+  totalMaxUploads: number;
+  totalEvents: number;
 }
 
 const Dashboard = ({
@@ -36,6 +38,9 @@ const Dashboard = ({
   EventError,
   EventSuccess,
   id,
+  totalMedia,
+  totalMaxUploads,
+  totalEvents,
 }: Props) => {
   const router = useRouter();
 
@@ -46,8 +51,22 @@ const Dashboard = ({
       );
       return;
     }
+
+    if (accountType === "PRO" && planDuration === 0) {
+      toast.error(
+        "Your plan has expired. Please upgrade your plan to create more events."
+      );
+      return;
+    }
+
     router.push(`/events/create-event/${id}`);
   };
+
+  const activeEvents = events.filter((event) => {
+    const isExpired = event ? new Date(event.expiryDate) < new Date() : false;
+
+    return !isExpired;
+  });
 
   return (
     <div className="w-full flex flex-col justify-between gap-4 ">
@@ -81,21 +100,32 @@ const Dashboard = ({
             <DashCards
               otherClasses="bg-[#6ee7b7]!"
               heading="Active Events"
-              info="1"
+              info={activeEvents.length}
               description="Total Active Event(s)"
             />
             <DashCards
               otherClasses="bg-[#67e8f9]!"
-              heading="Total Uploads"
-              info="425"
+              heading="Total Media Uploads"
+              info={totalMedia}
               description="Toal Photos/Videos Uploaded"
             />
-            <DashCards
-              otherClasses="bg-[#d8b4fe]!"
-              heading="Engagement Rate"
-              info="60%"
-              description="Average Guest Engagement Rate"
-            />
+            {accountType === "STANDARD" && (
+              <DashCards
+                otherClasses="bg-[#d8b4fe]!"
+                heading="Engagement Rate"
+                info={`${engagementRate(totalMedia, totalMaxUploads)}%`}
+                description="Average Guest Engagement Rate"
+              />
+            )}
+            {accountType === "PRO" && (
+              <DashCards
+                otherClasses="bg-[#d8b4fe]!"
+                heading="Average Uploads per Event"
+                info={`${AverageUploads(totalMedia, totalEvents)}%`}
+                description="Average Guest Contribution Rate"
+              />
+            )}
+
             <DashCards
               otherClasses="bg-[#fde68a]!"
               heading={`Active Plan - ${planName}`}

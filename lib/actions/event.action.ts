@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 import QRCode from "qrcode";
 
-import { Account, Event } from "@/database";
+import { Account, Event, Media } from "@/database";
 import { ActionResponse, ErrorResponse, GlobalEvent } from "@/types/global";
 
 import cloudinary from "../cloudinary";
@@ -129,7 +129,15 @@ export const createEvent = async (
 
 export const getEvents = async (
   params: getEventsParams
-): Promise<ActionResponse<{ events: GlobalEvent[]; isNext: boolean }>> => {
+): Promise<
+  ActionResponse<{
+    events: GlobalEvent[];
+    isNext: boolean;
+    totalMedia: number;
+    totalMaxUploads: number;
+    totalEvents: number;
+  }>
+> => {
   const validationResult = await action({
     params,
     schema: getEventsSchema,
@@ -150,10 +158,11 @@ export const getEvents = async (
       throw new NotFoundError("Account");
     }
 
+    // Total events for pagination
     const totalEvents = await Event.countDocuments({ organizer: account._id });
 
+    // Paginated events
     const events = await Event.find({ organizer: account._id })
-      .populate("organizer")
       .populate("media")
       .skip(skip)
       .limit(limit)
@@ -161,11 +170,39 @@ export const getEvents = async (
 
     const isNext = totalEvents > skip + events.length;
 
+    // ✅ Get ALL event IDs for this organizer
+    const allEventIds = await Event.find({ organizer: account._id }).distinct(
+      "_id"
+    );
+
+    // ✅ Total media across ALL events (not just paginated ones)
+    const totalMedia = await Media.countDocuments({
+      eventId: { $in: allEventIds },
+    });
+
+    // ✅ Total maxUploads across all events (only for standard accounts)
+    let totalMaxUploads = 0;
+    if (account.accountType !== "PRO") {
+      const allEvents = await Event.find(
+        { organizer: account._id },
+        "maxUploads"
+      );
+      totalMaxUploads = allEvents.reduce(
+        (sum, e) => sum + (e.maxUploads || 0),
+        0
+      );
+    }
+
+    console.log("totalEvents", totalEvents);
+
     return {
       success: true,
       data: {
         events: JSON.parse(JSON.stringify(events)),
         isNext,
+        totalMedia,
+        totalMaxUploads,
+        totalEvents,
       },
       status: 200,
     };
@@ -234,6 +271,64 @@ export const getEventByQR = async (
       status: 200,
     };
   } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const deleteEvent = async (
+  eventId: string
+): Promise<ActionResponse<null>> => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // 1. Fetch event + related media
+    const event = await Event.findById(eventId).session(session);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    const mediaDocs = await Media.find({ eventId }).session(session);
+
+    // 2. Delete all media docs from DB
+    await Media.deleteMany({ eventId }).session(session);
+
+    // 3. Delete event itself
+    await Event.deleteOne({ _id: eventId }).session(session);
+
+    // 4. Commit DB transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    // 5. Cleanup Cloudinary asynchronously (outside of transaction)
+    if (mediaDocs.length > 0) {
+      await Promise.all(
+        mediaDocs.map(
+          (m) =>
+            cloudinary.uploader
+              .destroy(m.publicId, {
+                resource_type: "auto",
+              })
+              .catch(() => null) // ignore failures
+        )
+      );
+    }
+
+    // Also delete QR code if exists
+    if (event.qrCode) {
+      await cloudinary.uploader
+        .destroy(`MomentShare/qr_codes/${event.qrCode}`)
+        .catch(() => null);
+    }
+
+    return {
+      success: true,
+      data: null,
+      status: 200,
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     return handleError(error) as ErrorResponse;
   }
 };

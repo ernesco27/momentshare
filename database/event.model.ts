@@ -15,6 +15,7 @@ export interface IEvent {
   maxUploads: number;
   themeColor: string;
   media?: Types.ObjectId[];
+  totalMedia?: number;
 }
 
 export interface IEventDoc extends IEvent, Document {}
@@ -35,6 +36,7 @@ const EventSchema = new Schema<IEvent>(
     maxUploads: { type: Number, required: true },
     themeColor: { type: String, required: true },
     media: [{ type: Schema.Types.ObjectId, ref: "Media" }],
+    totalMedia: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -41,7 +41,10 @@ export const createEventMedia = async (
 
     await Event.findByIdAndUpdate(
       eventId,
-      { $push: { media: { $each: mediaDocs.map((doc) => doc._id) } } },
+      {
+        $push: { media: { $each: mediaDocs.map((doc) => doc._id) } },
+        $inc: { totalMedia: mediaDocs.length },
+      },
       { session }
     );
 
