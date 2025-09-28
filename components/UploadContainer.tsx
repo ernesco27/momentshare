@@ -122,22 +122,20 @@ const UploadContainer = ({ event }: { event: GlobalEvent }) => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto min-h-screen my-10 p-4">
-      {/* Header */}
+    <div className="flex min-h-screen flex-1 flex-col px-6 pt-25 pb-14 sm:px-14 max-w-5xl mx-auto ">
       {event.coverImage && (
-        <div className="w-full h-[40vh] rounded-lg mb-8 mt-20 bg-red-500">
+        <div className="relative w-full max-lg:h-[20vh] max-sm:h-[20vh] h-[300px] rounded-lg mb-8 mt-8 overflow-hidden">
           <Image
-            src={event.coverImage! || "/images/event-cover-placeholder.jpg"}
+            src={event.coverImage}
             alt="Event Cover"
-            width={800}
-            height={400}
-            className="object-cover"
+            fill
             priority
+            className="object-cover"
           />
         </div>
       )}
 
-      <div className="text-center mt-30">
+      <div className="text-center ">
         <div className="flex items-center justify-center mb-4">
           <div className="background-light800_dark300 p-3 rounded-full ">
             <Camera

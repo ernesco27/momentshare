@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isAfter } from "date-fns";
-import { Calendar, Eye, Image, QrCode, Share2, Trash2 } from "lucide-react";
+import { Calendar, Eye, Image, QrCode, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

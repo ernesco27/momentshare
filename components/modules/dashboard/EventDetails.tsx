@@ -11,6 +11,8 @@ import {
   Share2,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import ROUTES from "@/constants/route";
 import handleError from "@/lib/handlers/error";
 import { ErrorResponse, GlobalEvent } from "@/types/global";
 
@@ -41,6 +44,11 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
     startDate,
     maxUploads,
   } = event!;
+
+  const session = useSession();
+  const userId = session?.data?.user?.id;
+
+  const router = useRouter();
 
   const isExpired = event ? new Date(expiryDate) < new Date() : false;
 
@@ -213,24 +221,24 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
   };
 
   return (
-    <div className="flex min-h-screen flex-1 flex-col px-6 pt-25 max-md:pb-14 sm:px-14 max-w-5xl mx-auto ">
+    <div className="flex min-h-screen flex-1 flex-col px-6 pt-25 pb-14 sm:px-14 max-w-5xl mx-auto ">
       <div className="mx-auto px-4 py-8 w-full">
         <div className="max-w-5xl mx-auto">
-          {/* Header */}
           <div className="flex-between w-full mb-6">
             <Button
               variant="outline"
               size="lg"
-              className=" primary-gradient cursor-pointer w-[150px]"
+              className=" primary-gradient hover:primary-dark-gradient hover:text-white cursor-pointer max-sm:w-[120px] w-[150px]"
+              onClick={() => router.push(ROUTES.DASHBOARD(userId!))}
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="h-4 w-4 mr-2 max-sm:hidden" />
               Dashboard
             </Button>
             <Button
               variant="outline"
-              className="primary-gradient hover:primary-dark-gradient cursor-pointer shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out w-[150px]"
+              className="primary-gradient hover:primary-dark-gradient hover:text-white  cursor-pointer shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out max-sm:w-[120px] w-[150px]"
             >
-              <DownloadIcon className="h-4 w-4 mr-2 " />
+              <DownloadIcon className="h-4 w-4 mr-2 max-sm:hidden " />
               Download Media
             </Button>
           </div>
