@@ -2,6 +2,7 @@
 
 import { BadgeCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import DashCards from "@/components/cards/DashCards";
@@ -43,6 +44,7 @@ const Dashboard = ({
   totalEvents,
 }: Props) => {
   const router = useRouter();
+  const [selectedEvent, setSelectedEvent] = useState<GlobalEvent | undefined>();
 
   const handleCreateEvent = () => {
     if (eventCredits === 0 && accountType === "STANDARD") {
@@ -142,10 +144,12 @@ const Dashboard = ({
             events={events}
             error={EventError}
             success={EventSuccess}
+            onEventSelect={setSelectedEvent}
+            selectedEventId={selectedEvent?._id}
           />
         </div>
         <div className="mt-8">
-          <MetricsCard />
+          <MetricsCard selectedEvent={selectedEvent} />
         </div>
       </main>
     </div>

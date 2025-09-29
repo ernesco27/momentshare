@@ -33,3 +33,21 @@ export const FEATURE = {
   STORAGE_LIMIT: "STORAGE_LIMIT",
   DOWNLOAD_ACCESS: "DOWNLOAD_ACCESS",
 };
+
+// images
+export const IMAGE_FORMATS = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "bmp",
+  "tiff",
+  "webp",
+  "svg",
+];
+
+// videos
+export const VIDEO_FORMATS = ["mp4", "mov", "avi", "mkv", "webm", "flv", "wmv"];
+
+// merge for allowed formats
+export const ALLOWED_FORMATS = [...IMAGE_FORMATS, ...VIDEO_FORMATS];

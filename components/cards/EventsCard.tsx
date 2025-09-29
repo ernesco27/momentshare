@@ -12,9 +12,17 @@ interface Props {
   events: GlobalEvent[];
   success: boolean;
   error?: ApiError;
+  onEventSelect?: (event: GlobalEvent) => void;
+  selectedEventId?: string;
 }
 
-const EventsCard = ({ events, success, error }: Props) => {
+const EventsCard = ({
+  events,
+  success,
+  error,
+  onEventSelect,
+  selectedEventId,
+}: Props) => {
   return (
     <Card className="card-wrapper light-border">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -35,7 +43,10 @@ const EventsCard = ({ events, success, error }: Props) => {
                 <Button
                   key={event._id}
                   size="lg"
-                  className="w-full hover:bg-primary-500/5 cursor-pointer py-10 "
+                  className={`w-full hover:bg-primary-500/5 cursor-pointer py-10 ${
+                    selectedEventId === event._id ? "bg-primary-500/10" : ""
+                  }`}
+                  onClick={() => onEventSelect?.(event)}
                 >
                   <div className="flex gap-2 items-start flex-col w-full">
                     <h3 className="h3-semibold text-dark100_light900">
