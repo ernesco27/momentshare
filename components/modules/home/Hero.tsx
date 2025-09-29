@@ -6,7 +6,6 @@ import { ScrollTrigger, SplitText } from "gsap/all";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-// import { auth } from "@/auth";
 import { useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -16,8 +15,6 @@ import ROUTES from "@/constants/route";
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const Hero = () => {
-  // const session = await auth();
-  // const userId = session?.user?.id;
   const router = useRouter();
 
   const ref = useRef(null);
@@ -99,7 +96,7 @@ const Hero = () => {
   return (
     <main
       ref={ref}
-      className="relative h-screen py-32 lg:px-28 overflow-hidden invisible  hero"
+      className="relative h-screen pb-32 lg:px-28 overflow-hidden -mt-16 invisible  hero"
     >
       <div className="absolute inset-0 z-0 top-0 right-0">
         <div className="relative w-full">
@@ -136,7 +133,7 @@ const Hero = () => {
           className="object-contain"
         />
       </div>
-      <div className="flex flex-col  justify-center p-8 lg:p-12 mt-[10%] min-lg:mt-[5%]">
+      <div className="flex flex-col  justify-center p-8 lg:p-12 mt-[20%] min-lg:mt-[15%]">
         <h2 className="text-dark200_light900 text-4xl lg:text-6xl    font-bold mb-6 header-1">
           Relive Every Moment
         </h2>

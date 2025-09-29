@@ -3,8 +3,6 @@ import gsap from "gsap";
 import { ScrollTrigger, SplitText } from "gsap/all";
 import { twMerge } from "tailwind-merge";
 
-import { auth } from "@/auth";
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

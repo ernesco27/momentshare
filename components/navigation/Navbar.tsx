@@ -20,14 +20,26 @@ const Navbar = async () => {
   const session = await auth();
   const userId = session?.user?.id;
   return (
-    <nav className="flex-between background-light900_dark200 fixed z-50 w-full p-2 dark:shadow-none sm:px-12 shadow-light-300 gap-5">
+    <nav
+      className=" sticky top-4 z-50
+  mx-auto w-[98%] 
+  rounded-2xl
+  border border-white/20 
+  bg-white/30 dark:bg-dark-200/30 
+  backdrop-blur-md 
+  shadow-lg 
+  flex-between gap-5 p-2 sm:px-12"
+    >
       <Link href="/" className="overflow-hidden">
-        <Image
-          src="/images/Logo.svg"
-          width={120}
-          height={120}
-          alt="MomentShare logo"
-        />
+        <div className="relative h-12 w-32">
+          <Image
+            src="/images/Logo.svg"
+            alt="MomentShare logo"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
       </Link>
       <div className="hidden md:flex md:gap-8">
         <NavLinks userId={userId!} />
@@ -94,13 +106,6 @@ const Navbar = async () => {
           )}
         </div>
 
-        {/* {session?.user?.id && (
-          <UserAvatar
-            id={session?.user?.id}
-            name={session.user.name!}
-            imageUrl={session.user?.image}
-          />
-        )}  */}
         <MobileNavigation />
       </div>
     </nav>

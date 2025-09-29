@@ -5,7 +5,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <main className="background-light850_dark100 relative">
       <Navbar />
       <section className="flex min-h-screen flex-1 flex-col">
-        <div className="">{children}</div>
+        <div>{children}</div>
       </section>
     </main>
   );
