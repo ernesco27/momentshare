@@ -69,7 +69,7 @@ const Features = () => {
 
   return (
     <Container>
-      <div className="feature flex-center flex-wrap gap-8  p-8 lg:mt-10">
+      <div className="feature flex-center flex-wrap gap-8  p-8 mt-10 lg:mt-10">
         {feaures.map((feature, index) => (
           <div id="feature-card" key={index}>
             <FeatureCard {...feature} />

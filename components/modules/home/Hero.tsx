@@ -115,9 +115,9 @@ const Hero = () => {
   return (
     <main
       ref={ref}
-      className="flex flex-col justify-center  items-center relative min-h-screen  lg:px-28  -mt-16 invisible  hero "
+      className="flex flex-col justify-center  items-center relative min-h-screen  lg:px-28  -mt-16 invisible  hero overflow-hidden "
     >
-      <div className="flex flex-col justify-center items-center mt-[10%] min-lg:mt-[10%]">
+      <div className="flex flex-col justify-center items-center mt-[20%] min-lg:mt-[10%] mb-8">
         <div className="mb-10 flex-center gap-2">
           <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
             <Avatar>
@@ -136,19 +136,19 @@ const Hero = () => {
               <AvatarFallback>ER</AvatarFallback>
             </Avatar>
           </div>
-          <p className="primary-text-gradient">
+          <p className="primary-text-gradient paragraph-regular">
             Trusted by Top 1% of Event Planners
           </p>
         </div>
-        <h2 className="text-dark200_light900 text-2xl lg:text-6xl    font-bold  header-1">
+        <h2 className="text-dark200_light900 text-3xl lg:text-6xl    font-bold  header-1">
           Relive Every Moment
         </h2>
-        <h3 className="text-4xl lg:text-6xl font-bold primary-text-gradient header-2">
+        <h3 className="text-3xl lg:text-6xl font-bold primary-text-gradient header-2">
           Even the Ones You Missed!
         </h3>
       </div>
-      <div className="flex flex-col justify-center items-center mt-4 gap-6">
-        <p className="lg:text-xl text-dark400_light700  max-w-md lg:max-w-2xl text-center mx-auto  subtitle">
+      <div className="flex flex-col justify-center items-center  gap-4">
+        <p className="text-sm lg:text-xl text-dark400_light700  max-w-md lg:max-w-2xl text-center mx-auto p-2  subtitle">
           From laughter to behind-the-scenes magic — let your guests capture and
           share the authentic moments you might have missed. All in one simple,
           temporary photobook.
@@ -156,15 +156,15 @@ const Hero = () => {
         <div className="cta">
           <Button
             onClick={handleClick}
-            size="sm"
+            size="lg"
             className="lg:h-[40px] bg-primary-500 text-md lg:text-xl text-white cursor-pointer hover:bg-primary-900 transition-all duration-300 ease-in-out shadow-light100_dark100"
           >
             {userId ? "Go to Dashboard" : "Try It For Free!"}
           </Button>
         </div>
       </div>
-      <div className="relative mt-20">
-        <div className="relative w-[800px] h-[400px] rounded-2xl border-8 border-primary-500/30 z-10 shadow shadow-light100_dark100 mainCover">
+      <div className="relative mt-15 ">
+        <div className="relative max-sm:w-[350px] max-sm:h-[250px]  w-[800px] h-[400px] rounded-2xl border-8 border-primary-500/30 z-10 shadow shadow-light100_dark100 mainCover">
           <Image
             src="/images/main.jpg"
             alt="group at event"
@@ -172,7 +172,7 @@ const Hero = () => {
             className="object-cover rounded-lg"
           />
         </div>
-        <div className="absolute -top-[100px] -left-[300px] rounded-2xl border-8  border-primary-500/30 w-[400px] h-[250px]  rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
+        <div className="absolute -top-[100px] -left-[300px] max-sm:-left-[130px]  rounded-2xl border-8  border-primary-500/30 max-sm:w-[200px] max-sm:h-[150px] w-[400px] h-[250px]  rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
           <Image
             src="/images/dashboard.jpg"
             alt="group at event"
@@ -180,7 +180,7 @@ const Hero = () => {
             className="object-cover rounded-lg "
           />
         </div>
-        <div className="absolute -top-[100px] -right-[300px]  rounded-2xl border-8 border-primary-500/30  w-[400px] h-[250px]  -rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
+        <div className="absolute -top-[100px] max-sm:-right-[130px] -right-[300px]  rounded-2xl border-8 border-primary-500/30 max-sm:w-[200px] max-sm:h-[150px]  w-[400px] h-[250px]  -rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
           <Image
             src="/images/code.jpg"
             alt="group at event"
@@ -188,7 +188,7 @@ const Hero = () => {
             className="object-cover rounded-lg"
           />
         </div>
-        <div className="absolute -bottom-[50px] -right-[300px]  rounded-2xl border-8 border-primary-500/30 w-[400px] h-[250px]  rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
+        <div className="absolute -bottom-[50px] -right-[300px]  rounded-2xl border-8 border-primary-500/30 max-sm:-right-[150px] max-sm:w-[200px] max-sm:h-[150px] w-[400px] h-[250px]  rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
           <Image
             src="/images/analytics.jpg"
             alt="group at event"
@@ -196,7 +196,7 @@ const Hero = () => {
             className="object-cover rounded-lg"
           />
         </div>
-        <div className="absolute -bottom-[50px] -left-[300px] rounded-2xl border-8 border-primary-500/30 w-[400px] h-[250px]  -rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
+        <div className="absolute -bottom-[50px] max-sm:-left-[150px] -left-[300px] rounded-2xl border-8 border-primary-500/30 max-sm:w-[200px] max-sm:h-[150px] w-[400px] h-[250px]  -rotate-6 z-0 shadow shadow-light100_dark100 otherCover">
           <Image
             src="/images/upload.jpg"
             alt="group at event"

@@ -2,7 +2,7 @@ import Navbar from "@/components/navigation/Navbar";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main className="background-light800_darkgradient relative">
+    <main className="background-light800_dark100 relative">
       <Navbar />
       <section className="flex min-h-screen flex-1 flex-col">
         <div>{children}</div>

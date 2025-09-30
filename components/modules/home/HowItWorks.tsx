@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/all";
 import { useMediaQuery } from "react-responsive";
 
 import HowToCard from "@/components/cards/HowToCard";
+import Container from "@/components/Container";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,18 +60,20 @@ const HowItWorks = () => {
   }, [isMobile]);
 
   return (
-    <section className="py-16 px-6 howTo">
-      <h2 className="text-4xl font-bold text-center mb-12 primary-text-gradient">
-        How It Works
-      </h2>
-      <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-        {steps.map((step, index) => (
-          <div id="howTo-card" key={index}>
-            <HowToCard key={index} {...step} />
-          </div>
-        ))}
-      </div>
-    </section>
+    <Container>
+      <section className="py-16 px-6 howTo">
+        <h2 className="text-4xl font-bold text-center mb-12 primary-text-gradient">
+          How It Works
+        </h2>
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {steps.map((step, index) => (
+            <div id="howTo-card" key={index}>
+              <HowToCard key={index} {...step} />
+            </div>
+          ))}
+        </div>
+      </section>
+    </Container>
   );
 };
 
