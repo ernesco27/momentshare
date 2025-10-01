@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isAfter } from "date-fns";
-import { Calendar, Eye, Image, QrCode, Trash2 } from "lucide-react";
+import { Calendar, Eye, Image, Pen, QrCode, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -104,8 +104,7 @@ const EventsListContainer = ({
                       </div>
                       <div className="flex items-center space-x-1 text-dark400_light900">
                         <Image className="h-4 w-4" />
-                        {/* <span>{event.media_count || 0} photos</span> */}
-                        <span>0 photos</span>
+                        <span>{event.totalMedia || 0} Photos/Videos</span>
                       </div>
                     </div>
 
@@ -177,6 +176,14 @@ const EventsListContainer = ({
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
+                      <Button
+                        onClick={() => {}}
+                        variant="outline"
+                        size="sm"
+                        className="text-green-500 hover:bg-green-500 hover:text-white transition duration-300 ease-in-out cursor-pointer"
+                      >
+                        <Pen className="h-4 w-4 mr-2" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

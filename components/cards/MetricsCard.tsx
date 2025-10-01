@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   BarChart,
   Bar,
@@ -13,6 +14,7 @@ import {
   Cell,
 } from "recharts";
 
+import ROUTES from "@/constants/route";
 import {
   getMediaTypeStats,
   getRecentMedia,
@@ -30,11 +32,13 @@ interface MetricsCardProps {
 }
 
 const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
+  const router = useRouter();
+
   if (!selectedEvent) {
     return (
       <Card className="card-wrapper light-border">
         <CardContent className="text-center py-10">
-          <p className="text-muted-foreground">
+          <p className="text-dark400_light500">
             Select an event to view metrics
           </p>
         </CardContent>
@@ -143,6 +147,9 @@ const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
             </div>
           </div>
           <Button
+            onClick={() => {
+              router.push(ROUTES.EVENT(selectedEvent._id!));
+            }}
             size="lg"
             className="bg-primary-500 hover:primary-dark-gradient  hover:ring-primary-500 hover:ring-offset-4 transition-all duration-300 ease-in-out  text-white text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-lg cursor-pointer w-full mt-6"
           >
