@@ -1,7 +1,15 @@
 "use client";
 
 import { format, isAfter } from "date-fns";
-import { Calendar, Eye, Image, Pen, QrCode, Trash2 } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  Calendar,
+  Eye,
+  Image,
+  Pen,
+  QrCode,
+  Trash2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -52,9 +60,18 @@ const EventsListContainer = ({
     router.push(ROUTES.EVENT(id));
   };
   return (
-    <main className="flex min-h-screen flex-1 flex-col px-6 py-36 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
-      <h1 className="mb-6 h1-bold font-bold primary-text-gradient">
-        Your Events
+    <main className="flex min-h-screen  flex-col px-6 py-8 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
+      <Button
+        onClick={() => router.back()}
+        variant="link"
+        size="sm"
+        className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
+      >
+        <ArrowLeftCircleIcon className="h-4 w-4 mr-2" />
+        <span className="max-sm:hidden">Back</span>
+      </Button>
+      <h1 className="mb-6 h3-bold lg:h1-bold font-bold primary-text-gradient">
+        My Events
       </h1>
 
       <DataRenderer
@@ -77,10 +94,10 @@ const EventsListContainer = ({
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-lg text-dark200_light800">
+                        <CardTitle className="text-[16px] text-dark200_light800">
                           {event.title}
                         </CardTitle>
-                        <CardDescription className="mt-1 text-light-400 line-clamp-2">
+                        <CardDescription className="mt-1 text-light-400 line-clamp-2 text-sm">
                           {event.description || "No description provided"}
                         </CardDescription>
                       </div>
@@ -118,21 +135,11 @@ const EventsListContainer = ({
                         <QrCode className="h-4 w-4 mr-2" />
                         View Details / QR Code
                       </Button>
-
-                      {/* <Button
-                        onClick={() => {}}
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 primary-gradient hover:shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:hover:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out cursor-pointer"
-                      >
-                        <Share2 className="h-4 w-4 mr-2" />
-                        Share
-                      </Button> */}
                     </div>
 
                     <div className="flex items-center space-x-2">
                       <Button
-                        onClick={() => {}}
+                        onClick={() => router.push(ROUTES.GALLERY(event._id))}
                         variant="default"
                         size="sm"
                         className="flex-1 text-white bg-green-400 hover:bg-green-500 transition duration-300 ease-in-out cursor-pointer"

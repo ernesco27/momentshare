@@ -8,7 +8,7 @@ import { ActionResponse, ErrorResponse, GlobalMedia } from "@/types/global";
 import cloudinary from "../cloudinary";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { createMediaSchema } from "../validations";
+import { createMediaSchema, getEventMediaSchema } from "../validations";
 
 export const createEventMedia = async (
   params: createEventMediaParams
@@ -73,6 +73,53 @@ export const createEventMedia = async (
       );
     }
 
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+export const getEventMedia = async (
+  params: GetEventMediaParams
+): Promise<
+  ActionResponse<{
+    media: GlobalMedia[];
+    isNext: boolean;
+    totalMedia: number;
+  }>
+> => {
+  const validationResult = await action({
+    params,
+    schema: getEventMediaSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { eventId, page = 1, pageSize = 10 } = validationResult.params!;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = Number(pageSize);
+
+  try {
+    const totalMedia = await Media.countDocuments({ eventId });
+
+    const media = await Media.find({ eventId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const isNext = totalMedia > skip + media.length;
+
+    return {
+      success: true,
+      data: {
+        media: JSON.parse(JSON.stringify(media)),
+        isNext,
+        totalMedia,
+      },
+      status: 200,
+    };
+  } catch (error) {
     return handleError(error) as ErrorResponse;
   }
 };

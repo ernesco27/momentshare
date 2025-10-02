@@ -7,12 +7,11 @@ import {
   Camera,
   Copy,
   Download,
-  DownloadIcon,
+  ImageIcon,
   Share2,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -43,10 +42,8 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
     eventUrl,
     startDate,
     maxUploads,
+    _id,
   } = event!;
-
-  const session = useSession();
-  const userId = session?.data?.user?.id;
 
   const router = useRouter();
 
@@ -221,25 +218,27 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
   };
 
   return (
-    <div className="flex min-h-screen flex-1 flex-col px-6 pt-25 pb-14 sm:px-14 max-w-5xl mx-auto ">
+    <div className="flex min-h-screen flex-1 flex-col px-6 pt-8 pb-14 sm:px-14 max-w-5xl mx-auto ">
       <div className="mx-auto px-4 py-8 w-full">
         <div className="max-w-5xl mx-auto">
           <div className="flex-between w-full mb-6">
             <Button
-              variant="outline"
-              size="lg"
-              className=" primary-gradient hover:primary-dark-gradient hover:text-white cursor-pointer max-sm:w-[120px] w-[150px]"
-              onClick={() => router.push(ROUTES.DASHBOARD(userId!))}
+              onClick={() => router.back()}
+              variant="link"
+              size="sm"
+              className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
             >
-              <ArrowLeft className="h-4 w-4 mr-2 max-sm:hidden" />
-              Dashboard
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              <span className="max-sm:hidden">Back</span>
             </Button>
             <Button
-              variant="outline"
-              className="primary-gradient hover:primary-dark-gradient hover:text-white  cursor-pointer shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out max-sm:w-[120px] w-[150px]"
+              onClick={() => router.push(ROUTES.GALLERY(_id))}
+              variant="link"
+              size="sm"
+              className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
             >
-              <DownloadIcon className="h-4 w-4 mr-2 max-sm:hidden " />
-              Download Media
+              <ImageIcon className="h-4 w-4 mr-2" />
+              <span className="max-sm:hidden">View Gallery</span>
             </Button>
           </div>
           {coverImage && (

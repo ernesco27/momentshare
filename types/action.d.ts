@@ -65,3 +65,8 @@ interface createEventMediaParams {
     publicId: string;
   }[];
 }
+
+interface GetEventMediaParams
+  extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
+  eventId: string;
+}

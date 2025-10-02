@@ -115,7 +115,7 @@ const Hero = () => {
   return (
     <main
       ref={ref}
-      className="flex flex-col justify-center  items-center relative min-h-screen  lg:px-28  -mt-16 invisible  hero overflow-hidden "
+      className="flex flex-col justify-center  items-center relative min-h-screen pb-4 lg:px-28  -mt-16 invisible  hero  "
     >
       <div className="flex flex-col justify-center items-center mt-[20%] min-lg:mt-[10%] mb-8">
         <div className="mb-10 flex-center gap-2">

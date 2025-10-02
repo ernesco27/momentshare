@@ -208,3 +208,7 @@ export const getEventSchema = z.object({
 export const getEventSchemaQR = z.object({
   qrCode: z.string().min(1, { message: "qrCode is required." }),
 });
+
+export const getEventMediaSchema = PaginatedSearchParamsSchema.extend({
+  eventId: z.string().min(1, { message: "Event ID is required." }),
+});

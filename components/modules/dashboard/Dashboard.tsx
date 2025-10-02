@@ -91,7 +91,7 @@ const Dashboard = ({
         <Button
           onClick={handleCreateEvent}
           size="lg"
-          className="bg-primary-500 hover:primary-dark-gradient   transition-all duration-300 ease-in-out  text-white text-md lg:text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-md cursor-pointer"
+          className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white text-md lg:text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
         >
           Create Event
         </Button>

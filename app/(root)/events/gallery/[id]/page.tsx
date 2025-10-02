@@ -1,18 +1,51 @@
-import GalleryContainer from "@/components/GalleryContainer";
+import { error } from "console";
+
+import MediaGallery from "@/components/GalleryContainer";
 import { getEvent } from "@/lib/actions/event.action";
+import { getEventMedia } from "@/lib/actions/media.action";
 import { RouteParams } from "@/types/global";
 
-const GalleryPage = async ({ params }: RouteParams) => {
+const GalleryPage = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params!;
+  const { page, pageSize } = await searchParams;
 
-  const { success, data: event, error } = await getEvent({ eventId: id });
+  const [eventResponse, mediaResponse] = await Promise.all([
+    getEvent({ eventId: id }),
+    getEventMedia({
+      eventId: id,
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 10,
+    }),
+  ]);
 
-  if (!event) return <div>Event not found</div>;
+  const {
+    success: eventSuccess,
+    data: eventData,
+    error: eventError,
+  } = eventResponse;
+
+  const {
+    success: mediaSuccess,
+    data: mediaData,
+    error: mediaError,
+  } = mediaResponse;
+
+  if (!eventData) return <div>Event not found</div>;
+
+  const { totalMedia, media, isNext } = mediaData!;
 
   return (
     <>
       {" "}
-      <GalleryContainer event={event!} success={success} error={error} />{" "}
+      <MediaGallery
+        event={eventData!}
+        success={mediaSuccess}
+        error={mediaError}
+        totalMedia={totalMedia || 0}
+        media={media}
+        isNext={isNext || false}
+        page={Number(page) || 1}
+      />{" "}
     </>
   );
 };
