@@ -6,6 +6,8 @@ import { twMerge } from "tailwind-merge";
 import { IMAGE_FORMATS, VIDEO_FORMATS } from "@/constants";
 import { GlobalMedia } from "@/types/global";
 
+import handleError from "./handlers/error";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -80,4 +82,18 @@ export const getMediaTypeStats = (media: GlobalMedia[]) => {
     { name: "Images", value: stats.images },
     { name: "Videos", value: stats.videos },
   ];
+};
+
+export const getVideoThumbnailUrl = (videoUrl: string, second: number = 0) => {
+  try {
+    const url = new URL(videoUrl);
+    const parts = url.pathname.split("/upload/");
+    if (parts.length !== 2) return videoUrl;
+
+    return `${url.origin}${parts[0]}/upload/so_${second}/frame.jpg/${parts[1].replace(/\.[^/.]+$/, ".jpg")}`;
+  } catch (error) {
+    handleError(error);
+    console.error("Invalid Cloudinary video URL:", videoUrl);
+    return videoUrl;
+  }
 };
