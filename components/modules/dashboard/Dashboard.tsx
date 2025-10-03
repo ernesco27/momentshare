@@ -96,7 +96,7 @@ const Dashboard = ({
           Create Event
         </Button>
       </header>
-      <main className="">
+      <main>
         <section className="lg:col-span-1 space-y-4">
           <div className="grid grid-cols-2 gap-4 ">
             <DashCards

@@ -151,7 +151,7 @@ const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
               router.push(ROUTES.EVENT(selectedEvent._id!));
             }}
             size="lg"
-            className="bg-primary-500 hover:primary-dark-gradient  hover:ring-primary-500 hover:ring-offset-4 transition-all duration-300 ease-in-out  text-white text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-lg cursor-pointer w-full mt-6"
+            className="bg-primary-500 hover:primary-dark-gradient  hover:ring-primary-500 hover:ring-offset-2 transition-all duration-300 ease-in-out  text-white text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-md cursor-pointer w-full mt-6"
           >
             View Event
           </Button>

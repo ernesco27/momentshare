@@ -1,5 +1,3 @@
-import { error } from "console";
-
 import MediaGallery from "@/components/GalleryContainer";
 import { getEvent } from "@/lib/actions/event.action";
 import { getEventMedia } from "@/lib/actions/media.action";
@@ -18,11 +16,7 @@ const GalleryPage = async ({ params, searchParams }: RouteParams) => {
     }),
   ]);
 
-  const {
-    success: eventSuccess,
-    data: eventData,
-    error: eventError,
-  } = eventResponse;
+  const { data: eventData } = eventResponse;
 
   const {
     success: mediaSuccess,

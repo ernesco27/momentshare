@@ -1,10 +1,13 @@
 import { auth } from "@/auth";
 import EventsListContainer from "@/components/modules/dashboard/EventsListContainer";
 import { getEvents } from "@/lib/actions/event.action";
+import { RouteParams } from "@/types/global";
 
-const EventsListPage = async () => {
+const EventsListPage = async ({ searchParams }: RouteParams) => {
   const session = await auth();
   const user = session?.user;
+
+  const { page, pageSize } = await searchParams;
 
   if (!user) {
     return (
@@ -16,10 +19,12 @@ const EventsListPage = async () => {
 
   const userId = user.id;
 
-  const { success, data, error } = await getEvents({ userId: userId! });
+  const { success, data, error } = await getEvents({
+    userId: userId!,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+  });
   const { events, isNext } = data || {};
-
-  console.log("events:", events);
 
   return (
     <>
@@ -28,6 +33,7 @@ const EventsListPage = async () => {
         hasMore={isNext!}
         success={success}
         error={error}
+        page={Number(page) || 1}
       />
     </>
   );

@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import DataRenderer from "@/components/DataRenderer";
+import Pagination from "@/components/Pagination";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +44,7 @@ interface EventProps {
   hasMore: boolean;
   success: boolean;
   error?: ApiError;
+  page: number;
 }
 
 const EventsListContainer = ({
@@ -50,8 +52,8 @@ const EventsListContainer = ({
   success,
   error,
   hasMore,
+  page,
 }: EventProps) => {
-  console.log("EventsListContainer events:", events);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
@@ -60,17 +62,17 @@ const EventsListContainer = ({
     router.push(ROUTES.EVENT(id));
   };
   return (
-    <main className="flex min-h-screen  flex-col px-6 py-8 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
+    <main className="flex min-h-screen  flex-col px-6 py-14 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
       <Button
         onClick={() => router.back()}
         variant="link"
         size="sm"
-        className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
+        className="w-[100px] bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
       >
         <ArrowLeftCircleIcon className="h-4 w-4 mr-2" />
         <span className="max-sm:hidden">Back</span>
       </Button>
-      <h1 className="mb-6 h3-bold lg:h1-bold font-bold primary-text-gradient">
+      <h1 className="mb-6 mt-4 h3-bold lg:h1-bold font-bold primary-text-gradient">
         My Events
       </h1>
 
@@ -94,7 +96,7 @@ const EventsListContainer = ({
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-[16px] text-dark200_light800">
+                        <CardTitle className="text-[16px] lg:text-lg text-dark200_light800">
                           {event.title}
                         </CardTitle>
                         <CardDescription className="mt-1 text-light-400 line-clamp-2 text-sm">
@@ -199,6 +201,7 @@ const EventsListContainer = ({
           </div>
         )}
       />
+      <Pagination page={page} isNext={hasMore} />
     </main>
   );
 };
