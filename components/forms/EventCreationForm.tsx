@@ -6,7 +6,7 @@ import { CalendarIcon, Loader2, UploadIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CldUploadWidget } from "next-cloudinary";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -25,43 +25,98 @@ import { Input } from "@/components/ui/input";
 import { FEATURE } from "@/constants";
 import ROUTES from "@/constants/route";
 import { IPlanFeature } from "@/database/planFeatures.model";
-import { createEvent } from "@/lib/actions/event.action";
+import { createEvent, editEvent } from "@/lib/actions/event.action";
 import { cn, getEventExpiryDate } from "@/lib/utils";
 import { eventFormSchema } from "@/lib/validations";
+import { GlobalEvent } from "@/types/global";
 
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Textarea } from "../ui/textarea";
 
 interface CreateEvent {
-  planFeatures: IPlanFeature[];
+  planFeatures?: IPlanFeature[];
+  event?: GlobalEvent;
+  isEdit?: boolean;
 }
 
-const EventCreationForm = ({ planFeatures }: CreateEvent) => {
+const EventCreationForm = ({
+  planFeatures,
+  event,
+  isEdit = false,
+}: CreateEvent) => {
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      startDate: new Date(),
-      location: "",
-      themeColor: "",
+      title: event?.title || "",
+      description: event?.description || "",
+      startDate: event?.startDate ? new Date(event.startDate) : new Date(),
+      location: event?.loc || "",
+      themeColor: event?.themeColor || "",
     },
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [coverPhoto, setCoverPhoto] = useState<any>();
+  const [isPending, startTransition] = useTransition();
+
+  // const [coverPhoto, setCoverPhoto] = useState<any>();
 
   const [uploading, setUploading] = useState(false);
 
+  const [coverPhoto, setCoverPhoto] = useState<any>(
+    isEdit && event?.coverImage ? { secure_url: event.coverImage } : null
+  );
+
+  const [existingImageRemoved, setExistingImageRemoved] = useState(false);
+
   const router = useRouter();
 
+  // const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
+  //   const maxUploads = planFeatures.find(
+  //     (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
+  //   );
+
+  //   const retentionDays = planFeatures.find(
+  //     (feature) => feature.featureKey === FEATURE.RETENTION_DAYS
+  //   );
+
+  //   const expiryDate = getEventExpiryDate(
+  //     values.startDate,
+  //     retentionDays?.limit
+  //   );
+
+  //   try {
+  //     setIsSubmitting(true);
+
+  //     const result = await createEvent({
+  //       title: values.title,
+  //       description: values.description,
+  //       loc: values.location,
+  //       startDate: values.startDate,
+  //       coverImage: coverPhoto?.secure_url || "",
+  //       expiryDate: expiryDate,
+  //       maxUploads: maxUploads?.limit || 0,
+  //       themeColor: values.themeColor,
+  //     });
+
+  //     if (result?.success) {
+  //       toast.success("Event created successfully!");
+
+  //       router.push(ROUTES.EVENTS);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Failed to create event");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
-    const maxUploads = planFeatures.find(
+    const maxUploads = planFeatures?.find(
       (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
     );
 
-    const retentionDays = planFeatures.find(
+    const retentionDays = planFeatures?.find(
       (feature) => feature.featureKey === FEATURE.RETENTION_DAYS
     );
 
@@ -70,8 +125,26 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
       retentionDays?.limit
     );
 
-    try {
-      setIsSubmitting(true);
+    startTransition(async () => {
+      if (isEdit && event) {
+        const result = await editEvent({
+          eventId: event?._id,
+          title: values.title,
+          description: values.description,
+          loc: values.location,
+          coverImage: coverPhoto?.secure_url || "",
+          themeColor: values.themeColor,
+        });
+
+        if (result.success) {
+          toast.success("Event updated successfully!");
+
+          router.push(ROUTES.EVENTS);
+        } else {
+          toast.error(result?.error?.message || "Failed to update event");
+        }
+        return;
+      }
 
       const result = await createEvent({
         title: values.title,
@@ -88,13 +161,15 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
         toast.success("Event created successfully!");
 
         router.push(ROUTES.EVENTS);
+      } else {
+        toast.error(result?.error?.message || "Failed to create event");
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to create event");
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
+  };
+
+  const handleRemoveCoverPhoto = () => {
+    setCoverPhoto(null);
+    setExistingImageRemoved(true);
   };
 
   return (
@@ -205,6 +280,7 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
+                        disabled={isEdit}
                         variant={"outline"}
                         className={cn(
                           "w-[240px] pl-3 text-left font-normal text-dark400_light500",
@@ -234,8 +310,8 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
                   </PopoverContent>
                 </Popover>
                 <FormDescription className="body-regular text-light-500 mt-2.5">
-                  Be specific and imagine you&apos;re giving info to another
-                  person
+                  Event Starting Date cannot be updated after submission. Be
+                  sure of the date before proceeding.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -246,7 +322,7 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
             Cover Photo (Optional)
           </FormLabel>
 
-          {coverPhoto ? (
+          {coverPhoto && coverPhoto.secure_url ? (
             <div className="relative w-full h-[200px] border rounded-md overflow-hidden">
               <Image
                 src={coverPhoto?.secure_url}
@@ -257,7 +333,7 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
               {/* Remove button overlay */}
               <button
                 type="button"
-                onClick={() => setCoverPhoto(null)}
+                onClick={handleRemoveCoverPhoto}
                 className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded hover:bg-black/80"
               >
                 Remove
@@ -277,6 +353,7 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
               onSuccess={(result, { widget }) => {
                 setCoverPhoto(result?.info);
                 setUploading(false);
+                setExistingImageRemoved(false);
                 widget.close();
               }}
               onClose={() => setUploading(false)}
@@ -304,22 +381,18 @@ const EventCreationForm = ({ planFeatures }: CreateEvent) => {
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button
-              className="bg-red-700 text-light-900"
-              type="button"
-              disabled={isSubmitting}
-              // onClick={onClose}
-            >
-              Discard
-            </Button>
-            <Button
-              className="bg-green-700 text-light-900"
+              className="bg-green-700 text-light-900 cursor-pointer hover:bg-green-800 transition duration-300 ease-in-out"
               type="submit"
-              disabled={isSubmitting}
+              disabled={isPending}
             >
-              {isSubmitting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                <>{isEdit ? "Update Event" : "Create Event"}</>
               )}
-              Publish Event
             </Button>
           </div>
         </form>

@@ -5,14 +5,16 @@ import { nanoid } from "nanoid";
 import QRCode from "qrcode";
 
 import { Account, Event, Media } from "@/database";
+import { IEventDoc } from "@/database/event.model";
 import { ActionResponse, ErrorResponse, GlobalEvent } from "@/types/global";
 
 import cloudinary from "../cloudinary";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { NotFoundError } from "../http-errors";
+import { NotFoundError, UnauthorizedError } from "../http-errors";
 import {
   createEventSchema,
+  editEventSchema,
   getEventSchema,
   getEventSchemaQR,
   getEventsSchema,
@@ -193,8 +195,6 @@ export const getEvents = async (
       );
     }
 
-    console.log("totalEvents", totalEvents);
-
     return {
       success: true,
       data: {
@@ -330,5 +330,69 @@ export const deleteEvent = async (
     await session.abortTransaction();
     session.endSession();
     return handleError(error) as ErrorResponse;
+  }
+};
+
+export const editEvent = async (
+  params: EditEventParams
+): Promise<ActionResponse<IEventDoc>> => {
+  const validationResult = await action({
+    params,
+    schema: editEventSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { title, description, loc, coverImage, themeColor, eventId } =
+    validationResult.params!;
+
+  const userId = validationResult!.session!.user!.id;
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const account = await Account.findOne({ userId }).session(session);
+
+    const event = await Event.findById(eventId).session(session);
+
+    if (!event) {
+      throw new NotFoundError("Event");
+    }
+
+    if (event.organizer._id.toString() !== account._id.toString()) {
+      throw new UnauthorizedError("You are not authorized to edit this event.");
+    }
+
+    if (
+      event.title !== title ||
+      event.description !== description ||
+      event.loc !== loc ||
+      event.coverImage !== coverImage ||
+      event.themeColor !== themeColor
+    ) {
+      event.title = title;
+      event.description = description;
+      event.loc = loc;
+      event.coverImage = coverImage;
+      event.themeColor = themeColor;
+
+      await event.save({ session });
+    }
+
+    await session.commitTransaction();
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(event)),
+      status: 200,
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
 };

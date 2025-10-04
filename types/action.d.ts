@@ -70,3 +70,12 @@ interface GetEventMediaParams
   extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
   eventId: string;
 }
+
+interface EditEventParams
+  extends Omit<createEventParams, "maxUploads" | "expiryDate" | "startDate"> {
+  eventId: string;
+}
+
+interface DeleteEventParams {
+  eventId: string;
+}

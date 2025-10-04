@@ -144,7 +144,20 @@ export const createEventSchema = z.object({
   themeColor: z.string().min(1, { message: "Theme color is required." }),
 });
 
-export const editEvent = createEventSchema.extend({
+export const editEventSchema = z.object({
+  title: z
+    .string()
+    .min(1, { message: "Title is required." })
+    .max(100, { message: "Title cannot exceed 100 characters." }),
+
+  description: z
+    .string()
+    .min(1, { message: "Description is required." })
+    .max(500, { message: "Description cannot exceed 500 characters." }),
+
+  loc: z.string().min(1, { message: "Location is required." }),
+  coverImage: z.string().optional(),
+  themeColor: z.string().min(1, { message: "Theme color is required." }),
   eventId: z.string().min(1, { message: "Event ID is required." }),
 });
 

@@ -2,7 +2,7 @@
 
 import { format, isAfter } from "date-fns";
 import {
-  ArrowLeftCircleIcon,
+  ArrowLeft,
   Calendar,
   Eye,
   Image,
@@ -69,7 +69,7 @@ const EventsListContainer = ({
         size="sm"
         className="w-[100px] bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
       >
-        <ArrowLeftCircleIcon className="h-4 w-4 mr-2" />
+        <ArrowLeft className="h-4 w-4 mr-2" />
         <span className="max-sm:hidden">Back</span>
       </Button>
       <h1 className="mb-6 mt-4 h3-bold lg:h1-bold font-bold primary-text-gradient">
@@ -186,7 +186,9 @@ const EventsListContainer = ({
                         </AlertDialogContent>
                       </AlertDialog>
                       <Button
-                        onClick={() => {}}
+                        onClick={() => {
+                          router.push(ROUTES.EDIT_EVENT(event._id));
+                        }}
                         variant="outline"
                         size="sm"
                         className="text-green-500 hover:bg-green-500 hover:text-white transition duration-300 ease-in-out cursor-pointer"
