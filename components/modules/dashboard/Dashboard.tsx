@@ -115,7 +115,7 @@ const Dashboard = ({
               <DashCards
                 otherClasses="bg-[#d8b4fe]!"
                 heading="Engagement Rate"
-                info={`${engagementRate(totalMedia, totalMaxUploads)}%`}
+                info={`${engagementRate(totalMedia, totalMaxUploads) || 0}%`}
                 description="Average Guest Engagement Rate"
               />
             )}

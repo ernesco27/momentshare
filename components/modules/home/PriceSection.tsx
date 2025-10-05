@@ -120,7 +120,7 @@ const PriceSection = () => {
           Plans are tailored for local organisers — from casual parties to
           professional event planners. Choose what fits your event and budget.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-14 lg:gap-8 max-w-6xl mx-auto p-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8  max-w-7xl mx-auto p-8">
           {prices.map((price, index) => (
             <div id="price-card" key={index}>
               <Card

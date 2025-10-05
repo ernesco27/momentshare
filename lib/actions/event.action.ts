@@ -2,6 +2,7 @@
 
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 
 import { Account, Event, Media } from "@/database";
@@ -14,6 +15,7 @@ import handleError from "../handlers/error";
 import { NotFoundError, UnauthorizedError } from "../http-errors";
 import {
   createEventSchema,
+  deleteEventSchema,
   editEventSchema,
   getEventSchema,
   getEventSchemaQR,
@@ -276,60 +278,93 @@ export const getEventByQR = async (
 };
 
 export const deleteEvent = async (
-  eventId: string
-): Promise<ActionResponse<null>> => {
+  params: DeleteEventParams
+): Promise<ActionResponse<GlobalEvent>> => {
+  const validationResult = await action({
+    params,
+    schema: deleteEventSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { eventId } = validationResult.params!;
+  const userId = validationResult!.session!.user!.id;
+
   const session = await mongoose.startSession();
-  session.startTransaction();
 
   try {
+    session.startTransaction();
+
+    const account = await Account.findOne({ userId }).session(session);
+
+    if (!account) {
+      throw new NotFoundError("Account");
+    }
+
     // 1. Fetch event + related media
     const event = await Event.findById(eventId).session(session);
     if (!event) {
-      throw new Error("Event not found");
+      throw new NotFoundError("Event");
+    }
+
+    if (event.organizer.toString() !== account._id.toString()) {
+      throw new UnauthorizedError(
+        "You are not authorized to delete this event"
+      );
     }
 
     const mediaDocs = await Media.find({ eventId }).session(session);
+    const qrCode = event.qrCode;
 
     // 2. Delete all media docs from DB
-    await Media.deleteMany({ eventId }).session(session);
+    await Media.deleteMany({ eventId: eventId }).session(session);
 
     // 3. Delete event itself
     await Event.deleteOne({ _id: eventId }).session(session);
 
     // 4. Commit DB transaction
     await session.commitTransaction();
-    session.endSession();
 
-    // 5. Cleanup Cloudinary asynchronously (outside of transaction)
+    //  5. Cleanup Cloudinary asynchronously (outside of transaction)
+    console.log("mediaDocs 2", mediaDocs);
+
+    const eventFolder = `MomentShare/events/${eventId}`;
+    const qrFolder = `MomentShare/qr_codes/${userId}`;
     if (mediaDocs.length > 0) {
-      await Promise.all(
-        mediaDocs.map(
-          (m) =>
-            cloudinary.uploader
-              .destroy(m.publicId, {
-                resource_type: "auto",
-              })
-              .catch(() => null) // ignore failures
-        )
-      );
+      try {
+        await cloudinary.api.delete_resources_by_prefix(eventFolder);
+
+        await cloudinary.api.delete_folder(eventFolder);
+      } catch (error) {
+        return handleError(error) as ErrorResponse;
+      }
     }
 
-    // Also delete QR code if exists
-    if (event.qrCode) {
-      await cloudinary.uploader
-        .destroy(`MomentShare/qr_codes/${event.qrCode}`)
-        .catch(() => null);
+    //   Also delete QR code if exists
+    if (qrCode) {
+      try {
+        await cloudinary.api.delete_resources_by_prefix(qrFolder);
+
+        await cloudinary.api.delete_folder(qrFolder);
+      } catch (error) {
+        return handleError(error) as ErrorResponse;
+      }
     }
+    revalidatePath(`/events`);
 
     return {
       success: true,
-      data: null,
+
       status: 200,
     };
   } catch (error) {
     await session.abortTransaction();
-    session.endSession();
     return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
 };
 

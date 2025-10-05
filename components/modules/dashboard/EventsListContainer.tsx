@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import DataRenderer from "@/components/DataRenderer";
 import Pagination from "@/components/Pagination";
@@ -37,6 +38,7 @@ import {
 } from "@/components/ui/card";
 import ROUTES from "@/constants/route";
 import { EMPTY_EVENT } from "@/constants/states";
+import { deleteEvent } from "@/lib/actions/event.action";
 import { GlobalEvent } from "@/types/global";
 
 interface EventProps {
@@ -54,13 +56,17 @@ const EventsListContainer = ({
   hasMore,
   page,
 }: EventProps) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-
   const router = useRouter();
 
   const handleViewDetails = (id: string) => {
     router.push(ROUTES.EVENT(id));
   };
+
+  const handleDeleteEvent = async (id: string) => {
+    await deleteEvent({ eventId: id });
+    toast.success("Event deleted successfully!");
+  };
+
   return (
     <main className="flex min-h-screen  flex-col px-6 py-14 max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
       <Button
@@ -166,9 +172,13 @@ const EventsListContainer = ({
                               Delete Event
                             </AlertDialogTitle>
                             <AlertDialogDescription className="text-dark200_light800">
-                              Are you sure you want to delete {event.title}?
-                              This will permanently remove the event and all
-                              uploaded photos. This action cannot be undone.
+                              Are you sure you want to delete
+                              <span className="font-semibold pl-1 text-red-500">
+                                {event.title}
+                              </span>
+                              ? This will permanently remove the event and all
+                              uploaded photos/videos. This action cannot be
+                              undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -176,11 +186,12 @@ const EventsListContainer = ({
                               Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => {}}
-                              //   disabled={isDeleting}
+                              onClick={() => {
+                                handleDeleteEvent(event._id!);
+                              }}
                               className="bg-red-500 text-white hover:bg-red-600 transition duration-300 ease-in-out cursor-pointer"
                             >
-                              {isDeleting ? "Deleting..." : "Delete Event"}
+                              Delete Event
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

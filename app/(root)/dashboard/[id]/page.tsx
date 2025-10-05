@@ -26,6 +26,8 @@ const DashboardPage = async ({ params }: RouteParams) => {
   const totalEvents = data?.totalEvents || 0;
   const planFeatures = planResponse.data?.features || [];
 
+  console.log("events:", events);
+
   return (
     <>
       <Dashboard

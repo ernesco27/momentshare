@@ -225,3 +225,7 @@ export const getEventSchemaQR = z.object({
 export const getEventMediaSchema = PaginatedSearchParamsSchema.extend({
   eventId: z.string().min(1, { message: "Event ID is required." }),
 });
+
+export const deleteEventSchema = z.object({
+  eventId: z.string().min(1, { message: "Event ID is required." }),
+});

@@ -65,7 +65,7 @@ const HowItWorks = () => {
         <h2 className="text-4xl font-bold text-center mb-12 primary-text-gradient">
           How It Works
         </h2>
-        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-10 max-w-7xl mx-auto">
           {steps.map((step, index) => (
             <div id="howTo-card" key={index}>
               <HowToCard key={index} {...step} />
