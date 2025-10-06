@@ -35,8 +35,7 @@ const NavLinks = ({
       const currentItem: NavLinkItem = { ...item };
 
       const isActive =
-        (pathname.includes(currentItem.route) &&
-          currentItem.route.length > 1) ||
+        (pathname === currentItem.route && currentItem.route.length > 1) ||
         pathname === currentItem.route;
 
       if (currentItem.route === "/profile") {

@@ -1,20 +1,26 @@
+import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
 import Dashboard from "@/components/modules/dashboard/Dashboard";
+import ROUTES from "@/constants/route";
 import { getAccount } from "@/lib/actions/account.action";
 import { getEvents } from "@/lib/actions/event.action";
 import { getPlan } from "@/lib/actions/plan.action";
-import { RouteParams } from "@/types/global";
 
-const DashboardPage = async ({ params }: RouteParams) => {
-  const { id } = await params;
+const DashboardPage = async () => {
+  const session = await auth();
+  const id = session?.user?.id;
 
-  const { data: account } = await getAccount({ userId: id });
+  if (!id) return redirect(ROUTES.SIGN_IN);
+
+  const { data: account } = await getAccount({ userId: id! });
 
   const { name, accountType, activePlan, eventCredits, planDuration } =
     account!;
 
   const [planResponse, eventResponse] = await Promise.all([
     getPlan({ planId: activePlan! }),
-    getEvents({ userId: id }),
+    getEvents({ userId: id! }),
   ]);
 
   const { name: planName } = planResponse.data!;
@@ -25,8 +31,6 @@ const DashboardPage = async ({ params }: RouteParams) => {
   const totalMaxUploads = data?.totalMaxUploads || 0;
   const totalEvents = data?.totalEvents || 0;
   const planFeatures = planResponse.data?.features || [];
-
-  console.log("events:", events);
 
   return (
     <>

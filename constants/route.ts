@@ -9,7 +9,7 @@ const ROUTES = {
   CREATE_EVENT: (id: string) => `/events/create-event/${id}`,
   EDIT_EVENT: (id: string) => `/events/${id}/edit`,
 
-  DASHBOARD: (id: string) => `/dashboard/${id}`,
+  DASHBOARD: "/dashboard",
   GALLERY: (id: string) => `/events/gallery/${id}`,
   UPLOAD: (id: string) => `/events/upload/${id}`,
 };

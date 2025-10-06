@@ -43,7 +43,7 @@ const StateSkeleton = ({
   message,
   button,
 }: StateSkeletonProps) => (
-  <div className="mt-16 flex flex-col items-center justify-center w-full sm:mt-36 ">
+  <div className=" flex flex-col items-center justify-center w-full  ">
     <>
       <Image
         src={image.dark}
@@ -66,7 +66,7 @@ const StateSkeleton = ({
     </p>
     {button && (
       <Link href={button.href}>
-        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500">
+        <Button className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white text-md lg:text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer">
           {button.text}
         </Button>
       </Link>

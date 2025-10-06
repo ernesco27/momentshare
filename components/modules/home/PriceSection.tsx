@@ -111,7 +111,7 @@ const PriceSection = () => {
     };
   }, [isMobile]);
   return (
-    <section className="py-20 background-light850_dark100 price">
+    <section className="py-24  price">
       <Container>
         <h2 className="text-4xl font-bold text-center mb-12 primary-text-gradient">
           Simple, Friendly Pricing

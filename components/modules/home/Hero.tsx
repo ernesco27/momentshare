@@ -106,7 +106,7 @@ const Hero = () => {
 
   const handleClick = () => {
     if (userId) {
-      router.push(ROUTES.DASHBOARD(userId));
+      router.push(ROUTES.DASHBOARD);
     } else {
       router.push(ROUTES.SIGN_IN);
     }

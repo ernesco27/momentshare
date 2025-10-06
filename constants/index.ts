@@ -14,11 +14,11 @@ export const dashNavLinks = [
   {
     imgURL: "/icons/calendar.svg",
     label: "Events",
-    route: "/events",
+    route: "/dashboard/events",
   },
   {
     imgURL: "/icons/user.svg",
-    route: "/profile",
+    route: "/dashboard/profile",
     label: "Profile",
   },
 ];
