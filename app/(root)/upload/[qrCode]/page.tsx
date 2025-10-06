@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import UploadContainer from "@/components/UploadContainer";
 import { getEventByQR } from "@/lib/actions/event.action";
 import { RouteParams } from "@/types/global";
@@ -5,13 +7,9 @@ import { RouteParams } from "@/types/global";
 const UploadPage = async ({ params }: RouteParams) => {
   const { qrCode } = await params;
 
-  const {
-    success,
-    data: event,
-    error,
-  } = await getEventByQR({ qrCode: qrCode });
+  const { data: event } = await getEventByQR({ qrCode: qrCode });
 
-  console.log("event:", event);
+  if (!event) return notFound();
 
   return (
     <div>

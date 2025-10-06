@@ -59,7 +59,7 @@ export const createEvent = async (
     }
 
     const qrCode = nanoid(12);
-    const eventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/events/upload/${qrCode}`;
+    const eventUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/upload/${qrCode}`;
     const qrDataUrl = await QRCode.toDataURL(eventUrl);
 
     const uploadResponse = await cloudinary.uploader.upload(qrDataUrl, {

@@ -4,13 +4,13 @@ const ROUTES = {
   SIGN_UP: "/sign-up",
   PROFILE: (id: string) => `/profile/${id}`,
 
-  EVENTS: "/events",
-  EVENT: (id: string) => `/events/${id}`,
-  CREATE_EVENT: (id: string) => `/events/create-event/${id}`,
-  EDIT_EVENT: (id: string) => `/events/${id}/edit`,
+  EVENTS: "/dashboard/events",
+  EVENT: (id: string) => `/dashboard/events/${id}`,
+  CREATE_EVENT: (id: string) => `/dashboard/events/create-event/${id}`,
+  EDIT_EVENT: (id: string) => `/dashboard/events/${id}/edit`,
 
   DASHBOARD: "/dashboard",
-  GALLERY: (id: string) => `/events/gallery/${id}`,
+  GALLERY: (id: string) => `/dashboard/events/gallery/${id}`,
   UPLOAD: (id: string) => `/events/upload/${id}`,
 };
 

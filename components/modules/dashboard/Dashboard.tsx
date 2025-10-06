@@ -9,6 +9,7 @@ import DashCards from "@/components/cards/DashCards";
 import EventsCard from "@/components/cards/EventsCard";
 import MetricsCard from "@/components/cards/MetricsCard";
 import { Button } from "@/components/ui/button";
+import ROUTES from "@/constants/route";
 import { IPlanFeature } from "@/database/planFeatures.model";
 import { AverageUploads, engagementRate } from "@/lib/utils";
 import { GlobalEvent } from "@/types/global";
@@ -61,7 +62,7 @@ const Dashboard = ({
       return;
     }
 
-    router.push(`/events/create-event/${id}`);
+    router.push(ROUTES.CREATE_EVENT(id));
   };
 
   const activeEvents = events.filter((event) => {
