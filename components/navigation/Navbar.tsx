@@ -74,7 +74,7 @@ const Navbar = async () => {
               >
                 <DropdownMenuItem>
                   <Button className="small-medium  min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none cursor-pointer primary-gradient">
-                    <Link href={ROUTES.SIGN_IN}>
+                    <Link href={ROUTES.DASHBOARD}>
                       <span className="paragraph-semibold">Dashboard</span>
                     </Link>
                   </Button>

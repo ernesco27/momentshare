@@ -182,9 +182,9 @@ export const createTransactionSchema = z.object({
   accountId: z.string().min(1, { message: "Account ID is required." }),
   planId: z.string().min(1, { message: "Plan ID is required." }),
   amount: z.number().min(1, { message: "Amount must be at least 1." }),
-  currency: z.enum(["GHS"]),
   status: z.enum(["PENDING", "SUCCESS", "FAILED"]),
   reference: z.string().min(1, { message: "Reference is required." }),
+  email: z.string().email({ message: "Please provide a valid email address." }),
 });
 
 export const getTransactionSchema = z.object({

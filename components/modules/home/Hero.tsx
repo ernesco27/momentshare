@@ -23,6 +23,8 @@ const Hero = () => {
   const session = useSession();
   const userId = session.data?.user?.id;
 
+  console.log("session:", session);
+
   const isMobile = useMediaQuery({
     maxWidth: 768,
   });
@@ -31,40 +33,6 @@ const Hero = () => {
     const paraSplit = new SplitText(".subtitle", { type: "lines" });
 
     const tl = gsap.timeline({ defaults: { ease: "back", opacity: 0 } });
-
-    // gsap.to("#layer3", {
-    //   duration: 2,
-    //   repeat: -1,
-    //   yoyo: true,
-    //   ease: "sine.inOut",
-    //   attr: {
-    //     d: "M160,0 C190,90 170,210 160,310 C150,410 190,510 160,600 L300,600 L300,0 Z",
-    //   },
-    // });
-
-    // // Middle layer
-    // gsap.to("#layer2", {
-    //   duration: 3,
-    //   repeat: -1,
-    //   yoyo: true,
-    //   ease: "sine.inOut",
-    //   delay: 1,
-    //   attr: {
-    //     d: "M170,0 C200,130 220,230 170,330 C150,430 220,530 170,600 L300,600 L300,0 Z",
-    //   },
-    // });
-
-    // // Top layer
-    // gsap.to("#layer1", {
-    //   duration: 3,
-    //   repeat: -1,
-    //   yoyo: true,
-    //   ease: "sine.inOut",
-    //   delay: 2,
-    //   attr: {
-    //     d: "M180,0 C210,90 205,190 180,280 C160,380 210,480 180,600 L300,600 L300,0 Z",
-    //   },
-    // });
 
     tl.from(ref.current, { autoAlpha: 0, ease: "linear" })
       .from(".header-1", { x: 120, duration: 1 })

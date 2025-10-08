@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
 import { signIn } from "@/auth";
+import { Plan } from "@/database";
 import Account from "@/database/account.model";
 import User from "@/database/user.model";
 import { ActionResponse, ErrorResponse } from "@/types/global";
@@ -46,6 +47,9 @@ export async function signUpWithCredentials(
       session,
     });
 
+    const freePlan = await Plan.findOne({ name: "FREE" });
+    if (!freePlan) throw new NotFoundError("Free plan");
+
     await Account.create(
       [
         {
@@ -54,7 +58,8 @@ export async function signUpWithCredentials(
           provider: "credentials",
           providerAccountId: email,
           password: hashedPassword,
-          accountType: "STANDARD",
+          activePlan: freePlan._id,
+          eventCredits: freePlan.credits || 0,
         },
       ],
       { session }

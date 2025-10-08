@@ -17,7 +17,6 @@ export const getPlan = async (
   }
 
   const { planId } = validationResult.params!;
-  console.log("planId", planId);
 
   try {
     const plan = await Plan.findById(planId).populate("features");
