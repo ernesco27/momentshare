@@ -12,6 +12,7 @@ const ROUTES = {
   DASHBOARD: "/dashboard",
   GALLERY: (id: string) => `/dashboard/events/gallery/${id}`,
   UPLOAD: (id: string) => `/events/upload/${id}`,
+  PRICING: "/pricing",
 };
 
 export default ROUTES;

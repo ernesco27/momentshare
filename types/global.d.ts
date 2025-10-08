@@ -75,3 +75,23 @@ interface GlobalEvent {
   media: GlobalMedia[];
   totalMedia?: number;
 }
+
+interface GlobalPlan {
+  _id: string;
+  name: string;
+  description: string;
+  priceNote?: string;
+  price: number;
+  currency: string;
+  type: string;
+  credits?: number;
+  durationDays?: number;
+  features: PlanFeature[];
+  isFeatured?: boolean;
+}
+
+interface PlanFeature {
+  key: string;
+  enabled: boolean;
+  limit?: number;
+}

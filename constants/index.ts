@@ -1,15 +1,17 @@
+import ROUTES from "./route";
+
 export const navLinks = [
-  { label: "Home", route: "/" },
+  { label: "Home", route: ROUTES.HOME },
   { label: "About Us", route: "/about-us" },
   { label: "Contact Us", route: "contact-us" },
-  { label: "Pricing", route: "/pricing" },
+  { label: "Pricing", route: ROUTES.PRICING },
 ];
 
 export const dashNavLinks = [
   {
     imgURL: "/icons/home.svg",
     label: "Dashboard",
-    route: "/dashboard",
+    route: ROUTES.DASHBOARD,
   },
   {
     imgURL: "/icons/calendar.svg",
@@ -27,12 +29,27 @@ export const FEATURE = {
   MAX_UPLOADS: "MAX_UPLOADS",
   RETENTION_DAYS: "RETENTION_DAYS",
   PRIORITY_SUPPORT: "PRIORITY_SUPPORT",
-  HD_UPLOADS: "HD_UPLOADS",
+  VIDEO_UPLOADS: "VIDEO_UPLOADS",
+  MAX_EVENTS: "MAX_EVENTS",
+  RESELL_RIGHT: "RESELL_RIGHT",
   CUSTOM_BRANDING: "CUSTOM_BRANDING",
   ANALYTICS: "ANALYTICS",
-  STORAGE_LIMIT: "STORAGE_LIMIT",
+  STORAGE_LIMIT_GB: "STORAGE_LIMIT_GB",
   DOWNLOAD_ACCESS: "DOWNLOAD_ACCESS",
 };
+
+export const FEATURE_KEYS = [
+  "VIDEO_UPLOADS",
+  "ANALYTICS",
+  "CUSTOM_BRANDING",
+  "MAX_UPLOADS",
+  "STORAGE_LIMIT_GB",
+  "RETENTION_DAYS",
+  "DOWNLOAD_ACCESS",
+  "PRIORITY_SUPPORT",
+  "MAX_EVENTS",
+  "RESELL_RIGHT",
+];
 
 // images
 export const IMAGE_FORMATS = [

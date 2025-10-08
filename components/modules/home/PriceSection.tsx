@@ -9,79 +9,12 @@ import { useMediaQuery } from "react-responsive";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FEATURE } from "@/constants";
 import { cn } from "@/lib/utils";
+import { GlobalPlan } from "@/types/global";
 
 gsap.registerPlugin(ScrollTrigger);
-const PriceSection = () => {
-  const prices = [
-    {
-      plan: "Free",
-      duration: "3 days Expiry",
-      price: "0",
-      priceNote: "Event",
-      featured: false,
-      benefits: [
-        "1 Event",
-        "Expires in 3 days",
-        "200MB total uploads",
-        "Upload photos only",
-        "Watermarked",
-      ],
-      description: "Try it out — ideal for testing or tiny gatherings.",
-    },
-    {
-      plan: "Standard",
-      duration: "7 days Expiry",
-      price: "150",
-      priceNote: "Event",
-      featured: true,
-      benefits: [
-        "1 Event",
-        "Expires in 7 days",
-        "2GB total uploads",
-        "Upload photos and videos",
-        "No watermark",
-      ],
-      description: "Most popular for birthdays & small weddings.",
-    },
-    {
-      plan: "Premium",
-      duration: "30 days Expiry",
-      price: "250",
-      priceNote: "Event",
-      featured: false,
-      benefits: [
-        "1 Event",
-        "Expires in 30 days",
-        "10GB total uploads",
-        "Upload photos and videos",
-        "Event cover + Logo branding",
-        "Priority support",
-        "No watermark",
-      ],
-      description: "Recommended for weddings and medium events.",
-    },
-    {
-      plan: "Pro (Monthly)",
-      duration: "30 days Expiry",
-      price: "350",
-      priceNote: "Month",
-      featured: false,
-      benefits: [
-        "Unlimited Events",
-        "Expires in 30 days",
-        "30GB / month uploads",
-        "Upload photos and videos",
-        "Event cover + Logo branding",
-        "Priority support",
-        "No watermark",
-        "White-label and resell right",
-        "Dedicated support",
-      ],
-      description: "For event planners, photographers & venues.",
-    },
-  ];
-
+const PriceSection = ({ plans }: { plans: GlobalPlan[] }) => {
   const isMobile = useMediaQuery({
     maxWidth: 768,
   });
@@ -121,79 +54,157 @@ const PriceSection = () => {
           professional event planners. Choose what fits your event and budget.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8  max-w-7xl mx-auto p-8">
-          {prices.map((price, index) => (
-            <div id="price-card" key={index}>
-              <Card
-                className={`card-wrapper light-border  md:max-w-[350px]  relative ${
-                  price.featured ? "ring-2 ring-primary-500/20 scale-105" : ""
-                }`}
-              >
-                {price.featured && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 min-w-[150px]">
-                    <div className=" bg-primary-500 text-white px-4 py-2 rounded-full text-sm  font-medium flex items-center space-x-1">
-                      <Star className="h-4 w-4" />
-                      <span>Most Popular</span>
+          {plans.map((plan, index) => {
+            const benefits: string[] = [];
+
+            const {
+              name,
+              credits,
+              description,
+              durationDays,
+              features,
+              isFeatured,
+              price,
+              priceNote,
+            } = plan;
+
+            const retentionDays = features.find(
+              (feature) => feature.key === FEATURE.RETENTION_DAYS
+            );
+
+            if (plan.type === "CREDIT") {
+              benefits.push(`${credits ?? 1} Event`);
+            } else if (plan.type === "SUBSCRIPTION") {
+              benefits.push("Unlimited Events");
+            }
+
+            if (retentionDays?.limit) {
+              benefits.push(`Expires in ${retentionDays.limit} days`);
+            }
+
+            features.forEach((feature) => {
+              if (!feature.enabled) return;
+
+              switch (feature.key) {
+                case FEATURE.CUSTOM_BRANDING:
+                  benefits.push("Event Cover + Logo Branding");
+                  break;
+
+                case FEATURE.ANALYTICS:
+                  benefits.push("Access to Analytics Dashboard");
+                  break;
+
+                case FEATURE.DOWNLOAD_ACCESS:
+                  benefits.push("Download Photos/Videos");
+                  break;
+
+                case FEATURE.MAX_UPLOADS:
+                  benefits.push(
+                    feature.limit
+                      ? `${feature.limit} Total Uploads`
+                      : "Unlimited Uploads"
+                  );
+                  break;
+
+                case FEATURE.STORAGE_LIMIT_GB:
+                  benefits.push(
+                    feature.limit
+                      ? `${feature.limit}GB total storage`
+                      : "Unlimited storage"
+                  );
+                  break;
+
+                case FEATURE.VIDEO_UPLOADS:
+                  benefits.push("Upload Photos and Videos");
+                  break;
+
+                case FEATURE.RESELL_RIGHT:
+                  benefits.push("White-label and Resell Right");
+                  break;
+
+                case FEATURE.PRIORITY_SUPPORT:
+                  benefits.push("Priority Support");
+                  break;
+
+                default:
+                  break;
+              }
+            });
+
+            return (
+              <div id="price-card" key={index}>
+                <Card
+                  className={`card-wrapper light-border  md:max-w-[350px]  relative ${
+                    isFeatured ? "ring-2 ring-primary-500/20 scale-105" : ""
+                  }`}
+                >
+                  {isFeatured && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 min-w-[150px]">
+                      <div className=" bg-primary-500 text-white px-4 py-2 rounded-full text-sm  font-medium flex items-center space-x-1">
+                        <Star className="h-4 w-4" />
+                        <span>Most Popular</span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-dark300_light700 text-lg lg:text-2xl">
-                    {price.plan}
-                  </CardTitle>
-                  <div className="text-sm text-dark400_light800">
-                    {price.duration}
-                  </div>
-                  <div className="mt-4">
-                    <span className="text-2xl lg:text-4xl font-bold text-primary-500">
-                      GHs{price.price}
-                    </span>
-                    {price.priceNote && (
-                      <span className="text-dark400_light500 ml-2">
-                        /{price.priceNote}
+                  <CardHeader className="text-center pb-4">
+                    <CardTitle className="text-dark300_light700 text-lg lg:text-2xl">
+                      {name}
+                    </CardTitle>
+                    <div className="text-sm text-dark400_light800">
+                      {retentionDays?.limit}
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-2xl lg:text-4xl font-bold text-primary-500">
+                        GHs{price}
                       </span>
-                    )}
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                  <p className="paragraph-regular text-dark400_light800 mb-4">
-                    {price.description}{" "}
-                  </p>
-                  <ul className="space-y-3">
-                    {price.benefits.map((benefit) => (
-                      <li key={benefit} className="flex items-start space-x-3">
-                        <Check className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-dark300_light900">
-                          {benefit}
+                      {priceNote && (
+                        <span className="text-dark400_light500 ml-2">
+                          /{priceNote}
                         </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="pt-4 space-y-3">
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full cursor-pointer text-dark200_light900 hover:bg-primary-500 hover:text-white transition-all duration-300 ease-in-out",
-                        price.featured
-                          ? "primary-gradient "
-                          : "ring-2 ring-primary-500/20"
                       )}
-                    >
-                      {`Subscribe to ${price.plan}`}
-                    </Button>
-                    <p className="text-xs text-dark500_light400 max-w-6xl mx-auto mt-6">
-                      Notes: Media caps are total per event. We apply automatic
-                      compression for videos to keep costs down. If you expect
-                      heavy video usage, contact sales for a custom Enterprise
-                      quote.
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-6">
+                    <p className="paragraph-regular text-dark400_light800 mb-4">
+                      {description}{" "}
                     </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
+                    <ul className="space-y-3">
+                      {benefits.map((benefit, index) => (
+                        <li key={index} className="flex items-start space-x-3">
+                          <Check className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-dark300_light900">
+                            {benefit}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="pt-4 space-y-3">
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full cursor-pointer text-dark200_light900 hover:bg-primary-500 hover:text-white transition-all duration-300 ease-in-out",
+                          isFeatured
+                            ? "primary-gradient "
+                            : "ring-2 ring-primary-500/20"
+                        )}
+                      >
+                        {`Subscribe to ${name}`}
+                      </Button>
+                      <p className="text-xs text-dark500_light400 max-w-6xl mx-auto mt-6">
+                        Notes: Media caps are total per event. We apply
+                        automatic compression for videos to keep costs down. If
+                        you expect heavy video usage, contact sales for a custom
+                        Enterprise quote.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })}
         </div>
       </Container>
     </section>

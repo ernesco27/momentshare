@@ -2,11 +2,14 @@ import { model, models, Schema } from "mongoose";
 
 export interface IPlan {
   name: "FREE" | "STANDARD" | "PREMIUM" | "PRO";
+  description: string;
+  priceNote?: string;
   price: number;
   currency: "GHS";
   type: "CREDIT" | "SUBSCRIPTION";
   credits?: number;
   durationDays?: number;
+  isFeatured?: boolean;
 }
 
 export interface IPlanDoc extends IPlan, Document {}
@@ -19,6 +22,8 @@ const PlanSchema = new Schema<IPlan>(
       required: true,
       unique: true,
     },
+    description: { type: String, required: true },
+    priceNote: { type: String },
     price: { type: Number, required: true, min: 0 },
     currency: { type: String, enum: ["GHS"], required: true },
     type: { type: String, enum: ["CREDIT", "SUBSCRIPTION"], required: true },
@@ -40,6 +45,7 @@ const PlanSchema = new Schema<IPlan>(
         message: "durationDays must be > 0 for SUBSCRIPTION plans",
       },
     },
+    isFeatured: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

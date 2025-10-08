@@ -24,3 +24,8 @@ export const EMPTY_EVENT = {
   message:
     "Your event board is empty. Maybe it’s waiting for your upcoming event to get things rolling.",
 };
+
+export const EMPTY_PLAN = {
+  title: "Ahh, No Plans Yet!",
+  message: "Plans will be available soon. Check back later",
+};
