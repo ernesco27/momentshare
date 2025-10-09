@@ -20,3 +20,5 @@ export const Home = async () => {
     </section>
   );
 };
+
+export default Home;

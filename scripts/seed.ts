@@ -89,7 +89,7 @@ const planFeatures: Record<
     { featureKey: "DOWNLOAD_ACCESS", enabled: true },
     { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
     { featureKey: "RESELL_RIGHT", enabled: false },
-    { featureKey: "PRIORITY_SUPPORT", enabled: false },
+    { featureKey: "PRIORITY_SUPPORT", enabled: true },
   ],
   PRO: [
     { featureKey: "VIDEO_UPLOADS", enabled: true },

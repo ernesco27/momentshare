@@ -44,16 +44,16 @@ const PriceSection = ({ plans }: { plans: GlobalPlan[] }) => {
     };
   }, [isMobile]);
   return (
-    <section className="py-24  price">
+    <section className="pt-10  price">
       <Container>
-        <h2 className="text-4xl font-bold text-center mb-12 primary-text-gradient">
+        <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 primary-text-gradient">
           Simple, Friendly Pricing
         </h2>
         <p className="text-center text-dark500_light400 max-w-3xl mx-auto mb-10">
           Plans are tailored for local organisers — from casual parties to
           professional event planners. Choose what fits your event and budget.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8  max-w-7xl mx-auto p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10  max-w-7xl mx-auto p-8">
           {plans.map((plan, index) => {
             const benefits: string[] = [];
 
@@ -148,11 +148,11 @@ const PriceSection = ({ plans }: { plans: GlobalPlan[] }) => {
                   )}
 
                   <CardHeader className="text-center pb-4">
-                    <CardTitle className="text-dark300_light700 text-lg lg:text-2xl">
+                    <CardTitle className="text-dark300_light700 text-lg ">
                       {name}
                     </CardTitle>
                     <div className="text-sm text-dark400_light800">
-                      {retentionDays?.limit}
+                      {`${retentionDays?.limit} Days Expiry`}
                     </div>
                     <div className="mt-4">
                       <span className="text-2xl lg:text-4xl font-bold text-primary-500">
