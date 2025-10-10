@@ -1,7 +1,6 @@
 "use server";
 
 import { Plan } from "@/database";
-import { IPlanDoc } from "@/database/plan.model";
 import { IPlanFeatureDoc } from "@/database/planFeatures.model";
 import { ActionResponse, ErrorResponse, GlobalPlan } from "@/types/global";
 
