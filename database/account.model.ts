@@ -7,10 +7,6 @@ export interface IAccount {
   password?: string;
   provider: string;
   providerAccountId: string;
-  accountType: "STANDARD" | "PRO";
-  activePlan: null;
-  eventCredits?: number;
-  planDuration?: number;
 }
 
 export interface IAccountDoc extends IAccount, Document {}
@@ -23,14 +19,6 @@ const AccountSchema = new Schema<IAccount>(
     password: { type: String },
     provider: { type: String, required: true },
     providerAccountId: { type: String, required: true, unique: true },
-    accountType: {
-      type: String,
-      enum: ["STANDARD", "PRO"],
-      default: "STANDARD",
-    },
-    activePlan: { type: Schema.Types.ObjectId, ref: "Plan" },
-    eventCredits: { type: Number, default: 1 },
-    planDuration: { type: Number },
   },
   { timestamps: true }
 );

@@ -15,14 +15,16 @@ export interface IEvent {
   maxUploads: number;
   themeColor: string;
   media?: Types.ObjectId[];
-  totalMedia?: number;
+  totalMedia: number;
+  status: "active" | "archived" | "completed" | "deleted";
+  storageUsedBytes: number;
 }
 
 export interface IEventDoc extends IEvent, Document {}
 
 const EventSchema = new Schema<IEvent>(
   {
-    organizer: { type: Schema.Types.ObjectId, ref: "Account", required: true },
+    organizer: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
     loc: { type: String, required: true },
@@ -37,6 +39,13 @@ const EventSchema = new Schema<IEvent>(
     themeColor: { type: String, required: true },
     media: [{ type: Schema.Types.ObjectId, ref: "Media" }],
     totalMedia: { type: Number, default: 0 },
+    status: {
+      type: String,
+      enum: ["active", "archived", "completed", "deleted"],
+      default: "active",
+      required: true,
+    },
+    storageUsedBytes: { type: Number, default: 0, required: true },
   },
   { timestamps: true }
 );
