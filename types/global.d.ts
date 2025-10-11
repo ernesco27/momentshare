@@ -29,7 +29,7 @@ interface PaginatedSearchParams {
   sort?: string;
 }
 
-interface User {
+interface GlobalUser {
   _id: string;
   name: string;
   username: string;
@@ -73,6 +73,8 @@ interface GlobalMedia {
   fileType: string;
   fileUrl: string;
   publicId?: string;
+  fileSizeBytes: number;
+  uploadedBy?: string;
 }
 
 interface GlobalEvent {

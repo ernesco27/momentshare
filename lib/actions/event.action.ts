@@ -1,13 +1,18 @@
 "use server";
 
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 
-import { Account, Event, Media, User } from "@/database";
+import { Event, Media, Plan, PlanFeature, User } from "@/database";
 import { IEventDoc } from "@/database/event.model";
-import { ActionResponse, ErrorResponse, GlobalEvent } from "@/types/global";
+import {
+  ActionResponse,
+  ErrorResponse,
+  GlobalEvent,
+  GlobalUser,
+} from "@/types/global";
 
 import cloudinary from "../cloudinary";
 import action from "../handlers/action";
@@ -21,6 +26,75 @@ import {
   getEventSchemaQR,
   getEventsSchema,
 } from "../validations";
+
+const applyPlanFeaturesToUser = async (
+  user: GlobalUser,
+  planId: Types.ObjectId,
+  session: mongoose.ClientSession
+): Promise<GlobalUser> => {
+  const plan = await Plan.findById(planId).session(session);
+
+  if (!plan) {
+    throw new NotFoundError("Plan");
+  }
+
+  const features = await PlanFeature.find({ planId }).session(session);
+
+  user.maxActiveEvents = 1;
+  user.storageLimitGB = 0.5;
+  user.canRemoveWatermark = false;
+  user.canAccessAnalytics = false;
+  user.activePlan = plan._id;
+  user.maxUploads = 100;
+  user.retentionDays = 3;
+  user.prioritySupport = false;
+  user.videoUploads = false;
+  user.resellerRight = false;
+  user.customBranding = false;
+  user.downloadAccess = false;
+
+  features.forEach((feature) => {
+    switch (feature.featureKey) {
+      case "MAX_ACTIVE_EVENTS":
+        user.maxActiveEvents = feature.limit || 1; // Default to 1 if limit is null
+        break;
+      case "STORAGE_LIMIT_GB":
+        user.storageLimitGB = feature.limit || 0.5;
+        break;
+      case "CAN_REMOVE_WATERMARK":
+        user.canRemoveWatermark = feature.enabled;
+        break;
+      case "CAN_ACCESS_ANALYTICS":
+        user.canAccessAnalytics = feature.enabled;
+        break;
+      case "MAX_UPLOADS":
+        user.maxUploads = feature.limit || 100;
+        break;
+      case "RETENTION_DAYS":
+        user.retentionDays = feature.limit || 3;
+        break;
+      case "PRIORITY_SUPPORT":
+        user.prioritySupport = feature.enabled;
+        break;
+      case "VIDEO_UPLOADS":
+        user.videoUploads = feature.enabled;
+        break;
+      case "RESELL_RIGHT":
+        user.resellerRight = feature.enabled;
+        break;
+      case "CUSTOM_BRANDING":
+        user.customBranding = feature.enabled;
+        break;
+      case "DOWNLOAD_ACCESS":
+        user.downloadAccess = feature.enabled;
+        break;
+      default:
+        break;
+    }
+  });
+
+  return user;
+};
 
 export const createEvent = async (
   params: createEventParams
@@ -58,19 +132,52 @@ export const createEvent = async (
       throw new NotFoundError("User");
     }
 
+    const freePlan = await Plan.findOne({ name: "FREE" });
+    if (!freePlan) throw new NotFoundError("Free plan");
+
+    let userCanCreateEvent = false;
+
     if (existingUser.isProSubscriber) {
       if (
         !existingUser.proSubscriptionEndDate ||
         Date.now() > existingUser.proSubscriptionEndDate.getTime()
       ) {
+        // Pro subscription has expired! Revert to Free plan.
         existingUser.isProSubscriber = false;
+        existingUser.proSubscriptionEndDate = undefined; // Clear the expired date
+
+        // Update current plan history - mark Pro as deactivated
+        if (existingUser.planHistory.length > 0) {
+          const lastPlanEntry =
+            existingUser.planHistory[existingUser.planHistory.length - 1];
+          if (
+            lastPlanEntry.planId.toString() ===
+            existingUser.activePlanId.toString()
+          ) {
+            lastPlanEntry.deactivationDate = new Date();
+          }
+        }
+
+        await applyPlanFeaturesToUser(existingUser, freePlan._id, session);
+        existingUser.eventCredits = freePlan.credits || 1;
+        //  existingUser.tierActivationDate = new Date(); // New activation date for Free
+        existingUser.planHistory.push({
+          planId: freePlan._id,
+          activationDate: new Date(),
+        });
 
         await existingUser.save({ session });
+
+        console.warn(`User ${userId} Pro plan expired. Reverted to Free tier.`);
         throw new Error(
-          "Your Pro subscription has expired. Please renew to create unlimited events."
+          "Your Pro plan expired, you've been reverted to Free. Please try again."
         );
+      } else {
+        userCanCreateEvent = true;
       }
-    } else {
+    }
+
+    if (!userCanCreateEvent) {
       if (existingUser.eventCredits < 1) {
         throw new Error(
           "You have no event credits left. Please upgrade your plan or purchase more credits to create new events."
@@ -86,11 +193,12 @@ export const createEvent = async (
         existingUser.maxActiveEvents !== -1 &&
         activeEventsCount >= existingUser.maxActiveEvents
       ) {
-        // Use -1 or Infinity for unlimited
         throw new Error(
           `You have reached your limit of ${existingUser.maxActiveEvents} active events. Please archive an existing event or upgrade your plan.`
         );
       }
+
+      userCanCreateEvent = true;
     }
 
     const qrCode = nanoid(12);
@@ -136,9 +244,13 @@ export const createEvent = async (
 
     // Update user usage
 
-    if (!existingUser.isProSubscriber) existingUser.eventCredits -= 1;
-
-    await existingUser.save({ session });
+    if (!existingUser.isProSubscriber) {
+      await User.findByIdAndUpdate(
+        userId,
+        { $inc: { eventCredits: -1 } },
+        { session, new: true }
+      );
+    }
 
     await session.commitTransaction();
 
@@ -180,17 +292,17 @@ export const getEvents = async (
   const limit = Number(pageSize);
 
   try {
-    const account = await Account.findOne({ userId });
+    const user = await User.findById(userId);
 
-    if (!account) {
-      throw new NotFoundError("Account");
+    if (!user) {
+      throw new NotFoundError("User");
     }
 
     // Total events for pagination
-    const totalEvents = await Event.countDocuments({ organizer: account._id });
+    const totalEvents = await Event.countDocuments({ organizer: user._id });
 
     // Paginated events
-    const events = await Event.find({ organizer: account._id })
+    const events = await Event.find({ organizer: user._id })
       .populate("media")
       .skip(skip)
       .limit(limit)
@@ -199,7 +311,7 @@ export const getEvents = async (
     const isNext = totalEvents > skip + events.length;
 
     // ✅ Get ALL event IDs for this organizer
-    const allEventIds = await Event.find({ organizer: account._id }).distinct(
+    const allEventIds = await Event.find({ organizer: user._id }).distinct(
       "_id"
     );
 
@@ -210,11 +322,8 @@ export const getEvents = async (
 
     // ✅ Total maxUploads across all events (only for standard accounts)
     let totalMaxUploads = 0;
-    if (account.accountType !== "PRO") {
-      const allEvents = await Event.find(
-        { organizer: account._id },
-        "maxUploads"
-      );
+    if (!user.isProSubscriber) {
+      const allEvents = await Event.find({ organizer: user._id }, "maxUploads");
       totalMaxUploads = allEvents.reduce(
         (sum, e) => sum + (e.maxUploads || 0),
         0
@@ -322,10 +431,10 @@ export const deleteEvent = async (
   try {
     session.startTransaction();
 
-    const account = await Account.findOne({ userId }).session(session);
+    const user = await User.findById(userId).session(session);
 
-    if (!account) {
-      throw new NotFoundError("Account");
+    if (!user) {
+      throw new NotFoundError("User");
     }
 
     // 1. Fetch event + related media
@@ -334,7 +443,7 @@ export const deleteEvent = async (
       throw new NotFoundError("Event");
     }
 
-    if (event.organizer.toString() !== account._id.toString()) {
+    if (event.organizer.toString() !== user._id.toString()) {
       throw new UnauthorizedError(
         "You are not authorized to delete this event"
       );
@@ -353,7 +462,6 @@ export const deleteEvent = async (
     await session.commitTransaction();
 
     //  5. Cleanup Cloudinary asynchronously (outside of transaction)
-    console.log("mediaDocs 2", mediaDocs);
 
     const eventFolder = `MomentShare/events/${eventId}`;
     const qrFolder = `MomentShare/qr_codes/${userId}`;
@@ -414,7 +522,11 @@ export const editEvent = async (
   session.startTransaction();
 
   try {
-    const account = await Account.findOne({ userId }).session(session);
+    const user = await User.findById(userId).session(session);
+
+    if (!user) {
+      throw new NotFoundError("User");
+    }
 
     const event = await Event.findById(eventId).session(session);
 
@@ -422,7 +534,7 @@ export const editEvent = async (
       throw new NotFoundError("Event");
     }
 
-    if (event.organizer._id.toString() !== account._id.toString()) {
+    if (event.organizer._id.toString() !== user._id.toString()) {
       throw new UnauthorizedError("You are not authorized to edit this event.");
     }
 

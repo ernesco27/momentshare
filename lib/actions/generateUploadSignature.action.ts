@@ -1,4 +1,3 @@
-// lib/actions/generateUploadSignature.action.ts
 "use server";
 
 import crypto from "crypto";
