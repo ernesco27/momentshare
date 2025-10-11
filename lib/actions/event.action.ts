@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 
-import { Account, Event, Media } from "@/database";
+import { Account, Event, Media, User } from "@/database";
 import { IEventDoc } from "@/database/event.model";
 import { ActionResponse, ErrorResponse, GlobalEvent } from "@/types/global";
 
@@ -52,10 +52,45 @@ export const createEvent = async (
   session.startTransaction();
 
   try {
-    const existingAccount = await Account.findOne({ userId }).session(session);
+    const existingUser = await User.findById(userId).session(session);
 
-    if (!existingAccount) {
-      throw new NotFoundError("Account");
+    if (!existingUser) {
+      throw new NotFoundError("User");
+    }
+
+    if (existingUser.isProSubscriber) {
+      if (
+        !existingUser.proSubscriptionEndDate ||
+        Date.now() > existingUser.proSubscriptionEndDate.getTime()
+      ) {
+        existingUser.isProSubscriber = false;
+
+        await existingUser.save({ session });
+        throw new Error(
+          "Your Pro subscription has expired. Please renew to create unlimited events."
+        );
+      }
+    } else {
+      if (existingUser.eventCredits < 1) {
+        throw new Error(
+          "You have no event credits left. Please upgrade your plan or purchase more credits to create new events."
+        );
+      }
+
+      const activeEventsCount = await Event.countDocuments({
+        organizer: existingUser._id,
+        status: "active",
+      }).session(session);
+
+      if (
+        existingUser.maxActiveEvents !== -1 &&
+        activeEventsCount >= existingUser.maxActiveEvents
+      ) {
+        // Use -1 or Infinity for unlimited
+        throw new Error(
+          `You have reached your limit of ${existingUser.maxActiveEvents} active events. Please archive an existing event or upgrade your plan.`
+        );
+      }
     }
 
     const qrCode = nanoid(12);
@@ -63,33 +98,23 @@ export const createEvent = async (
     const qrDataUrl = await QRCode.toDataURL(eventUrl);
 
     const uploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
-      folder: `MomentShare/qr_codes/${userId}`, // each user has their own folder
+      folder: `MomentShare/qr_codes/${userId}`,
       public_id: qrCode,
       resource_type: "image",
       context: {
         userId: userId,
-        accountId: existingAccount._id.toString(),
       },
     });
 
-    // Pre-check based on account type
-    if (existingAccount.accountType === "STANDARD") {
-      if (existingAccount.eventCredits < 1) {
-        throw new Error("Insufficient credits");
-      }
-    } else if (existingAccount.accountType === "PRO") {
-      if (existingAccount.planDuration < 1) {
-        throw new Error("Monthly subscription expired");
-      }
-    } else {
-      throw new Error("Unsupported account type");
+    if (!uploadResponse || !uploadResponse.secure_url) {
+      throw new Error("Failed to upload QR code image.");
     }
 
     // Create event
     const [event] = await Event.create(
       [
         {
-          organizer: existingAccount._id,
+          organizer: existingUser._id,
           title,
           description,
           loc,
@@ -102,19 +127,18 @@ export const createEvent = async (
           expiryDate,
           maxUploads,
           themeColor,
+          status: "active",
+          storageUsedBytes: 0,
         },
       ],
       { session }
     );
 
-    // Update account usage
-    if (existingAccount.accountType === "STANDARD") {
-      existingAccount.eventCredits -= 1;
-    } else if (existingAccount.accountType === "PRO") {
-      existingAccount.planDuration -= 1;
-    }
+    // Update user usage
 
-    await existingAccount.save({ session });
+    if (!existingUser.isProSubscriber) existingUser.eventCredits -= 1;
+
+    await existingUser.save({ session });
 
     await session.commitTransaction();
 

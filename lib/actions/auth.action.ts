@@ -43,12 +43,40 @@ export async function signUpWithCredentials(
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const [newUser] = await User.create([{ username, name, email }], {
-      session,
-    });
-
     const freePlan = await Plan.findOne({ name: "FREE" });
     if (!freePlan) throw new NotFoundError("Free plan");
+
+    const [newUser] = await User.create(
+      [
+        {
+          username,
+          name,
+          email,
+          activePlan: freePlan._id,
+          eventCredits: freePlan.credits || 0,
+          planHistory: [
+            {
+              planId: freePlan._id,
+              activationDate: new Date(),
+            },
+          ],
+          maxActiveEvents: freePlan.maxActiveEvents || 1,
+          storageLimitGB: freePlan.storageLimitGB || 0.5,
+          canRemoveWatermark: false,
+          canAccessAnalytics: false,
+          maxUploads: freePlan.maxUploads || 100,
+          retentionDays: freePlan.retentionDays || 3,
+          prioritySupport: false,
+          videoUploads: false,
+          resellerRight: false,
+          customBranding: false,
+          downloadAccess: false,
+        },
+      ],
+      {
+        session,
+      }
+    );
 
     await Account.create(
       [
@@ -58,8 +86,6 @@ export async function signUpWithCredentials(
           provider: "credentials",
           providerAccountId: email,
           password: hashedPassword,
-          activePlan: freePlan._id,
-          eventCredits: freePlan.credits || 0,
         },
       ],
       { session }
