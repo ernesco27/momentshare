@@ -59,10 +59,12 @@ interface ApiError {
 
 interface createEventMediaParams {
   eventId: string;
+  uploadedBy?: string;
   media: {
     fileUrl: string;
     fileType: string;
     publicId: string;
+    fileSizeBytes: number;
   }[];
 }
 

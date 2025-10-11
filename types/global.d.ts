@@ -34,6 +34,27 @@ interface User {
   name: string;
   username: string;
   image?: string;
+  email: string;
+  activePlan: string;
+  eventCredits: number;
+  isProSubscriber: boolean;
+  proSubscriptionEndDate?: Date;
+  planHistory: {
+    planId: string;
+    activationDate: Date;
+    deactivationDate?: Date;
+  }[];
+  maxActiveEvents: number;
+  storageLimitGB: number;
+  canRemoveWatermark: boolean;
+  canAccessAnalytics: boolean;
+  maxUploads: number;
+  retentionDays: number;
+  prioritySupport: boolean;
+  videoUploads: boolean;
+  resellerRight: boolean;
+  customBranding: boolean;
+  downloadAccess: boolean;
 }
 
 interface GlobalAccount {
@@ -44,10 +65,6 @@ interface GlobalAccount {
   password?: string;
   provider: string;
   providerAccountId: string;
-  accountType: string;
-  activePlan?: string;
-  eventCredits?: number;
-  planDuration?: number;
 }
 
 interface GlobalMedia {
@@ -74,6 +91,8 @@ interface GlobalEvent {
   themeColor: string;
   media: GlobalMedia[];
   totalMedia?: number;
+  status: string;
+  storageUsedBytes: number;
 }
 
 interface GlobalPlan {
