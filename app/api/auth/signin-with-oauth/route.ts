@@ -38,6 +38,9 @@ export async function POST(request: Request) {
 
     let existingUser = await User.findOne({ email }).session(session);
 
+    const freePlan = await Plan.findOne({ name: "FREE" });
+    if (!freePlan) throw new NotFoundError("Free plan");
+
     if (!existingUser) {
       [existingUser] = await User.create(
         [
@@ -46,6 +49,25 @@ export async function POST(request: Request) {
             username: slugifiedUsername,
             email,
             image,
+            activePlan: freePlan._id,
+            eventCredits: freePlan.credits || 0,
+            planHistory: [
+              {
+                planId: freePlan._id,
+                activationDate: new Date(),
+              },
+            ],
+            maxActiveEvents: freePlan.maxActiveEvents || 1,
+            storageLimitGB: freePlan.storageLimitGB || 0.5,
+            canRemoveWatermark: false,
+            canAccessAnalytics: false,
+            maxUploads: freePlan.maxUploads || 100,
+            retentionDays: freePlan.retentionDays || 3,
+            prioritySupport: false,
+            videoUploads: false,
+            resellerRight: false,
+            customBranding: false,
+            downloadAccess: false,
           },
         ],
         { session }
@@ -66,9 +88,6 @@ export async function POST(request: Request) {
       }
     }
 
-    const freePlan = await Plan.findOne({ name: "FREE" });
-    if (!freePlan) throw new NotFoundError("Free plan");
-
     const existingAccount = await Account.findOne({
       userId: existingUser._id,
       provider,
@@ -84,8 +103,6 @@ export async function POST(request: Request) {
             image,
             provider,
             providerAccountId,
-            activePlan: freePlan._id,
-            eventCredits: freePlan.credits || 0,
           },
         ],
         { session }

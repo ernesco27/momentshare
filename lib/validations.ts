@@ -57,6 +57,28 @@ export const UserSchema = z.object({
     .min(3, { message: "Username must be at least 3 characters long." }),
   email: z.string().email({ message: "Please provide a valid email address." }),
   image: z.string().url({ message: "Please provide a valid URL." }).optional(),
+  activePlan: z.string().min(1, { message: "Active plan is required." }),
+  eventCredits: z.number().default(0),
+  isProSubscriber: z.boolean().default(false),
+  proSubscriptionEndDate: z.date().optional(),
+  planHistory: z.array(
+    z.object({
+      planId: z.string().min(1, { message: "Plan ID is required." }),
+      activationDate: z.date(),
+      deactivationDate: z.date().optional(),
+    })
+  ),
+  maxActiveEvents: z.number().default(1),
+  storageLimitGB: z.number().default(0.5),
+  canRemoveWatermark: z.boolean().default(false),
+  canAccessAnalytics: z.boolean().default(false),
+  maxUploads: z.number().default(100),
+  retentionDays: z.number().default(3),
+  prioritySupport: z.boolean().default(false),
+  videoUploads: z.boolean().default(false),
+  resellerRight: z.boolean().default(false),
+  customBranding: z.boolean().default(false),
+  downloadAccess: z.boolean().default(false),
 });
 
 export const AccountSchema = z.object({
@@ -82,10 +104,6 @@ export const AccountSchema = z.object({
   providerAccountId: z
     .string()
     .min(1, { message: "Provider Account ID is required." }),
-  accountType: z.enum(["STANDARD", "PRO"]),
-  activePlan: z.string().optional(),
-  eventCredits: z.number().optional(),
-  planExpiryDate: z.date().optional(),
 });
 
 export const signInWithOAuthSchema = z.object({

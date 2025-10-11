@@ -52,7 +52,7 @@ const UserSchema = new Schema<IUser>(
     storageLimitGB: { type: Number, default: 0.5, required: true },
     canRemoveWatermark: { type: Boolean, default: false, required: true },
     canAccessAnalytics: { type: Boolean, default: false, required: true },
-    maxUploads: { type: Number, default: 10, required: true },
+    maxUploads: { type: Number, default: 100, required: true },
     retentionDays: { type: Number, default: 3, required: true },
     prioritySupport: { type: Boolean, default: false, required: true },
     videoUploads: { type: Boolean, default: false, required: true },

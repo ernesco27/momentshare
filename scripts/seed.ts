@@ -58,7 +58,7 @@ const planFeatures: Record<
   FREE: [
     { featureKey: "VIDEO_UPLOADS", enabled: false },
     { featureKey: "CUSTOM_BRANDING", enabled: false },
-    { featureKey: "ANALYTICS", enabled: false },
+
     { featureKey: "MAX_UPLOADS", enabled: true, limit: 100 },
     { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 1 }, // 1 GB
     { featureKey: "RETENTION_DAYS", enabled: true, limit: 7 }, // 1 week
@@ -66,6 +66,8 @@ const planFeatures: Record<
     { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
     { featureKey: "RESELL_RIGHT", enabled: false },
     { featureKey: "PRIORITY_SUPPORT", enabled: false },
+    { featureKey: "WATERMARK_REMOVAL", enabled: false },
+    { featureKey: "ACCESS_ANALYTICS", enabled: false },
   ],
   STANDARD: [
     { featureKey: "VIDEO_UPLOADS", enabled: false },
@@ -78,6 +80,8 @@ const planFeatures: Record<
     { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
     { featureKey: "RESELL_RIGHT", enabled: false },
     { featureKey: "PRIORITY_SUPPORT", enabled: false },
+    { featureKey: "WATERMARK_REMOVAL", enabled: true },
+    { featureKey: "ACCESS_ANALYTICS", enabled: true },
   ],
   PREMIUM: [
     { featureKey: "VIDEO_UPLOADS", enabled: true },
@@ -90,6 +94,8 @@ const planFeatures: Record<
     { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
     { featureKey: "RESELL_RIGHT", enabled: false },
     { featureKey: "PRIORITY_SUPPORT", enabled: true },
+    { featureKey: "WATERMARK_REMOVAL", enabled: true },
+    { featureKey: "ACCESS_ANALYTICS", enabled: true },
   ],
   PRO: [
     { featureKey: "VIDEO_UPLOADS", enabled: true },
@@ -102,6 +108,8 @@ const planFeatures: Record<
     { featureKey: "MAX_EVENTS", enabled: true },
     { featureKey: "RESELL_RIGHT", enabled: true },
     { featureKey: "PRIORITY_SUPPORT", enabled: true },
+    { featureKey: "WATERMARK_REMOVAL", enabled: true },
+    { featureKey: "ACCESS_ANALYTICS", enabled: true },
   ],
 };
 

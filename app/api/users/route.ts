@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { User } from "@/database";
+import { Plan, User } from "@/database";
 import handleError from "@/lib/handlers/error";
-import { ValidationError } from "@/lib/http-errors";
+import { NotFoundError, ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { UserSchema } from "@/lib/validations";
 import { APIErrorResponse } from "@/types/global";
@@ -40,7 +40,31 @@ export async function POST(request: Request) {
 
     if (existingUser) throw new Error("User already exists");
 
-    const newUser = await User.create(validatedData.data);
+    const freePlan = await Plan.findOne({ name: "FREE" });
+    if (!freePlan) throw new NotFoundError("Free plan");
+
+    const newUser = await User.create({
+      ...validatedData.data,
+      activePlan: freePlan._id,
+      eventCredits: freePlan.credits || 0,
+      planHistory: [
+        {
+          planId: freePlan._id,
+          activationDate: new Date(),
+        },
+      ],
+      maxActiveEvents: freePlan.maxActiveEvents || 1,
+      storageLimitGB: freePlan.storageLimitGB || 0.5,
+      canRemoveWatermark: false,
+      canAccessAnalytics: false,
+      maxUploads: freePlan.maxUploads || 100,
+      retentionDays: freePlan.retentionDays || 3,
+      prioritySupport: false,
+      videoUploads: false,
+      resellerRight: false,
+      customBranding: false,
+      downloadAccess: false,
+    });
 
     return NextResponse.json({ success: true, data: newUser }, { status: 201 });
   } catch (error) {
