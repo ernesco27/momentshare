@@ -54,6 +54,7 @@ export async function signUpWithCredentials(
           email,
           activePlan: freePlan._id,
           eventCredits: freePlan.credits || 0,
+          tierActivationDate: new Date(),
           planHistory: [
             {
               planId: freePlan._id,

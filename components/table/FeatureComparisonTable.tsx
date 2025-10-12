@@ -17,10 +17,13 @@ const FeatureComparisonTable = ({ plans, popularPlan = "STANDARD" }: Props) => {
   const getFeatureDisplay = (plan: GlobalPlan, featureKey: string) => {
     const feature = plan.features.find((f) => f.key === featureKey);
     if (!feature) return <X className="text-red-500 mx-auto" />;
+
     if (feature.enabled && feature.limit)
       return (
         <span className="text-green-600 font-medium">
-          {feature.limit.toLocaleString()}
+          {feature.limit !== -1
+            ? `${feature.limit.toLocaleString()}`
+            : "Unlimited"}
         </span>
       );
     return feature.enabled ? (

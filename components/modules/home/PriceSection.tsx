@@ -39,17 +39,17 @@ interface PlanWithPaystackProps extends GlobalPlan {
 
 interface Props {
   plans: GlobalPlan[];
-  accountId?: string;
+  userId?: string;
   email?: string;
 }
 
 // Dynamically import PaystackButtonClient
 const DynamicPaystackButton = dynamic(
   () => import("@/components/paystack/PaystackButtonClient"),
-  { ssr: false } // This is the magic! Only render on client side.
+  { ssr: false }
 );
 
-const PriceSection = ({ plans, accountId, email }: Props) => {
+const PriceSection = ({ plans, userId, email }: Props) => {
   const router = useRouter();
   const isMobile = useMediaQuery({
     maxWidth: 768,
@@ -99,7 +99,7 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ reference, planId, accountId, email, amount }),
+          body: JSON.stringify({ reference, planId, userId, email, amount }),
         });
 
         const data = await response.json();
@@ -121,7 +121,7 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
         console.error("Error verifying payment with backend:", error);
       }
     },
-    [accountId, plans, email, router]
+    [userId, plans, email, router]
   );
 
   const handlePaymentClose = useCallback(() => {
@@ -143,7 +143,7 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
 
       let configErrorForPlan: string | null = globalConfigError;
 
-      if (accountId && plan.name === "FREE") {
+      if (userId && plan.name === "FREE") {
         configErrorForPlan = "Plan Activated";
       }
 
@@ -164,13 +164,13 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
         publicKey: publicKey!,
         currency: "GHS",
         metadata: {
-          accountId: accountId || "N/A",
+          userId: userId || "N/A",
           planId: _id,
         },
       };
       return { ...plan, paystackProps: paystackConfig, configError: null };
     });
-  }, [plans, publicKey, email, accountId]);
+  }, [plans, publicKey, email, userId]);
 
   return (
     <section className="pt-10 price">
@@ -220,7 +220,7 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
                 case FEATURE.CUSTOM_BRANDING:
                   benefits.push("Event Cover + Logo Branding");
                   break;
-                case FEATURE.ANALYTICS:
+                case FEATURE.CAN_ACCESS_ANALYTICS:
                   benefits.push("Access to Analytics Dashboard");
                   break;
                 case FEATURE.DOWNLOAD_ACCESS:
@@ -228,9 +228,9 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
                   break;
                 case FEATURE.MAX_UPLOADS:
                   benefits.push(
-                    feature.limit
+                    feature.limit !== -1
                       ? `${feature.limit} Total Uploads`
-                      : "Unlimited Uploads"
+                      : "Unlimited Total Uploads"
                   );
                   break;
                 case FEATURE.STORAGE_LIMIT_GB:
@@ -249,13 +249,23 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
                 case FEATURE.PRIORITY_SUPPORT:
                   benefits.push("Priority Support");
                   break;
+                case FEATURE.MAX_ACTIVE_EVENTS:
+                  benefits.push(
+                    feature.limit !== -1
+                      ? `${feature.limit} Active Events`
+                      : "Unlimited Active Events"
+                  );
+                  break;
+                case FEATURE.CAN_REMOVE_WATERMARK:
+                  benefits.push("Watermark removed");
+                  break;
                 default:
                   break;
               }
             });
 
             const buttonIsDisabled =
-              isSubscribing || !accountId || !paystackProps || !!configError;
+              isSubscribing || !userId || !paystackProps || !!configError;
             const buttonText =
               isSubscribing && currentPlanId === _id
                 ? "Processing..."
@@ -313,7 +323,7 @@ const PriceSection = ({ plans, accountId, email }: Props) => {
                     </ul>
 
                     <div className="pt-4 space-y-3">
-                      {!accountId ? (
+                      {!userId ? (
                         <Button
                           onClick={() => {
                             toast.info("Please sign in to subscribe.");

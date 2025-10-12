@@ -10,7 +10,7 @@ interface PricingContainerProps {
   plans: GlobalPlan[];
   success: boolean;
   error: ApiError;
-  accountId?: string;
+  userId?: string;
   email?: string;
 }
 
@@ -18,7 +18,7 @@ const PricingContainer = ({
   plans,
   success,
   error,
-  accountId,
+  userId,
   email,
 }: PricingContainerProps) => {
   return (
@@ -29,7 +29,7 @@ const PricingContainer = ({
         error={error}
         empty={EMPTY_PLAN}
         render={(plans) => (
-          <PriceSection plans={plans} accountId={accountId} email={email} />
+          <PriceSection plans={plans} userId={userId} email={email} />
         )}
       />
     </>
