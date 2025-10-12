@@ -65,7 +65,7 @@ export async function POST(request: Request) {
             retentionDays: freePlan.retentionDays || 3,
             prioritySupport: false,
             videoUploads: false,
-            resellerRight: false,
+            resellRight: false,
             customBranding: false,
             downloadAccess: false,
           },

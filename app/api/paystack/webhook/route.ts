@@ -3,10 +3,11 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
-import { Account, Plan, Transaction } from "@/database";
+import { Plan, Transaction, User } from "@/database";
 import handleError from "@/lib/handlers/error";
 import { NotFoundError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
+import { applyPlanFeaturesToUser } from "@/lib/utils";
 
 export async function POST(req: Request) {
   const rawBody = await req.text(); // read raw body (important!)
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
 
   const data = event.data;
   const { reference, amount, customer, metadata } = data;
-  const { planId, accountId } = metadata; // ensure you send these in Paystack initialize call
+  const { planId, userId } = metadata; // ensure you send these in Paystack initialize call
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -48,23 +49,52 @@ export async function POST(req: Request) {
     const plan = await Plan.findById(planId).session(session);
     if (!plan) throw new NotFoundError("Plan");
 
-    const account = await Account.findById(accountId).session(session);
-    if (!account) throw new NotFoundError("Account");
+    const user = await User.findById(userId).session(session);
+    if (!user) throw new NotFoundError("User");
 
     // Check if already processed
-    const existingTx = await Transaction.findOne({ reference }).session(
-      session
-    );
-    if (existingTx?.status === "SUCCESS") {
+    const existingSuccessfulTx = await Transaction.findOne({
+      reference,
+      status: "SUCCESS",
+    }).session(session);
+
+    if (existingSuccessfulTx) {
       await session.abortTransaction();
-      return NextResponse.json({ success: true }, { status: 200 });
+      return NextResponse.json(
+        {
+          success: true,
+          message: "Payment already successfully verified and processed.",
+          data: existingSuccessfulTx,
+        },
+        { status: 200 }
+      );
     }
 
     const verifiedAmount = amount / 100;
+
     if (Math.abs(plan.price - verifiedAmount) > 0.01) {
+      // Log this discrepancy for investigation
+      console.error(
+        `Amount mismatch for reference ${reference}: Expected ${plan.price}, Got ${verifiedAmount}`
+      );
       await session.abortTransaction();
+      // Record transaction as FAILED due to amount mismatch
+      await Transaction.findOneAndUpdate(
+        { reference },
+        {
+          reference,
+          email: customer.email,
+          planId: plan._id,
+          amount: verifiedAmount,
+          status: "FAILED",
+          verifiedAt: new Date(),
+          userId,
+          paymentProviderTransactionId: data.id,
+        },
+        { upsert: true, new: true, session }
+      );
       return NextResponse.json(
-        { success: false, message: "Amount mismatch" },
+        { success: false, message: "Transaction amount mismatch." },
         { status: 400 }
       );
     }
@@ -75,26 +105,46 @@ export async function POST(req: Request) {
       {
         reference,
         email: customer.email,
-        planId,
+        planId: plan._id,
         amount: verifiedAmount,
         status: "SUCCESS",
         verifiedAt: new Date(),
-        accountId,
+        userId,
+        paymentProviderTransactionId: data.id,
       },
-      { upsert: true, new: true }
+      { upsert: true, new: true, session }
     ).session(session);
 
-    // Update account
-    if (plan.type === "CREDIT") {
-      account.eventCredits += plan.credits;
-      account.activePlan = planId;
-    } else {
-      account.planDuration += plan.durationDays;
-      account.activePlan = planId;
-      account.accountType = "PRO";
+    // --- Plan History and Transition Logic---
+    // Update previous plan history entry
+    if (user.planHistory.length > 0 && user.activePlanId) {
+      const lastPlanEntry = user.planHistory[user.planHistory.length - 1];
+
+      if (lastPlanEntry.planId.toString() === user.activePlanId.toString()) {
+        lastPlanEntry.deactivationDate = new Date();
+      }
     }
-    account.activePlan = planId;
-    await account.save({ session });
+
+    // Add new plan entry to history
+    user.planHistory.push({ planId: plan._id, activationDate: new Date() });
+    user.activePlanId = plan._id;
+    user.tierActivationDate = new Date();
+
+    if (plan.type === "CREDIT") {
+      user.isProSubscriber = false;
+      user.proSubscriptionEndDate = undefined;
+      user.eventCredits += plan.eventCredits || 0;
+    } else {
+      user.isProSubscriber = true;
+      user.eventCredits = 0;
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + (plan.durationDays || 30)); // Default to 30 days if not set
+      user.proSubscriptionEndDate = endDate;
+    }
+
+    await applyPlanFeaturesToUser(user, plan._id, session);
+
+    await user.save({ session });
 
     await session.commitTransaction();
 

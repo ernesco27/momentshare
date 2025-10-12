@@ -56,60 +56,56 @@ const planFeatures: Record<
   { featureKey: string; enabled: boolean; limit?: number }[]
 > = {
   FREE: [
-    { featureKey: "VIDEO_UPLOADS", enabled: false },
-    { featureKey: "CUSTOM_BRANDING", enabled: false },
-
+    { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: 1 },
+    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 0.5 }, // 500mb
+    { featureKey: "CAN_REMOVE_WATERMARK", enabled: false },
+    { featureKey: "CAN_ACCESS_ANALYTICS", enabled: false },
     { featureKey: "MAX_UPLOADS", enabled: true, limit: 100 },
-    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 1 }, // 1 GB
-    { featureKey: "RETENTION_DAYS", enabled: true, limit: 7 }, // 1 week
-    { featureKey: "DOWNLOAD_ACCESS", enabled: false },
-    { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
-    { featureKey: "RESELL_RIGHT", enabled: false },
+    { featureKey: "RETENTION_DAYS", enabled: true, limit: 3 }, // 3 days
     { featureKey: "PRIORITY_SUPPORT", enabled: false },
-    { featureKey: "WATERMARK_REMOVAL", enabled: false },
-    { featureKey: "ACCESS_ANALYTICS", enabled: false },
+    { featureKey: "VIDEO_UPLOADS", enabled: false },
+    { featureKey: "RESELL_RIGHT", enabled: false },
+    { featureKey: "CUSTOM_BRANDING", enabled: false },
+    { featureKey: "DOWNLOAD_ACCESS", enabled: false },
   ],
   STANDARD: [
-    { featureKey: "VIDEO_UPLOADS", enabled: false },
-    { featureKey: "CUSTOM_BRANDING", enabled: false },
-    { featureKey: "ANALYTICS", enabled: false },
+    { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: 3 },
+    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 1 }, // 1GB
+    { featureKey: "CAN_REMOVE_WATERMARK", enabled: true },
+    { featureKey: "CAN_ACCESS_ANALYTICS", enabled: true },
     { featureKey: "MAX_UPLOADS", enabled: true, limit: 500 },
-    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 5 }, // 5 GB
-    { featureKey: "RETENTION_DAYS", enabled: true, limit: 14 }, // 2 weeks
-    { featureKey: "DOWNLOAD_ACCESS", enabled: true },
-    { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
-    { featureKey: "RESELL_RIGHT", enabled: false },
+    { featureKey: "RETENTION_DAYS", enabled: true, limit: 7 }, // 7 days
     { featureKey: "PRIORITY_SUPPORT", enabled: false },
-    { featureKey: "WATERMARK_REMOVAL", enabled: true },
-    { featureKey: "ACCESS_ANALYTICS", enabled: true },
+    { featureKey: "VIDEO_UPLOADS", enabled: false },
+    { featureKey: "RESELL_RIGHT", enabled: false },
+    { featureKey: "CUSTOM_BRANDING", enabled: false },
+    { featureKey: "DOWNLOAD_ACCESS", enabled: true },
   ],
   PREMIUM: [
-    { featureKey: "VIDEO_UPLOADS", enabled: true },
-    { featureKey: "CUSTOM_BRANDING", enabled: true },
-    { featureKey: "ANALYTICS", enabled: true },
-    { featureKey: "MAX_UPLOADS", enabled: true, limit: 2000 },
-    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 20 }, // 20 GB
-    { featureKey: "RETENTION_DAYS", enabled: true, limit: 30 }, // 1 month
-    { featureKey: "DOWNLOAD_ACCESS", enabled: true },
-    { featureKey: "MAX_EVENTS", enabled: true, limit: 1 },
-    { featureKey: "RESELL_RIGHT", enabled: false },
+    { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: 5 },
+    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 5 }, // 5GB
+    { featureKey: "CAN_REMOVE_WATERMARK", enabled: true },
+    { featureKey: "CAN_ACCESS_ANALYTICS", enabled: true },
+    { featureKey: "MAX_UPLOADS", enabled: true, limit: 1000 },
+    { featureKey: "RETENTION_DAYS", enabled: true, limit: 14 }, // 14 days
     { featureKey: "PRIORITY_SUPPORT", enabled: true },
-    { featureKey: "WATERMARK_REMOVAL", enabled: true },
-    { featureKey: "ACCESS_ANALYTICS", enabled: true },
+    { featureKey: "VIDEO_UPLOADS", enabled: true },
+    { featureKey: "RESELL_RIGHT", enabled: false },
+    { featureKey: "CUSTOM_BRANDING", enabled: true },
+    { featureKey: "DOWNLOAD_ACCESS", enabled: true },
   ],
   PRO: [
-    { featureKey: "VIDEO_UPLOADS", enabled: true },
-    { featureKey: "CUSTOM_BRANDING", enabled: true },
-    { featureKey: "ANALYTICS", enabled: true },
-    { featureKey: "MAX_UPLOADS", enabled: true }, // unlimited
-    { featureKey: "STORAGE_LIMIT_GB", enabled: true }, // unlimited
-    { featureKey: "RETENTION_DAYS", enabled: true, limit: 30 }, // 1 month
-    { featureKey: "DOWNLOAD_ACCESS", enabled: true },
-    { featureKey: "MAX_EVENTS", enabled: true },
-    { featureKey: "RESELL_RIGHT", enabled: true },
+    { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: -1 }, //unlimited
+    { featureKey: "STORAGE_LIMIT_GB", enabled: true, limit: 5 }, // 10GB
+    { featureKey: "CAN_REMOVE_WATERMARK", enabled: true },
+    { featureKey: "CAN_ACCESS_ANALYTICS", enabled: true },
+    { featureKey: "MAX_UPLOADS", enabled: true, limit: -1 }, //unlimited
+    { featureKey: "RETENTION_DAYS", enabled: true, limit: 14 }, // 30 days
     { featureKey: "PRIORITY_SUPPORT", enabled: true },
-    { featureKey: "WATERMARK_REMOVAL", enabled: true },
-    { featureKey: "ACCESS_ANALYTICS", enabled: true },
+    { featureKey: "VIDEO_UPLOADS", enabled: true },
+    { featureKey: "RESELL_RIGHT", enabled: true },
+    { featureKey: "CUSTOM_BRANDING", enabled: true },
+    { featureKey: "DOWNLOAD_ACCESS", enabled: true },
   ],
 };
 

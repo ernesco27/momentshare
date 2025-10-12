@@ -1,23 +1,19 @@
 "use server";
 
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 
-import { Event, Media, Plan, PlanFeature, User } from "@/database";
+import { Event, Media, Plan, User } from "@/database";
 import { IEventDoc } from "@/database/event.model";
-import {
-  ActionResponse,
-  ErrorResponse,
-  GlobalEvent,
-  GlobalUser,
-} from "@/types/global";
+import { ActionResponse, ErrorResponse, GlobalEvent } from "@/types/global";
 
 import cloudinary from "../cloudinary";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { NotFoundError, UnauthorizedError } from "../http-errors";
+import { applyPlanFeaturesToUser } from "../utils";
 import {
   createEventSchema,
   deleteEventSchema,
@@ -26,75 +22,6 @@ import {
   getEventSchemaQR,
   getEventsSchema,
 } from "../validations";
-
-const applyPlanFeaturesToUser = async (
-  user: GlobalUser,
-  planId: Types.ObjectId,
-  session: mongoose.ClientSession
-): Promise<GlobalUser> => {
-  const plan = await Plan.findById(planId).session(session);
-
-  if (!plan) {
-    throw new NotFoundError("Plan");
-  }
-
-  const features = await PlanFeature.find({ planId }).session(session);
-
-  user.maxActiveEvents = 1;
-  user.storageLimitGB = 0.5;
-  user.canRemoveWatermark = false;
-  user.canAccessAnalytics = false;
-  user.activePlan = plan._id;
-  user.maxUploads = 100;
-  user.retentionDays = 3;
-  user.prioritySupport = false;
-  user.videoUploads = false;
-  user.resellerRight = false;
-  user.customBranding = false;
-  user.downloadAccess = false;
-
-  features.forEach((feature) => {
-    switch (feature.featureKey) {
-      case "MAX_ACTIVE_EVENTS":
-        user.maxActiveEvents = feature.limit || 1; // Default to 1 if limit is null
-        break;
-      case "STORAGE_LIMIT_GB":
-        user.storageLimitGB = feature.limit || 0.5;
-        break;
-      case "CAN_REMOVE_WATERMARK":
-        user.canRemoveWatermark = feature.enabled;
-        break;
-      case "CAN_ACCESS_ANALYTICS":
-        user.canAccessAnalytics = feature.enabled;
-        break;
-      case "MAX_UPLOADS":
-        user.maxUploads = feature.limit || 100;
-        break;
-      case "RETENTION_DAYS":
-        user.retentionDays = feature.limit || 3;
-        break;
-      case "PRIORITY_SUPPORT":
-        user.prioritySupport = feature.enabled;
-        break;
-      case "VIDEO_UPLOADS":
-        user.videoUploads = feature.enabled;
-        break;
-      case "RESELL_RIGHT":
-        user.resellerRight = feature.enabled;
-        break;
-      case "CUSTOM_BRANDING":
-        user.customBranding = feature.enabled;
-        break;
-      case "DOWNLOAD_ACCESS":
-        user.downloadAccess = feature.enabled;
-        break;
-      default:
-        break;
-    }
-  });
-
-  return user;
-};
 
 export const createEvent = async (
   params: createEventParams
