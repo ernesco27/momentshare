@@ -39,6 +39,7 @@ interface GlobalUser {
   eventCredits: number;
   isProSubscriber: boolean;
   proSubscriptionEndDate?: Date;
+  tierActivationDate: Date;
   planHistory: {
     planId: string;
     activationDate: Date;

@@ -24,7 +24,7 @@ export interface IUser {
   retentionDays: number;
   prioritySupport: boolean;
   videoUploads: boolean;
-  resellerRight: boolean;
+  resellRight: boolean;
   customBranding: boolean;
   downloadAccess: boolean;
 }
@@ -41,6 +41,7 @@ const UserSchema = new Schema<IUser>(
     eventCredits: { type: Number, default: 0, required: true },
     isProSubscriber: { type: Boolean, default: false, required: true },
     proSubscriptionEndDate: { type: Date },
+    tierActivationDate: { type: Date, default: Date.now, required: true },
     planHistory: [
       {
         planId: { type: Schema.Types.ObjectId, ref: "Plan", required: true },
@@ -56,7 +57,7 @@ const UserSchema = new Schema<IUser>(
     retentionDays: { type: Number, default: 3, required: true },
     prioritySupport: { type: Boolean, default: false, required: true },
     videoUploads: { type: Boolean, default: false, required: true },
-    resellerRight: { type: Boolean, default: false, required: true },
+    resellRight: { type: Boolean, default: false, required: true },
     customBranding: { type: Boolean, default: false, required: true },
     downloadAccess: { type: Boolean, default: false, required: true },
   },

@@ -197,9 +197,9 @@ export const getPlanSchema = z.object({
 });
 
 export const createTransactionSchema = z.object({
-  accountId: z.string().min(1, { message: "Account ID is required." }),
+  userId: z.string().min(1, { message: "User ID is required." }),
   planId: z.string().min(1, { message: "Plan ID is required." }),
-  amount: z.number().min(1, { message: "Amount must be at least 1." }),
+  // amount: z.number().min(1, { message: "Amount must be at least 1." }),
   status: z.enum(["PENDING", "SUCCESS", "FAILED"]).optional(),
   reference: z.string().min(1, { message: "Reference is required." }),
   email: z.string().email({ message: "Please provide a valid email address." }),
@@ -229,6 +229,10 @@ export const getMediaSchema = z.object({
 });
 
 export const getAccountSchema = z.object({
+  userId: z.string().min(1, { message: "User ID is required." }),
+});
+
+export const getUserSchema = z.object({
   userId: z.string().min(1, { message: "User ID is required." }),
 });
 

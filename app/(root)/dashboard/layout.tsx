@@ -8,7 +8,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       <div className="flex">
         <LeftSidebar />
         <section className="flex min-h-screen flex-1 flex-col px-6 py-8 max-md:pb-14 sm:px-14 ">
-          <div className="mx-auto w-full max-w-5xl">{children}</div>
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
         </section>
       </div>
     </main>

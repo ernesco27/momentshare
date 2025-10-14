@@ -44,7 +44,7 @@ export async function signUpWithCredentials(
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const freePlan = await Plan.findOne({ name: "FREE" });
-    if (!freePlan) throw new NotFoundError("Free plan");
+    if (!freePlan) throw new NotFoundError("Free");
 
     const [newUser] = await User.create(
       [
@@ -69,7 +69,7 @@ export async function signUpWithCredentials(
           retentionDays: freePlan.retentionDays || 3,
           prioritySupport: false,
           videoUploads: false,
-          resellerRight: false,
+          resellRight: false,
           customBranding: false,
           downloadAccess: false,
         },

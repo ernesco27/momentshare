@@ -149,6 +149,7 @@ export async function POST(request: Request) {
     } else {
       user.isProSubscriber = true;
       user.eventCredits = 0;
+      user.tierActivationDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + (plan.durationDays || 30)); // Default to 30 days if not set
       user.proSubscriptionEndDate = endDate;

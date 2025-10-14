@@ -19,6 +19,10 @@ interface getAccountParams {
   userId: string;
 }
 
+interface getUserParams {
+  userId: string;
+}
+
 interface getPlansParams {
   planId: string;
 }

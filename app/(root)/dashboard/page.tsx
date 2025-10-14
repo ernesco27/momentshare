@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Dashboard from "@/components/modules/dashboard/Dashboard";
 import ROUTES from "@/constants/route";
-import { getAccount } from "@/lib/actions/account.action";
 import { getEvents } from "@/lib/actions/event.action";
 import { getPlan } from "@/lib/actions/plan.action";
+import { getUser } from "@/lib/actions/user.action";
 
 const DashboardPage = async () => {
   const session = await auth();
@@ -13,10 +13,18 @@ const DashboardPage = async () => {
 
   if (!id) return redirect(ROUTES.SIGN_IN);
 
-  const { data: account } = await getAccount({ userId: id! });
+  const { data: user } = await getUser({ userId: id! });
 
-  const { name, accountType, activePlan, eventCredits, planDuration } =
-    account!;
+  console.log("user", user);
+
+  const {
+    name,
+    activePlan,
+    eventCredits,
+    isProSubscriber,
+    proSubscriptionEndDate,
+    tierActivationDate,
+  } = user!;
 
   const [planResponse, eventResponse] = await Promise.all([
     getPlan({ planId: activePlan! }),
@@ -36,9 +44,7 @@ const DashboardPage = async () => {
     <>
       <Dashboard
         name={name}
-        accountType={accountType}
         planName={planName}
-        planDuration={planDuration!}
         eventCredits={eventCredits!}
         events={events!}
         EventError={eventError}
@@ -48,6 +54,9 @@ const DashboardPage = async () => {
         totalMedia={totalMedia}
         totalMaxUploads={totalMaxUploads}
         totalEvents={totalEvents}
+        isProSubscriber={isProSubscriber}
+        proSubscriptionEndDate={proSubscriptionEndDate!}
+        tierActivationDate={tierActivationDate}
       />
     </>
   );

@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { addMonths, differenceInDays, format } from "date-fns";
 import gsap from "gsap";
 import { ScrollTrigger, SplitText } from "gsap/all";
 import { Types } from "mongoose";
@@ -7,7 +8,7 @@ import { twMerge } from "tailwind-merge";
 
 import { IMAGE_FORMATS, VIDEO_FORMATS } from "@/constants";
 import { Plan, PlanFeature } from "@/database";
-import { GlobalMedia, GlobalUser } from "@/types/global";
+import { GlobalMedia, GlobalPlan, GlobalUser } from "@/types/global";
 
 import handleError from "./handlers/error";
 import { NotFoundError } from "./http-errors";
@@ -169,4 +170,25 @@ export const applyPlanFeaturesToUser = async (
   });
 
   return user;
+};
+
+export const getExpiryDetails = (date?: string | Date) => {
+  if (!date) return null;
+  const parsed = new Date(date);
+  if (isNaN(parsed.getTime())) return null;
+
+  const expiry = addMonths(parsed, 1);
+  const daysLeft = differenceInDays(expiry, new Date());
+  const totalDays = differenceInDays(expiry, parsed);
+  const progress = Math.max(0, Math.min(100, (daysLeft / totalDays) * 100));
+
+  return { expiryDate: format(expiry, "MMM dd, yyyy"), daysLeft, progress };
+};
+
+export const getFormattedDate = (date?: string | Date) => {
+  if (!date) return "Not yet activated";
+  const parsed = new Date(date);
+  return isNaN(parsed.getTime())
+    ? "Invalid date"
+    : format(parsed, "MMM dd, yyyy");
 };
