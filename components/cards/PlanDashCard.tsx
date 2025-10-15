@@ -149,7 +149,7 @@ const PlanDashCards = ({
               />
             </div>
 
-            <p className="text-xs text-gray-400 flex justify-between max-sm:hidden">
+            <p className="text-xs text-gray-400 flex justify-between">
               <span>{expiryDetails.progress.toFixed(0)}% remaining</span>
               <span>
                 {expiryDetails.daysLeft > 0
@@ -157,7 +157,7 @@ const PlanDashCards = ({
                   : "Expired"}
               </span>
             </p>
-            <p className="text-xs text-light400_light500 italic max-sm:hidden">
+            <p className="text-xs text-light400_light500 italic">
               Expires on {expiryDetails.expiryDate}
             </p>
           </div>

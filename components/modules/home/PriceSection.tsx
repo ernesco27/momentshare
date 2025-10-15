@@ -340,7 +340,6 @@ const PriceSection = ({ plans, userId, email }: Props) => {
                           Sign In to Subscribe
                         </Button>
                       ) : paystackProps ? (
-                        // Use the dynamically imported component
                         <DynamicPaystackButton
                           {...paystackProps}
                           onSuccess={(reference) =>
