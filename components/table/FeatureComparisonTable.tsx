@@ -64,7 +64,7 @@ const FeatureComparisonTable = ({ plans, popularPlan = "STANDARD" }: Props) => {
       } else {
         gsap.from(".feature-table", {
           opacity: 0,
-          y: 50,
+          y: 100,
           duration: 1,
           ease: "power3.out",
           scrollTrigger: {
@@ -85,12 +85,14 @@ const FeatureComparisonTable = ({ plans, popularPlan = "STANDARD" }: Props) => {
         Compare All Features
       </h2>
 
-      {/* 💻 Desktop Table */}
+      {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200 shadow-sm feature-table">
-        <table className="min-w-full text-sm">
+        <table className="min-w-full text-sm card-wrapper light-border">
           <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="p-3 font-semibold text-gray-700">Feature</th>
+            <tr className="background-dark400_light900 text-left">
+              <th className="p-3 font-semibold text-dark300_light700">
+                FEATURE
+              </th>
               {plans.map((plan) => {
                 const isHighlighted = plan.name === popularPlan;
                 return (
@@ -98,8 +100,8 @@ const FeatureComparisonTable = ({ plans, popularPlan = "STANDARD" }: Props) => {
                     key={plan._id}
                     className={`p-3 text-center font-semibold ${
                       isHighlighted
-                        ? "bg-indigo-50 text-indigo-700 border-b-2 border-indigo-500"
-                        : "text-gray-700"
+                        ? "bg-primary-100/20 text-primary-500 border-b-2 border-primary-500"
+                        : "text-dark300_light700"
                     }`}
                   >
                     {plan.name}
@@ -113,10 +115,12 @@ const FeatureComparisonTable = ({ plans, popularPlan = "STANDARD" }: Props) => {
               <tr
                 key={featureKey}
                 className={`border-t ${
-                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  index % 2 === 0
+                    ? "background-light900_dark300"
+                    : "background-light800_dark200"
                 }`}
               >
-                <td className="p-3 text-gray-600 capitalize">
+                <td className="p-3 text-dark300_light700 capitalize">
                   {featureKey.replaceAll("_", " ")}
                 </td>
                 {plans.map((plan) => {
@@ -125,7 +129,7 @@ const FeatureComparisonTable = ({ plans, popularPlan = "STANDARD" }: Props) => {
                     <td
                       key={`${plan._id}-${featureKey}`}
                       className={`p-3 text-center ${
-                        isHighlighted ? "bg-indigo-50" : ""
+                        isHighlighted ? "bg-primary-100/20" : ""
                       }`}
                     >
                       {getFeatureDisplay(plan, featureKey)}
