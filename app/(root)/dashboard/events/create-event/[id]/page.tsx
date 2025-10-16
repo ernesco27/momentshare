@@ -5,19 +5,27 @@ import { redirect } from "next/navigation";
 import EventCreationForm from "@/components/forms/EventCreationForm";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/route";
-import { getAccount } from "@/lib/actions/account.action";
 import { getPlan } from "@/lib/actions/plan.action";
+import { getUser } from "@/lib/actions/user.action";
 import { RouteParams } from "@/types/global";
 
 const CreateEvent = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  const { data: account } = await getAccount({ userId: id });
+  const { data: user } = await getUser({ userId: id });
 
-  const { activePlan, eventCredits } = account!;
+  const { activePlan, eventCredits, isProSubscriber, proSubscriptionEndDate } =
+    user!;
 
-  if (eventCredits === 0) {
-    return redirect("/sign-in");
+  const isActiveSubscription = isProSubscriber
+    ? new Date(proSubscriptionEndDate!) > new Date()
+    : false;
+
+  if (
+    (!isProSubscriber && eventCredits === 0) ||
+    (isProSubscriber && !isActiveSubscription)
+  ) {
+    return redirect("/pricing");
   }
 
   const { data: plan } = await getPlan({ planId: activePlan! });

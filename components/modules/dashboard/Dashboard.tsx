@@ -51,10 +51,6 @@ const Dashboard = ({
   const router = useRouter();
   const [selectedEvent, setSelectedEvent] = useState<GlobalEvent | undefined>();
 
-  console.log("totalEvents", totalEvents);
-
-  console.log("totalMedia", totalMedia);
-
   const handleCreateEvent = () => {
     if (eventCredits === 0 && !isProSubscriber) {
       toast.error(

@@ -154,9 +154,8 @@ export const createEventSchema = z.object({
     .max(500, { message: "Description cannot exceed 500 characters." }),
   startDate: z.date(),
   expiryDate: z.date(),
-  maxUploads: z
-    .number()
-    .min(1, { message: "Max uploads per attendee must be at least 1." }),
+  maxUploads: z.number(),
+  // .min(1, { message: "Max uploads per attendee must be at least 1." }),
   loc: z.string().min(1, { message: "Location is required." }),
   coverImage: z.string().optional(),
   themeColor: z.string().min(1, { message: "Theme color is required." }),

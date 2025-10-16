@@ -70,47 +70,6 @@ const EventCreationForm = ({
 
   const router = useRouter();
 
-  // const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
-  //   const maxUploads = planFeatures.find(
-  //     (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
-  //   );
-
-  //   const retentionDays = planFeatures.find(
-  //     (feature) => feature.featureKey === FEATURE.RETENTION_DAYS
-  //   );
-
-  //   const expiryDate = getEventExpiryDate(
-  //     values.startDate,
-  //     retentionDays?.limit
-  //   );
-
-  //   try {
-  //     setIsSubmitting(true);
-
-  //     const result = await createEvent({
-  //       title: values.title,
-  //       description: values.description,
-  //       loc: values.location,
-  //       startDate: values.startDate,
-  //       coverImage: coverPhoto?.secure_url || "",
-  //       expiryDate: expiryDate,
-  //       maxUploads: maxUploads?.limit || 0,
-  //       themeColor: values.themeColor,
-  //     });
-
-  //     if (result?.success) {
-  //       toast.success("Event created successfully!");
-
-  //       router.push(ROUTES.EVENTS);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error("Failed to create event");
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
     const maxUploads = planFeatures?.find(
       (feature) => feature.featureKey === FEATURE.MAX_UPLOADS

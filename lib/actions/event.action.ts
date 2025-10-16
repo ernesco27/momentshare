@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
+import { cache } from "react";
 
 import { Event, Media, Plan, User } from "@/database";
 import { IEventDoc } from "@/database/event.model";
@@ -87,7 +88,7 @@ export const createEvent = async (
 
         await applyPlanFeaturesToUser(existingUser, freePlan._id, session);
         existingUser.eventCredits = freePlan.credits || 1;
-        //  existingUser.tierActivationDate = new Date(); // New activation date for Free
+        existingUser.tierActivationDate = new Date();
         existingUser.planHistory.push({
           planId: freePlan._id,
           activationDate: new Date(),
@@ -194,7 +195,7 @@ export const createEvent = async (
   }
 };
 
-export const getEvents = async (
+export const getEvents = cache(async function getEvents(
   params: getEventsParams
 ): Promise<
   ActionResponse<{
@@ -204,7 +205,7 @@ export const getEvents = async (
     totalMaxUploads: number;
     totalEvents: number;
   }>
-> => {
+> {
   const validationResult = await action({
     params,
     schema: getEventsSchema,
@@ -271,11 +272,11 @@ export const getEvents = async (
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-};
+});
 
-export const getEvent = async (
+export const getEvent = cache(async function getEvent(
   params: getEventParams
-): Promise<ActionResponse<GlobalEvent>> => {
+): Promise<ActionResponse<GlobalEvent>> {
   const validationResult = await action({
     params,
     schema: getEventSchema,
@@ -304,11 +305,11 @@ export const getEvent = async (
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-};
+});
 
-export const getEventByQR = async (
+export const getEventByQR = cache(async function getEventByQR(
   params: getEventParamsQR
-): Promise<ActionResponse<GlobalEvent>> => {
+): Promise<ActionResponse<GlobalEvent>> {
   const validationResult = await action({
     params,
     schema: getEventSchemaQR,
@@ -335,7 +336,7 @@ export const getEventByQR = async (
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-};
+});
 
 export const deleteEvent = async (
   params: DeleteEventParams
@@ -427,9 +428,9 @@ export const deleteEvent = async (
   }
 };
 
-export const editEvent = async (
+export const editEvent = cache(async function editEvent(
   params: EditEventParams
-): Promise<ActionResponse<IEventDoc>> => {
+): Promise<ActionResponse<IEventDoc>> {
   const validationResult = await action({
     params,
     schema: editEventSchema,
@@ -493,4 +494,4 @@ export const editEvent = async (
   } finally {
     await session.endSession();
   }
-};
+});
