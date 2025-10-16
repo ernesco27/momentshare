@@ -43,6 +43,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
     startDate,
     maxUploads,
     _id,
+    themeColor,
   } = event!;
 
   const router = useRouter();
@@ -100,7 +101,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
       const pageWidth = doc.internal.pageSize.getWidth();
       let yOffset = 10;
 
-      const themeColor = "#1E90FF";
+      //  const themeColor = "#1E90FF";
 
       const hexToRgb = (hex: string) => {
         const bigint = parseInt(hex.slice(1), 16);

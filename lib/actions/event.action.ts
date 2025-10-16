@@ -46,6 +46,7 @@ export const createEvent = async (
     expiryDate,
     maxUploads,
     themeColor,
+    storageLimit,
   } = validationResult.params!;
 
   const userId = validationResult!.session!.user!.id;
@@ -165,6 +166,7 @@ export const createEvent = async (
           themeColor,
           status: "active",
           storageUsedBytes: 0,
+          storageLimit,
         },
       ],
       { session }

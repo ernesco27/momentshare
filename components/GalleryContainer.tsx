@@ -8,7 +8,8 @@ import Lightbox from "yet-another-react-lightbox";
 import Video from "yet-another-react-lightbox/plugins/video";
 
 import { VIDEO_FORMATS } from "@/constants";
-import { EMPTY_EVENT, EMPTY_GALLERY } from "@/constants/states";
+import { EMPTY_GALLERY } from "@/constants/states";
+import { bytesToGigabytes, getVideoThumbnailUrl } from "@/lib/utils";
 import { GlobalEvent, GlobalMedia } from "@/types/global";
 
 import MediaCard from "./cards/MediaCard";
@@ -41,10 +42,32 @@ const MediaGallery = ({
 
   const router = useRouter();
 
-  const slides = media.map((m) => ({
-    src: m.fileUrl,
-    type: VIDEO_FORMATS.includes(m.fileType) ? "video" : "image",
-  }));
+  // const slides = media.map((m) => ({
+  //   src: m.fileUrl,
+  //   type: VIDEO_FORMATS.includes(m.fileType) ? "video" : "image",
+  // }));
+
+  const slides = media.map((m) => {
+    const isVideo = VIDEO_FORMATS.includes(m.fileType);
+
+    if (isVideo) {
+      return {
+        type: "video",
+        poster: getVideoThumbnailUrl(m.fileUrl),
+        sources: [
+          {
+            src: m.fileUrl,
+            type: `video/${m.fileType}`,
+          },
+        ],
+      };
+    }
+
+    return {
+      src: m.fileUrl,
+      type: "image",
+    };
+  });
 
   console.log("slides", slides);
 
@@ -70,7 +93,7 @@ const MediaGallery = ({
             className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
           >
             <DownloadCloudIcon className="h-4 w-4 mr-2" />
-            <span className="max-sm:hidden">{`Download All (${event.storageUsedBytes}GB)`}</span>
+            <span className="max-sm:hidden">{`Download All (${bytesToGigabytes(event.storageUsedBytes)})`}</span>
           </Button>
         </div>
         <div className="text-center mb-8">
@@ -78,7 +101,7 @@ const MediaGallery = ({
             {event.title}
           </h1>
           <p className="text-light400_light500 small-regular lg:paragraph-medium">
-            {` ${totalMedia} photos collected • ${event.storageUsedBytes}GB/${event.storageLimit}GB used • Expires
+            {` ${totalMedia} photos/videos collected • ${bytesToGigabytes(event.storageUsedBytes)}/${event.storageLimit}GB used • Expires
             ${format(new Date(event.expiryDate), "MMM d, yyyy")}`}
           </p>
         </div>
@@ -110,9 +133,7 @@ const MediaGallery = ({
             slides={slides}
             index={index}
             plugins={[Video]}
-            carousel={{
-              finite: false, // loop navigation
-            }}
+            carousel={{ finite: false }}
           />
         )}
       </div>

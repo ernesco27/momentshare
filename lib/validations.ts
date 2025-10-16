@@ -257,3 +257,7 @@ export const getEventMediaSchema = PaginatedSearchParamsSchema.extend({
 export const deleteEventSchema = z.object({
   eventId: z.string().min(1, { message: "Event ID is required." }),
 });
+
+export const mediaUploadFormSchema = z.object({
+  fullName: z.string().min(1, { message: "Full name is required." }),
+});

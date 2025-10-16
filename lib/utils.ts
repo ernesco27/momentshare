@@ -89,16 +89,32 @@ export const getMediaTypeStats = (media: GlobalMedia[]) => {
   ];
 };
 
-export const getVideoThumbnailUrl = (videoUrl: string, second: number = 0) => {
+// export const getVideoThumbnailUrl = (videoUrl: string, second: number = 0) => {
+//   try {
+//     const url = new URL(videoUrl);
+//     const parts = url.pathname.split("/upload/");
+//     if (parts.length !== 2) return videoUrl;
+
+//     return `${url.origin}${parts[0]}/upload/so_${second}/frame.jpg/${parts[1].replace(/\.[^/.]+$/, ".jpg")}`;
+//   } catch (error) {
+//     handleError(error);
+//     console.error("Invalid Cloudinary video URL:", videoUrl);
+//     return videoUrl;
+//   }
+// };
+
+export const getVideoThumbnailUrl = (videoUrl: string, second: number = 2) => {
   try {
     const url = new URL(videoUrl);
     const parts = url.pathname.split("/upload/");
     if (parts.length !== 2) return videoUrl;
 
-    return `${url.origin}${parts[0]}/upload/so_${second}/frame.jpg/${parts[1].replace(/\.[^/.]+$/, ".jpg")}`;
+    // Insert Cloudinary transformation for extracting a JPG frame
+    const transformedPath = `/upload/so_${second},f_jpg,q_auto/${parts[1].replace(/\.[^/.]+$/, ".jpg")}`;
+
+    return `${url.origin}${transformedPath}`;
   } catch (error) {
-    handleError(error);
-    console.error("Invalid Cloudinary video URL:", videoUrl);
+    console.error("Invalid Cloudinary video URL:", videoUrl, error);
     return videoUrl;
   }
 };
@@ -192,3 +208,29 @@ export const getFormattedDate = (date?: string | Date) => {
     ? "Invalid date"
     : format(parsed, "MMM dd, yyyy");
 };
+
+export function isFeatureEnabledForPlan(
+  plans: GlobalPlan[],
+  planId: string,
+  featureKey: string
+): boolean {
+  const plan = plans.find((p) => p._id === planId);
+  if (!plan) return false;
+
+  return plan.features.some(
+    (feature) => feature.key === featureKey && feature.enabled
+  );
+}
+
+export function bytesToGigabytes(bytes: number, decimals: number = 2): string {
+  if (bytes === 0) return "0 MB";
+
+  const mb = bytes / 1024 ** 2;
+  const gb = bytes / 1024 ** 3;
+
+  if (gb >= 1) {
+    return `${gb.toFixed(decimals)} GB`;
+  } else {
+    return `${mb.toFixed(decimals)} MB`;
+  }
+}

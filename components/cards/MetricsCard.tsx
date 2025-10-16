@@ -14,6 +14,7 @@ import {
   Cell,
 } from "recharts";
 
+import { VIDEO_FORMATS } from "@/constants";
 import ROUTES from "@/constants/route";
 import {
   getMediaTypeStats,
@@ -119,7 +120,7 @@ const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
 
             <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
               {recentMedia.map((media, index) => {
-                const isVideo = media.fileType?.startsWith("video");
+                const isVideo = VIDEO_FORMATS.includes(media.fileType);
                 return (
                   <div
                     key={media._id}
