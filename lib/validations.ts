@@ -159,6 +159,9 @@ export const createEventSchema = z.object({
   loc: z.string().min(1, { message: "Location is required." }),
   coverImage: z.string().optional(),
   themeColor: z.string().min(1, { message: "Theme color is required." }),
+  storageLimit: z
+    .number()
+    .min(0.5, { message: "Storage limit must be at least 0.5 GB." }),
 });
 
 export const editEventSchema = z.object({

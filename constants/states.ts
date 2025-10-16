@@ -29,3 +29,9 @@ export const EMPTY_PLAN = {
   title: "Ahh, No Plans Yet!",
   message: "Plans will be available soon. Check back later",
 };
+
+export const EMPTY_GALLERY = {
+  title: "Ahh, No Media Yet!",
+  message:
+    "Your event gallery is empty. Maybe it’s waiting for your upcoming event to get things rolling.",
+};

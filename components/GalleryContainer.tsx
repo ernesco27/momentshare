@@ -8,7 +8,7 @@ import Lightbox from "yet-another-react-lightbox";
 import Video from "yet-another-react-lightbox/plugins/video";
 
 import { VIDEO_FORMATS } from "@/constants";
-import { EMPTY_EVENT } from "@/constants/states";
+import { EMPTY_EVENT, EMPTY_GALLERY } from "@/constants/states";
 import { GlobalEvent, GlobalMedia } from "@/types/global";
 
 import MediaCard from "./cards/MediaCard";
@@ -70,7 +70,7 @@ const MediaGallery = ({
             className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer"
           >
             <DownloadCloudIcon className="h-4 w-4 mr-2" />
-            <span className="max-sm:hidden">Download All</span>
+            <span className="max-sm:hidden">{`Download All (${event.storageUsedBytes}GB)`}</span>
           </Button>
         </div>
         <div className="text-center mb-8">
@@ -78,15 +78,15 @@ const MediaGallery = ({
             {event.title}
           </h1>
           <p className="text-light400_light500 small-regular lg:paragraph-medium">
-            {totalMedia} photos collected • Expires{" "}
-            {format(new Date(event.expiryDate), "MMM d, yyyy")}
+            {` ${totalMedia} photos collected • ${event.storageUsedBytes}GB/${event.storageLimit}GB used • Expires
+            ${format(new Date(event.expiryDate), "MMM d, yyyy")}`}
           </p>
         </div>
         <DataRenderer
           data={media}
           success={success}
           error={error}
-          empty={EMPTY_EVENT}
+          empty={EMPTY_GALLERY}
           render={(media) => (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
               {media.map((item, index) => (

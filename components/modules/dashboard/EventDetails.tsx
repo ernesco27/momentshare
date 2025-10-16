@@ -328,7 +328,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
                 </Button>
 
                 <Collapsible>
-                  <CollapsibleTrigger className="w-full rounded-lg flex-center p-[5px] primary-gradient hover:shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:hover:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out cursor-pointer">
+                  <CollapsibleTrigger className="w-full text-white  rounded-lg flex-center p-[5px] primary-gradient hover:shadow-[0_0_4px_1px_rgba(245,158,11,0.6)] dark:hover:shadow-[0_0_15px_2px_rgba(245,158,11,0.7)] transition duration-300 ease-in-out cursor-pointer">
                     <Download className="h-4 w-4 mr-2 " />
                     Download QR Code
                   </CollapsibleTrigger>
@@ -396,7 +396,7 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
                     Upload Limit
                   </h3>
                   <p className="text-dark400_light900 text-center my-2 h1-bold font-bold">
-                    {maxUploads}
+                    {maxUploads && maxUploads !== -1 ? maxUploads : "Unlimited"}
                   </p>
                 </div>
               </div>

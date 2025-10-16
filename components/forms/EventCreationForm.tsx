@@ -58,8 +58,6 @@ const EventCreationForm = ({
 
   const [isPending, startTransition] = useTransition();
 
-  // const [coverPhoto, setCoverPhoto] = useState<any>();
-
   const [uploading, setUploading] = useState(false);
 
   const [coverPhoto, setCoverPhoto] = useState<any>(
@@ -73,6 +71,10 @@ const EventCreationForm = ({
   const handleCreateEvent = async (values: z.infer<typeof eventFormSchema>) => {
     const maxUploads = planFeatures?.find(
       (feature) => feature.featureKey === FEATURE.MAX_UPLOADS
+    );
+
+    const StorageLimit = planFeatures?.find(
+      (feature) => feature.featureKey === FEATURE.STORAGE_LIMIT_GB
     );
 
     const retentionDays = planFeatures?.find(
@@ -114,6 +116,7 @@ const EventCreationForm = ({
         expiryDate: expiryDate,
         maxUploads: maxUploads?.limit || 0,
         themeColor: values.themeColor,
+        storageLimit: StorageLimit?.limit || 0.5,
       });
 
       if (result?.success) {

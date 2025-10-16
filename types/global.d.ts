@@ -96,6 +96,7 @@ interface GlobalEvent {
   totalMedia?: number;
   status: string;
   storageUsedBytes: number;
+  storageLimit: number;
 }
 
 interface GlobalPlan {

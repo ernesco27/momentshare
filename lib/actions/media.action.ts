@@ -1,6 +1,7 @@
 "use server";
 
 import mongoose from "mongoose";
+import { cache } from "react";
 
 import { Event, Media, User } from "@/database";
 import { ActionResponse, ErrorResponse, GlobalMedia } from "@/types/global";
@@ -81,10 +82,6 @@ export const createEventMedia = async (
       );
     }
 
-    // if (event.storageLimitBytes !== -1 && (event.storageUsedBytes + newStorageBytes) > event.storageLimitBytes) {
-    //     throw new Error(`This event has exceeded its storage limit.`);
-    // }
-
     const mediaDocs = await Media.create(
       mediaArray.map((file) => ({
         eventId,
@@ -139,7 +136,7 @@ export const createEventMedia = async (
   }
 };
 
-export const getEventMedia = async (
+export const getEventMedia = cache(async function getEventMedia(
   params: GetEventMediaParams
 ): Promise<
   ActionResponse<{
@@ -147,7 +144,7 @@ export const getEventMedia = async (
     isNext: boolean;
     totalMedia: number;
   }>
-> => {
+> {
   const validationResult = await action({
     params,
     schema: getEventMediaSchema,
@@ -184,4 +181,4 @@ export const getEventMedia = async (
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-};
+});

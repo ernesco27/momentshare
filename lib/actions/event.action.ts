@@ -289,9 +289,7 @@ export const getEvent = cache(async function getEvent(
   const { eventId } = validationResult.params!;
 
   try {
-    const event = await Event.findById(eventId)
-      .populate("organizer")
-      .populate("media");
+    const event = await Event.findById(eventId).populate("media");
 
     if (!event) {
       throw new NotFoundError("Event");

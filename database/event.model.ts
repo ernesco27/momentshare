@@ -18,6 +18,7 @@ export interface IEvent {
   totalMedia: number;
   status: "active" | "archived" | "completed" | "deleted";
   storageUsedBytes: number;
+  storageLimit: number;
 }
 
 export interface IEventDoc extends IEvent, Document {}
@@ -46,6 +47,7 @@ const EventSchema = new Schema<IEvent>(
       required: true,
     },
     storageUsedBytes: { type: Number, default: 0, required: true },
+    storageLimit: { type: Number, default: 0.5, required: true },
   },
   { timestamps: true }
 );

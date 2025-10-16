@@ -41,6 +41,7 @@ interface createEventParams {
   expiryDate: Date;
   maxUploads: number;
   themeColor: string;
+  storageLimit: number;
 }
 
 interface getEventsParams
@@ -78,7 +79,10 @@ interface GetEventMediaParams
 }
 
 interface EditEventParams
-  extends Omit<createEventParams, "maxUploads" | "expiryDate" | "startDate"> {
+  extends Omit<
+    createEventParams,
+    "maxUploads" | "expiryDate" | "startDate" | "storageLimit"
+  > {
   eventId: string;
 }
 

@@ -24,6 +24,8 @@ const GalleryPage = async ({ params, searchParams }: RouteParams) => {
     error: mediaError,
   } = mediaResponse;
 
+  console.log("eventData", eventData);
+
   if (!eventData) return <div>Event not found</div>;
 
   const { totalMedia, media, isNext } = mediaData!;
