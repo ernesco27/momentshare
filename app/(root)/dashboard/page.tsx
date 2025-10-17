@@ -2,10 +2,12 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import Dashboard from "@/components/modules/dashboard/Dashboard";
+import { FEATURE } from "@/constants";
 import ROUTES from "@/constants/route";
 import { getEvents } from "@/lib/actions/event.action";
-import { getPlan } from "@/lib/actions/plan.action";
+import { getPlan, getPlans } from "@/lib/actions/plan.action";
 import { getUser } from "@/lib/actions/user.action";
+import { isFeatureEnabledForPlan } from "@/lib/utils";
 
 const DashboardPage = async () => {
   const session = await auth();
@@ -26,19 +28,28 @@ const DashboardPage = async () => {
     tierActivationDate,
   } = user!;
 
-  const [planResponse, eventResponse] = await Promise.all([
+  const [planResponse, eventResponse, plansResponse] = await Promise.all([
     getPlan({ planId: activePlan! }),
     getEvents({ userId: id! }),
+    getPlans(),
   ]);
 
   const { name: planName } = planResponse.data!;
   const { success: eventSuccess, data, error: eventError } = eventResponse!;
+
+  const plans = plansResponse.data;
 
   const events = data?.events || [];
   const totalMedia = data?.totalMedia || 0;
   const totalMaxUploads = data?.totalMaxUploads || 0;
   const totalEvents = data?.totalEvents || 0;
   const planFeatures = planResponse.data?.features || [];
+
+  const isAnalyticsAllowed = isFeatureEnabledForPlan(
+    plans!,
+    activePlan!,
+    FEATURE.CAN_ACCESS_ANALYTICS
+  );
 
   return (
     <>
@@ -57,6 +68,7 @@ const DashboardPage = async () => {
         isProSubscriber={isProSubscriber}
         proSubscriptionEndDate={proSubscriptionEndDate!}
         tierActivationDate={tierActivationDate}
+        isAnalyticsAllowed={isAnalyticsAllowed}
       />
     </>
   );

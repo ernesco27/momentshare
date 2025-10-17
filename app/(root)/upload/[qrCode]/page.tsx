@@ -28,8 +28,6 @@ const UploadPage = async ({ params }: RouteParams) => {
     FEATURE.VIDEO_UPLOADS
   );
 
-  console.log("isVideoUploadAllowed: ", isVideoUploadAllowed);
-
   return (
     <div>
       <UploadContainer

@@ -30,6 +30,7 @@ interface Props {
   totalMaxUploads: number;
   totalEvents: number;
   tierActivationDate?: Date;
+  isAnalyticsAllowed: boolean;
 }
 
 const Dashboard = ({
@@ -47,6 +48,7 @@ const Dashboard = ({
   totalEvents,
   isProSubscriber,
   proSubscriptionEndDate,
+  isAnalyticsAllowed,
 }: Props) => {
   const router = useRouter();
   const [selectedEvent, setSelectedEvent] = useState<GlobalEvent | undefined>();
@@ -219,7 +221,10 @@ const Dashboard = ({
             />
           </div>
           <div className="mt-8">
-            <MetricsCard selectedEvent={selectedEvent} />
+            <MetricsCard
+              selectedEvent={selectedEvent}
+              isAnalyticsAllowed={isAnalyticsAllowed}
+            />
           </div>
         </div>
       </main>
