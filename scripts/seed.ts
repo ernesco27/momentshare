@@ -67,6 +67,7 @@ const planFeatures: Record<
     { featureKey: "RESELL_RIGHT", enabled: false },
     { featureKey: "CUSTOM_BRANDING", enabled: false },
     { featureKey: "DOWNLOAD_ACCESS", enabled: false },
+    { featureKey: "DOWNLOAD_QR_FLYER", enabled: false },
   ],
   STANDARD: [
     { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: 3 },
@@ -80,6 +81,7 @@ const planFeatures: Record<
     { featureKey: "RESELL_RIGHT", enabled: false },
     { featureKey: "CUSTOM_BRANDING", enabled: false },
     { featureKey: "DOWNLOAD_ACCESS", enabled: true },
+    { featureKey: "DOWNLOAD_QR_FLYER", enabled: false },
   ],
   PREMIUM: [
     { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: 5 },
@@ -93,6 +95,7 @@ const planFeatures: Record<
     { featureKey: "RESELL_RIGHT", enabled: false },
     { featureKey: "CUSTOM_BRANDING", enabled: true },
     { featureKey: "DOWNLOAD_ACCESS", enabled: true },
+    { featureKey: "DOWNLOAD_QR_FLYER", enabled: true },
   ],
   PRO: [
     { featureKey: "MAX_ACTIVE_EVENTS", enabled: true, limit: -1 }, //unlimited
@@ -106,6 +109,7 @@ const planFeatures: Record<
     { featureKey: "RESELL_RIGHT", enabled: true },
     { featureKey: "CUSTOM_BRANDING", enabled: true },
     { featureKey: "DOWNLOAD_ACCESS", enabled: true },
+    { featureKey: "DOWNLOAD_QR_FLYER", enabled: true },
   ],
 };
 

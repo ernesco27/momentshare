@@ -133,7 +133,7 @@ export async function POST(req: Request) {
     if (plan.type === "CREDIT") {
       user.isProSubscriber = false;
       user.proSubscriptionEndDate = undefined;
-      user.eventCredits += plan.eventCredits || 0;
+      user.eventCredits += plan.credits || 0;
     } else {
       user.isProSubscriber = true;
       user.eventCredits = 0;

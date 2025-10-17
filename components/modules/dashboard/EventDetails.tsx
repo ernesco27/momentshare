@@ -6,14 +6,26 @@ import {
   ArrowLeft,
   Camera,
   Copy,
+  Crown,
   Download,
   ImageIcon,
   Share2,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,7 +43,12 @@ import ROUTES from "@/constants/route";
 import handleError from "@/lib/handlers/error";
 import { ErrorResponse, GlobalEvent } from "@/types/global";
 
-const EventDetails = ({ event }: { event: GlobalEvent }) => {
+interface Props {
+  event: GlobalEvent;
+  isDownloadQrFlyer: boolean;
+}
+
+const EventDetails = ({ event, isDownloadQrFlyer = false }: Props) => {
   const {
     title,
     description,
@@ -47,6 +64,8 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
   } = event!;
 
   const router = useRouter();
+
+  const [prompt, setPrompt] = useState<boolean>(false);
 
   const isExpired = event ? new Date(expiryDate) < new Date() : false;
 
@@ -96,12 +115,14 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
           URL.revokeObjectURL(url);
         });
     } else if (format === "pdf") {
-      // Elegant Flyer PDF
+      if (!isDownloadQrFlyer) {
+        setPrompt(true);
+        return;
+      }
+
       const doc = new jsPDF("p", "mm", "a4");
       const pageWidth = doc.internal.pageSize.getWidth();
       let yOffset = 10;
-
-      //  const themeColor = "#1E90FF";
 
       const hexToRgb = (hex: string) => {
         const bigint = parseInt(hex.slice(1), 16);
@@ -350,7 +371,11 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
                       disabled={isExpired}
                     >
                       <Download className="h-4 w-4 mr-2 text-primary-500 " />
-                      Download PDF
+                      Download Flyer
+                      <Crown
+                        fill="#f59e0b"
+                        className="h-4 w-4 ml-2 text-primary-500"
+                      />
                     </Button>
                   </CollapsibleContent>
                 </Collapsible>
@@ -405,6 +430,37 @@ const EventDetails = ({ event }: { event: GlobalEvent }) => {
           </Card>
         </div>
       </div>
+      <AlertDialog open={prompt}>
+        <AlertDialogContent className="light-border background-light900_dark200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-primary-500">
+              Upgrade Plan
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-dark200_light800">
+              Your current plan does not support{" "}
+              <span className="primary-text-gradient">QR Flyer Download</span> .
+              Upgrade plan to <strong>Premium</strong> or <strong>Pro</strong>{" "}
+              to download QR Flyer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setPrompt(false)}
+              className="text-primary-500 hover:bg-slate-200/50 cursor-pointer"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                router.push(ROUTES.PRICING);
+              }}
+              className="primary-gradient text-white hover:primary-dark-gradient transition duration-300 ease-in-out cursor-pointer"
+            >
+              Upgrade
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

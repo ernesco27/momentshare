@@ -5,12 +5,13 @@ import {
   ArrowLeft,
   Calendar,
   Eye,
-  Image,
+  ImageIcon,
   Pen,
   QrCode,
   Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import DataRenderer from "@/components/DataRenderer";
@@ -35,10 +36,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import ROUTES from "@/constants/route";
 import { EMPTY_EVENT } from "@/constants/states";
 import { deleteEvent } from "@/lib/actions/event.action";
-import { GlobalEvent } from "@/types/global";
+import handleError from "@/lib/handlers/error";
+import { ErrorResponse, GlobalEvent } from "@/types/global";
 
 interface EventProps {
   events: GlobalEvent[];
@@ -57,13 +60,24 @@ const EventsListContainer = ({
 }: EventProps) => {
   const router = useRouter();
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleViewDetails = (id: string) => {
     router.push(ROUTES.EVENT(id));
   };
 
   const handleDeleteEvent = async (id: string) => {
-    await deleteEvent({ eventId: id });
-    toast.success("Event deleted successfully!");
+    setIsDeleting(true);
+
+    try {
+      await deleteEvent({ eventId: id });
+      toast.success("Event deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete event!");
+      return handleError(error as ErrorResponse);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -127,7 +141,7 @@ const EventsListContainer = ({
                         </span>
                       </div>
                       <div className="flex items-center space-x-1 text-dark400_light900">
-                        <Image className="h-4 w-4" />
+                        <ImageIcon className="h-4 w-4" />
                         <span>{event.totalMedia || 0} Photos/Videos</span>
                       </div>
                     </div>
@@ -158,11 +172,16 @@ const EventsListContainer = ({
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
+                            disabled={isDeleting}
                             variant="outline"
                             size="sm"
                             className="text-red-500 hover:bg-red-500 hover:text-white transition duration-300 ease-in-out cursor-pointer"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {isDeleting ? (
+                              <Spinner className="size-4" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="light-border background-light900_dark200">

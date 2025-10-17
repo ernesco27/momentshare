@@ -79,6 +79,7 @@ export const UserSchema = z.object({
   resellerRight: z.boolean().default(false),
   customBranding: z.boolean().default(false),
   downloadAccess: z.boolean().default(false),
+  downloadQrFlyer: z.boolean().default(false),
 });
 
 export const AccountSchema = z.object({

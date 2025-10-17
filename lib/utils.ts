@@ -6,7 +6,7 @@ import { Types } from "mongoose";
 import mongoose from "mongoose";
 import { twMerge } from "tailwind-merge";
 
-import { IMAGE_FORMATS, VIDEO_FORMATS } from "@/constants";
+import { FEATURE, IMAGE_FORMATS, VIDEO_FORMATS } from "@/constants";
 import { Plan, PlanFeature } from "@/database";
 import { GlobalMedia, GlobalPlan, GlobalUser } from "@/types/global";
 
@@ -130,42 +130,48 @@ export const applyPlanFeaturesToUser = async (
   user.resellerRight = false;
   user.customBranding = false;
   user.downloadAccess = false;
+  user.downloadQrFlyer = false;
 
   features.forEach((feature) => {
     switch (feature.featureKey) {
-      case "MAX_ACTIVE_EVENTS":
+      case FEATURE.MAX_ACTIVE_EVENTS:
         user.maxActiveEvents = feature.limit || 1; // Default to 1 if limit is null
         break;
-      case "STORAGE_LIMIT_GB":
+      case FEATURE.STORAGE_LIMIT_GB:
         user.storageLimitGB = feature.limit || 0.5;
         break;
-      case "CAN_REMOVE_WATERMARK":
+      case FEATURE.CAN_REMOVE_WATERMARK:
         user.canRemoveWatermark = feature.enabled;
         break;
-      case "CAN_ACCESS_ANALYTICS":
+      case FEATURE.CAN_ACCESS_ANALYTICS:
         user.canAccessAnalytics = feature.enabled;
         break;
-      case "MAX_UPLOADS":
+      case FEATURE.MAX_UPLOADS:
         user.maxUploads = feature.limit || 100;
         break;
-      case "RETENTION_DAYS":
+      case FEATURE.RETENTION_DAYS:
         user.retentionDays = feature.limit || 3;
         break;
-      case "PRIORITY_SUPPORT":
+      case FEATURE.PRIORITY_SUPPORT:
         user.prioritySupport = feature.enabled;
         break;
-      case "VIDEO_UPLOADS":
+      case FEATURE.VIDEO_UPLOADS:
         user.videoUploads = feature.enabled;
         break;
-      case "RESELL_RIGHT":
+      case FEATURE.RESELL_RIGHT:
         user.resellerRight = feature.enabled;
         break;
-      case "CUSTOM_BRANDING":
+      case FEATURE.CUSTOM_BRANDING:
         user.customBranding = feature.enabled;
         break;
-      case "DOWNLOAD_ACCESS":
+      case FEATURE.DOWNLOAD_ACCESS:
         user.downloadAccess = feature.enabled;
         break;
+
+      case FEATURE.DOWNLOAD_QR_FLYER:
+        user.downloadQrFlyer = feature.enabled;
+        break;
+
       default:
         break;
     }

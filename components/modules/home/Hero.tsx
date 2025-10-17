@@ -83,7 +83,7 @@ const Hero = () => {
   return (
     <main
       ref={ref}
-      className="flex flex-col justify-center  items-center relative min-h-screen pb-4 lg:px-28  -mt-16 invisible  hero  "
+      className="flex flex-col justify-center  items-center relative min-h-screen pb-4 lg:px-28  -mt-16 invisible  hero max-sm:overflow-x-hidden  "
     >
       <div className="flex flex-col justify-center items-center mt-[20%] min-lg:mt-[10%] mb-8">
         <div className="mb-10 flex-center gap-2">
@@ -178,43 +178,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-{
-  /* <div className="absolute inset-0 z-0 top-0 right-0">
-        <div className="relative w-full">
-          <svg
-            viewBox="0 0 300 600"
-            preserveAspectRatio="none"
-            xmlns="http://www.w3.org/2000/svg"
-            id="waves"
-            className="relative top-0 right-0 max-h-screen"
-          >
-            <path
-              id="layer3"
-              d="M160,0 C180,100 170,200 160,300 C150,400 180,500 160,600 L300,600 L300,0 Z"
-            />
-
-            <path
-              id="layer2"
-              d="M160,0 C180,100 170,200 160,300 C150,400 180,500 160,600 L300,600 L300,0 Z"
-              transform="scale(1,-1) translate(0,-600)"
-            />
-
-            <path
-              id="layer1"
-              d="M170,0 C190,80 180,180 170,260 C160,360 190,460 170,600 L300,600 L300,0 Z"
-            />
-          </svg>
-        </div>
-      </div> */
-}
-{
-  /* <div className="absolute w-[60vw]  lg:w-[30vw] max-w-[750px] aspect-[3/4] bottom-0 right-0 z-10 max-sm:hidden overflow-hidden">
-        <Image
-          src="/images/couple.png"
-          alt="image of couple"
-          fill
-          className="object-contain"
-        />
-      </div> */
-}

@@ -56,6 +56,7 @@ interface GlobalUser {
   resellerRight: boolean;
   customBranding: boolean;
   downloadAccess: boolean;
+  downloadQrFlyer: boolean;
 }
 
 interface GlobalAccount {

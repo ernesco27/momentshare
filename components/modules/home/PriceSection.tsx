@@ -226,6 +226,9 @@ const PriceSection = ({ plans, userId, email }: Props) => {
                 case FEATURE.DOWNLOAD_ACCESS:
                   benefits.push("Download Photos/Videos");
                   break;
+                case FEATURE.DOWNLOAD_QR_FLYER:
+                  benefits.push("Download QR Flyer");
+                  break;
                 case FEATURE.MAX_UPLOADS:
                   benefits.push(
                     feature.limit !== -1

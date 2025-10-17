@@ -127,6 +127,8 @@ export async function POST(request: Request) {
       throw new NotFoundError("User not found for plan activation.");
     }
 
+    const AddedCredits = plan.credits || 0;
+
     // --- Plan History and Transition Logic---
     // Update previous plan history entry
     if (user.planHistory.length > 0 && user.activePlanId) {
@@ -145,11 +147,10 @@ export async function POST(request: Request) {
     if (plan.type === "CREDIT") {
       user.isProSubscriber = false;
       user.proSubscriptionEndDate = undefined;
-      user.eventCredits += plan.eventCredits || 0;
+      user.eventCredits += AddedCredits;
     } else {
       user.isProSubscriber = true;
       user.eventCredits = 0;
-      user.tierActivationDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + (plan.durationDays || 30)); // Default to 30 days if not set
       user.proSubscriptionEndDate = endDate;

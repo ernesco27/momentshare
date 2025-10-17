@@ -27,6 +27,7 @@ export interface IUser {
   resellRight: boolean;
   customBranding: boolean;
   downloadAccess: boolean;
+  downloadQrFlyer: boolean;
 }
 
 export interface IUserDoc extends IUser, Document {}
@@ -60,6 +61,7 @@ const UserSchema = new Schema<IUser>(
     resellRight: { type: Boolean, default: false, required: true },
     customBranding: { type: Boolean, default: false, required: true },
     downloadAccess: { type: Boolean, default: false, required: true },
+    downloadQrFlyer: { type: Boolean, default: false, required: true },
   },
 
   { timestamps: true }

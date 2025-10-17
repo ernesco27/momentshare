@@ -69,6 +69,7 @@ export async function POST(request: Request) {
             resellRight: false,
             customBranding: false,
             downloadAccess: false,
+            downloadQrFlyer: false,
           },
         ],
         { session }

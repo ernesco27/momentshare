@@ -72,6 +72,7 @@ export async function signUpWithCredentials(
           resellRight: false,
           customBranding: false,
           downloadAccess: false,
+          downloadQrFlyer: false,
         },
       ],
       {
