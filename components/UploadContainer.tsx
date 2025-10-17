@@ -13,7 +13,7 @@ import { createEventMedia } from "@/lib/actions/media.action";
 import handleError from "@/lib/handlers/error";
 import { cn } from "@/lib/utils";
 import { mediaUploadFormSchema } from "@/lib/validations";
-import { ErrorResponse, GlobalEvent, GlobalPlan } from "@/types/global";
+import { ErrorResponse, GlobalEvent } from "@/types/global";
 
 import { Button } from "./ui/button";
 import {

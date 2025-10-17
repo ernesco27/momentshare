@@ -218,12 +218,12 @@ export const uploadedFileSchema = z.object({
   fileSizeBytes: z
     .number()
     .min(1, { message: "File size must be at least 1." }),
+  uploadedBy: z.string().optional(),
 });
 
 export const createMediaSchema = z.object({
   eventId: z.string().nonempty(),
   media: z.array(uploadedFileSchema).min(1, "At least one file is required"),
-  uploadedBy: z.string().optional(),
 });
 
 export const getMediaSchema = z.object({

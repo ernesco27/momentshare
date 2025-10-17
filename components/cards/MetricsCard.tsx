@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -20,6 +21,7 @@ import {
   getMediaTypeStats,
   getRecentMedia,
   getUploadsPerHour,
+  getVideoThumbnailUrl,
 } from "@/lib/utils";
 import { GlobalEvent } from "@/types/global";
 
@@ -57,16 +59,18 @@ const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
         <CardTitle className="h2-semibold text-dark100_light900">
           <div className="flex-between gap-4 w-full">
             <div className="flex gap-2 items-start flex-col w-full">
-              <h2 className="text-lg  lg:h3-semibold text-dark100_light900">
+              <h2 className="text-lg  lg:h3-semibold text-dark100_light900 line-clamp-1">
                 {selectedEvent.title}
               </h2>
               <p className="text-[12px] lg:text-[14px] text-light-400">
                 {selectedEvent.totalMedia} uploads
               </p>
             </div>
-            <div className="flex gap-2 items-end flex-col w-full flex-1">
+            <div className="flex gap-2 items-end flex-col w-full">
               <p className="paragraph-regular text-light-400">Expires</p>
-              <p className="text-[14px] text-dark100_light900">12/12/2025</p>
+              <p className="text-[14px] text-dark100_light900">
+                {format(new Date(selectedEvent.expiryDate), "MMM d, yyyy")}
+              </p>
             </div>
           </div>
         </CardTitle>
@@ -132,6 +136,14 @@ const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
                         className="w-full h-full object-cover"
                         controls={false}
                         muted
+                        poster={getVideoThumbnailUrl(media.fileUrl)}
+                        onMouseOver={(e) =>
+                          (e.currentTarget as HTMLVideoElement).play()
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget as HTMLVideoElement).pause()
+                        }
+                        playsInline
                       />
                     ) : (
                       <Image
@@ -152,7 +164,7 @@ const MetricsCard = ({ selectedEvent }: MetricsCardProps) => {
               router.push(ROUTES.EVENT(selectedEvent._id!));
             }}
             size="lg"
-            className="bg-primary-500 hover:primary-dark-gradient  hover:ring-primary-500 hover:ring-offset-2 transition-all duration-300 ease-in-out  text-white text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-md cursor-pointer w-full mt-6"
+            className="bg-primary-500 hover:primary-dark-gradient transition-all duration-300 ease-in-out  text-white text-md lg:text-lg font-semibold hover:shadow-primary-500/50 hover:shadow-sm cursor-pointer w-full mt-6"
           >
             View Event
           </Button>

@@ -42,11 +42,6 @@ const MediaGallery = ({
 
   const router = useRouter();
 
-  // const slides = media.map((m) => ({
-  //   src: m.fileUrl,
-  //   type: VIDEO_FORMATS.includes(m.fileType) ? "video" : "image",
-  // }));
-
   const slides = media.map((m) => {
     const isVideo = VIDEO_FORMATS.includes(m.fileType);
 

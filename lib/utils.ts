@@ -89,30 +89,16 @@ export const getMediaTypeStats = (media: GlobalMedia[]) => {
   ];
 };
 
-// export const getVideoThumbnailUrl = (videoUrl: string, second: number = 0) => {
-//   try {
-//     const url = new URL(videoUrl);
-//     const parts = url.pathname.split("/upload/");
-//     if (parts.length !== 2) return videoUrl;
-
-//     return `${url.origin}${parts[0]}/upload/so_${second}/frame.jpg/${parts[1].replace(/\.[^/.]+$/, ".jpg")}`;
-//   } catch (error) {
-//     handleError(error);
-//     console.error("Invalid Cloudinary video URL:", videoUrl);
-//     return videoUrl;
-//   }
-// };
-
 export const getVideoThumbnailUrl = (videoUrl: string, second: number = 2) => {
   try {
     const url = new URL(videoUrl);
-    const parts = url.pathname.split("/upload/");
-    if (parts.length !== 2) return videoUrl;
 
-    // Insert Cloudinary transformation for extracting a JPG frame
-    const transformedPath = `/upload/so_${second},f_jpg,q_auto/${parts[1].replace(/\.[^/.]+$/, ".jpg")}`;
+    const [beforeUpload, afterUpload] = url.href.split("/upload/");
+    if (!afterUpload) return videoUrl;
 
-    return `${url.origin}${transformedPath}`;
+    const transformedUrl = `${beforeUpload}/upload/so_${second},f_jpg,q_auto/${afterUpload.replace(/\.[^/.]+$/, ".jpg")}`;
+
+    return transformedUrl;
   } catch (error) {
     console.error("Invalid Cloudinary video URL:", videoUrl, error);
     return videoUrl;

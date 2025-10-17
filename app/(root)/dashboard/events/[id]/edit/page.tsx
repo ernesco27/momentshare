@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import EventCreationContainer from "@/components/EventCreationContainer";
 import ROUTES from "@/constants/route";
-import { getAccount } from "@/lib/actions/account.action";
 import { getEvent } from "@/lib/actions/event.action";
+import { getUser } from "@/lib/actions/user.action";
 import { RouteParams } from "@/types/global";
 
 const EditEvent = async ({ params }: RouteParams) => {
@@ -16,19 +16,19 @@ const EditEvent = async ({ params }: RouteParams) => {
   const userId = session?.user?.id;
   if (!userId) return redirect("/sign-in");
 
-  const [accountResponse, eventResponse] = await Promise.all([
-    getAccount({ userId }),
+  const [userResponse, eventResponse] = await Promise.all([
+    getUser({ userId }),
     getEvent({ eventId: id }),
   ]);
 
-  const { data: account, success: accountSuccess } = accountResponse;
-  if (!accountSuccess) return notFound();
+  const { data: user, success: userSuccess } = userResponse!;
+  if (!userSuccess) return notFound();
 
-  const { data: event, success: eventSuccess } = eventResponse;
+  const { data: event, success: eventSuccess } = eventResponse!;
   if (!eventSuccess) return notFound();
 
-  if (event?.organizer._id.toString() !== account?._id) {
-    return redirect(ROUTES.DASHBOARD(userId));
+  if (event?.organizer.toString() !== user?._id) {
+    return redirect(ROUTES.DASHBOARD);
   }
 
   return (

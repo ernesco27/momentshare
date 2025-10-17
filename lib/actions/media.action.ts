@@ -21,7 +21,9 @@ export const createEventMedia = async (
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { eventId, media, uploadedBy } = validationResult.params!;
+  const { eventId, media } = validationResult.params!;
+
+  console.log("media", media);
 
   let event;
   let organizer;
@@ -89,7 +91,7 @@ export const createEventMedia = async (
         fileUrl: file.fileUrl,
         publicId: file.publicId,
         fileSizeBytes: file.fileSizeBytes,
-        uploadedBy,
+        uploadedBy: file.uploadedBy,
       })),
       { session, ordered: true }
     );
