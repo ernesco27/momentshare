@@ -37,7 +37,7 @@ export const engagementRate = (totalMedia: number, maxUploads: number) => {
 };
 
 export const AverageUploads = (totalMedia: number, totalEvents: number) => {
-  return totalMedia / totalEvents;
+  return totalMedia / totalEvents || 0;
 };
 
 export const getRecentMedia = (
