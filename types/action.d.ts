@@ -37,6 +37,7 @@ interface createEventParams {
   description: string;
   loc: string;
   coverImage?: string;
+  logo?: string;
   startDate: Date;
   expiryDate: Date;
   maxUploads: number;

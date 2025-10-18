@@ -156,9 +156,9 @@ export const createEventSchema = z.object({
   startDate: z.date(),
   expiryDate: z.date(),
   maxUploads: z.number(),
-  // .min(1, { message: "Max uploads per attendee must be at least 1." }),
   loc: z.string().min(1, { message: "Location is required." }),
   coverImage: z.string().optional(),
+  logo: z.string().optional(),
   themeColor: z.string().min(1, { message: "Theme color is required." }),
   storageLimit: z
     .number()
@@ -178,6 +178,7 @@ export const editEventSchema = z.object({
 
   loc: z.string().min(1, { message: "Location is required." }),
   coverImage: z.string().optional(),
+  logo: z.string().optional(),
   themeColor: z.string().min(1, { message: "Theme color is required." }),
   eventId: z.string().min(1, { message: "Event ID is required." }),
 });

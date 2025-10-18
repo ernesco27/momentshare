@@ -183,7 +183,7 @@ const Dashboard = ({
                 <DashCards
                   otherClasses="bg-[#d8b4fe]!"
                   heading="Engagement Rate"
-                  info={`${engagementRate(totalMedia, totalMaxUploads) || 0}%`}
+                  info={`${Number(engagementRate(totalMedia, totalMaxUploads)).toFixed(1) || 0}%`}
                   description="Average Guest Engagement Rate"
                 />
               )}
@@ -191,7 +191,7 @@ const Dashboard = ({
                 <DashCards
                   otherClasses="bg-[#d8b4fe]!"
                   heading="Average Uploads"
-                  info={`${Number(AverageUploads(totalMedia, totalEvents)) || 0}%`}
+                  info={`${Number(AverageUploads(totalMedia, totalEvents)).toFixed(1) || 0}%`}
                   description="Average Guest Contribution Rate"
                 />
               )}

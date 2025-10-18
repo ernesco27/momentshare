@@ -6,6 +6,7 @@ export interface IEvent {
   description: string;
   loc: string;
   coverImage?: string;
+  logo?: string;
   qrCode: string;
   qrImage: string;
   qrPublicId: string;
@@ -30,6 +31,7 @@ const EventSchema = new Schema<IEvent>(
     description: { type: String, required: true },
     loc: { type: String, required: true },
     coverImage: { type: String },
+    logo: { type: String },
     qrCode: { type: String, required: true, unique: true },
     qrImage: { type: String, required: true },
     qrPublicId: { type: String, required: true, unique: true },

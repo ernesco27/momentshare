@@ -42,6 +42,7 @@ export const createEvent = async (
     description,
     loc,
     coverImage,
+    logo,
     startDate,
     expiryDate,
     maxUploads,
@@ -135,7 +136,7 @@ export const createEvent = async (
     const qrDataUrl = await QRCode.toDataURL(eventUrl);
 
     const uploadResponse = await cloudinary.uploader.upload(qrDataUrl, {
-      folder: `MomentShare/qr_codes/${userId}`,
+      folder: `MomentShare/qr_codes/${userId}_${qrCode}`,
       public_id: qrCode,
       resource_type: "image",
       context: {
@@ -156,6 +157,7 @@ export const createEvent = async (
           description,
           loc,
           coverImage,
+          logo,
           qrCode,
           qrImage: uploadResponse.secure_url,
           qrPublicId: uploadResponse.public_id,
@@ -392,7 +394,7 @@ export const deleteEvent = async (
     //  5. Cleanup Cloudinary asynchronously (outside of transaction)
 
     const eventFolder = `MomentShare/events/${eventId}`;
-    const qrFolder = `MomentShare/qr_codes/${userId}`;
+    const qrFolder = `MomentShare/qr_codes/${userId}_${qrCode}`;
     if (mediaDocs.length > 0) {
       try {
         await cloudinary.api.delete_resources_by_prefix(eventFolder);
@@ -441,7 +443,7 @@ export const editEvent = cache(async function editEvent(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, description, loc, coverImage, themeColor, eventId } =
+  const { title, description, loc, coverImage, logo, themeColor, eventId } =
     validationResult.params!;
 
   const userId = validationResult!.session!.user!.id;
@@ -471,12 +473,14 @@ export const editEvent = cache(async function editEvent(
       event.description !== description ||
       event.loc !== loc ||
       event.coverImage !== coverImage ||
+      event.logo !== logo ||
       event.themeColor !== themeColor
     ) {
       event.title = title;
       event.description = description;
       event.loc = loc;
       event.coverImage = coverImage;
+      event.logo = logo;
       event.themeColor = themeColor;
 
       await event.save({ session });

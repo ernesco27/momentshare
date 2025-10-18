@@ -85,6 +85,7 @@ interface GlobalEvent {
   description: string;
   loc: string;
   coverImage?: string;
+  logo?: string;
   organizer: Account;
   qrCode: string;
   qrImage: string;

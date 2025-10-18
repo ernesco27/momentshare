@@ -2,15 +2,25 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2, UploadIcon } from "lucide-react";
+import { CalendarIcon, UploadIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -32,6 +42,7 @@ import { GlobalEvent } from "@/types/global";
 
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 
 interface CreateEvent {
@@ -40,6 +51,10 @@ interface CreateEvent {
   isEdit?: boolean;
   isCustomBrandingEnabled: boolean;
 }
+
+// interface ImageUpload {
+//   secure_url: string;
+// }
 
 const EventCreationForm = ({
   planFeatures,
@@ -61,12 +76,18 @@ const EventCreationForm = ({
   const [isPending, startTransition] = useTransition();
 
   const [uploading, setUploading] = useState(false);
+  const [prompt, setPrompt] = useState<boolean>(false);
 
   const [coverPhoto, setCoverPhoto] = useState<any>(
     isEdit && event?.coverImage ? { secure_url: event.coverImage } : null
   );
 
+  const [logo, setLogo] = useState<any>(
+    isEdit && event?.logo ? { secure_url: event.logo } : null
+  );
+
   const [existingImageRemoved, setExistingImageRemoved] = useState(false);
+  const [existingLogoRemoved, setExistingLogoRemoved] = useState(false);
 
   const router = useRouter();
 
@@ -96,6 +117,7 @@ const EventCreationForm = ({
           description: values.description,
           loc: values.location,
           coverImage: coverPhoto?.secure_url || "",
+          logo: logo?.secure_url || "",
           themeColor: values.themeColor,
         });
 
@@ -115,6 +137,7 @@ const EventCreationForm = ({
         loc: values.location,
         startDate: values.startDate,
         coverImage: coverPhoto?.secure_url || "",
+        logo: logo?.secure_url || "",
         expiryDate: expiryDate,
         maxUploads: maxUploads?.limit || 0,
         themeColor: values.themeColor,
@@ -136,7 +159,10 @@ const EventCreationForm = ({
     setExistingImageRemoved(true);
   };
 
-  const handleSelectCoverPhoto = () => {};
+  const handleRemoveLogo = () => {
+    setLogo(null);
+    setExistingLogoRemoved(true);
+  };
 
   return (
     <div className="mt-10">
@@ -283,67 +309,154 @@ const EventCreationForm = ({
               </FormItem>
             )}
           />
-
-          <FormLabel className="paragraph-semibold text-dark400_light800">
-            Cover Photo (Optional)
-          </FormLabel>
-
-          {coverPhoto && coverPhoto.secure_url ? (
-            <div className="relative w-full h-[200px] border rounded-md overflow-hidden">
-              <Image
-                src={coverPhoto?.secure_url}
-                alt="cover photo"
-                fill
-                className="object-cover"
-              />
-              {/* Remove button overlay */}
-              <button
-                type="button"
-                onClick={handleRemoveCoverPhoto}
-                className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded hover:bg-black/80"
-              >
-                Remove
-              </button>
+          <div>
+            <div className="mb-4">
+              <FormLabel className="paragraph-semibold text-dark400_light800">
+                Event Cover Photo (Optional)
+              </FormLabel>
+              <FormDescription className="body-regular text-light-500 mt-1">
+                Select your event&apos;s cover photo to personalize the
+                experience.
+              </FormDescription>
             </div>
-          ) : (
-            <CldUploadWidget
-              uploadPreset="momentshare"
-              options={{
-                sources: ["local"],
-                multiple: false,
-                maxFiles: 1,
-                maxFileSize: 2 * 1024 * 1024, // 2MB
-                clientAllowedFormats: ["png", "jpeg", "jpg"],
-                folder: "MomentShare/cover_images",
-              }}
-              onSuccess={(result, { widget }) => {
-                setCoverPhoto(result?.info);
-                setUploading(false);
-                setExistingImageRemoved(false);
-                widget.close();
-              }}
-              onClose={() => setUploading(false)}
-              onError={() => {
-                toast.error("Failed to upload image. Please try again.");
-                setUploading(false);
-              }}
-            >
-              {({ open }) => (
-                <Button
+
+            {coverPhoto && coverPhoto.secure_url ? (
+              <div className="relative w-full h-[200px] border rounded-md overflow-hidden">
+                <Image
+                  src={coverPhoto?.secure_url}
+                  alt="cover photo"
+                  fill
+                  className="object-cover"
+                />
+
+                <button
                   type="button"
-                  variant="outline"
-                  className="flex flex-col justify-center w-full h-[200px] border text-lg text-gray-500 items-center gap-2"
-                  onClick={() => open()}
+                  onClick={handleRemoveCoverPhoto}
+                  className="absolute top-2 right-2 bg-red-600/60 text-white text-xs px-2 py-1 rounded hover:bg-red-600/80 cursor-pointer"
                 >
-                  <UploadIcon className="w-6 h-6" />
-                  <span>{uploading ? "Uploading..." : "Upload photo"}</span>
-                  <p className="text-xs text-black font-medium">
-                    Browse (1 Photo - Max size 2MB)
-                  </p>
-                </Button>
-              )}
-            </CldUploadWidget>
-          )}
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <CldUploadWidget
+                uploadPreset="momentshare"
+                options={{
+                  sources: ["local"],
+                  multiple: false,
+                  maxFiles: 1,
+                  maxFileSize: 2 * 1024 * 1024, // 2MB
+                  clientAllowedFormats: ["png", "jpeg", "jpg"],
+                  folder: "MomentShare/cover_images",
+                }}
+                onSuccess={(result, { widget }) => {
+                  setCoverPhoto(result?.info);
+                  setUploading(false);
+                  setExistingImageRemoved(false);
+                  widget.close();
+                }}
+                onClose={() => setUploading(false)}
+                onError={() => {
+                  toast.error("Failed to upload image. Please try again.");
+                  setUploading(false);
+                }}
+              >
+                {({ open }) => (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex flex-col justify-center w-full h-[200px] border text-lg text-gray-500 items-center gap-2"
+                    onClick={() => {
+                      if (!isCustomBrandingEnabled) {
+                        setPrompt(true);
+                        return;
+                      }
+                      open();
+                    }}
+                  >
+                    <UploadIcon className="w-6 h-6" />
+                    <span>{uploading ? "Uploading..." : "Upload photo"}</span>
+                    <p className="text-xs text-black font-medium">
+                      Browse (1 Photo - Max size 2MB)
+                    </p>
+                  </Button>
+                )}
+              </CldUploadWidget>
+            )}
+          </div>
+          <div>
+            <div className="mb-4">
+              <FormLabel className="paragraph-semibold text-dark400_light800">
+                Event Logo (Optional)
+              </FormLabel>
+              <FormDescription className="body-regular text-light-500 mt-1">
+                Select your event&apos;s logo to personalize the experience.
+              </FormDescription>
+            </div>
+
+            {logo && logo.secure_url ? (
+              <div className="relative  w-full h-[200px] border rounded-md overflow-hidden">
+                <Image
+                  src={logo?.secure_url}
+                  alt="logo"
+                  width={200}
+                  height={200}
+                  className="object-center flex justify-self-center pt-[5%]"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleRemoveLogo}
+                  className="absolute top-2 right-2 bg-red-600/60 text-white text-xs px-2 py-1 rounded hover:bg-red-600/80 cursor-pointer"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <CldUploadWidget
+                uploadPreset="momentshare"
+                options={{
+                  sources: ["local"],
+                  multiple: false,
+                  maxFiles: 1,
+                  maxFileSize: 2 * 1024 * 1024, // 2MB
+                  clientAllowedFormats: ["png", "jpeg", "jpg"],
+                  folder: "MomentShare/cover_images",
+                }}
+                onSuccess={(result, { widget }) => {
+                  setLogo(result?.info);
+                  setUploading(false);
+                  setExistingLogoRemoved(false);
+                  widget.close();
+                }}
+                onClose={() => setUploading(false)}
+                onError={() => {
+                  toast.error("Failed to upload image. Please try again.");
+                  setUploading(false);
+                }}
+              >
+                {({ open }) => (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex flex-col justify-center w-full h-[200px] border text-lg text-gray-500 items-center gap-2"
+                    onClick={() => {
+                      if (!isCustomBrandingEnabled) {
+                        setPrompt(true);
+                        return;
+                      }
+                      open();
+                    }}
+                  >
+                    <UploadIcon className="w-6 h-6" />
+                    <span>{uploading ? "Uploading..." : "Upload photo"}</span>
+                    <p className="text-xs text-black font-medium">
+                      Browse (1 Photo - Max size 2MB)
+                    </p>
+                  </Button>
+                )}
+              </CldUploadWidget>
+            )}
+          </div>
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button
@@ -353,7 +466,7 @@ const EventCreationForm = ({
             >
               {isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Spinner className="size-4" />
                   <span>Submitting...</span>
                 </>
               ) : (
@@ -363,6 +476,39 @@ const EventCreationForm = ({
           </div>
         </form>
       </Form>
+      <AlertDialog open={prompt}>
+        <AlertDialogContent className="light-border background-light900_dark200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-primary-500">
+              Upgrade Plan
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-dark200_light800">
+              Your current plan does not support{" "}
+              <span className="primary-text-gradient">
+                Cover Photo / Logo Upload
+              </span>
+              . Upgrade plan to <strong>Premium</strong> or <strong>Pro</strong>{" "}
+              to upload event cover photo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setPrompt(false)}
+              className="text-primary-500 hover:bg-slate-200/50 cursor-pointer"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                router.push(ROUTES.PRICING);
+              }}
+              className="primary-gradient text-white hover:primary-dark-gradient transition duration-300 ease-in-out cursor-pointer"
+            >
+              Upgrade
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

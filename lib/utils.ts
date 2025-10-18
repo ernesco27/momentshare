@@ -33,11 +33,11 @@ export function getEventExpiryDate(
 }
 
 export const engagementRate = (totalMedia: number, maxUploads: number) => {
-  return (totalMedia / maxUploads) * 100;
+  return (totalMedia / maxUploads) * 100 || 0;
 };
 
 export const AverageUploads = (totalMedia: number, totalEvents: number) => {
-  return (totalMedia / totalEvents).toFixed(2);
+  return totalMedia / totalEvents;
 };
 
 export const getRecentMedia = (
