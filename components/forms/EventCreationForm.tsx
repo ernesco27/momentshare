@@ -38,12 +38,14 @@ interface CreateEvent {
   planFeatures?: IPlanFeature[];
   event?: GlobalEvent;
   isEdit?: boolean;
+  isCustomBrandingEnabled: boolean;
 }
 
 const EventCreationForm = ({
   planFeatures,
   event,
   isEdit = false,
+  isCustomBrandingEnabled = false,
 }: CreateEvent) => {
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -133,6 +135,8 @@ const EventCreationForm = ({
     setCoverPhoto(null);
     setExistingImageRemoved(true);
   };
+
+  const handleSelectCoverPhoto = () => {};
 
   return (
     <div className="mt-10">

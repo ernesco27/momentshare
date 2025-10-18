@@ -4,18 +4,26 @@ import { redirect } from "next/navigation";
 
 import EventCreationForm from "@/components/forms/EventCreationForm";
 import { Button } from "@/components/ui/button";
+import { FEATURE } from "@/constants";
 import ROUTES from "@/constants/route";
-import { getPlan } from "@/lib/actions/plan.action";
+import { getPlan, getPlans } from "@/lib/actions/plan.action";
 import { getUser } from "@/lib/actions/user.action";
+import { isFeatureEnabledForPlan } from "@/lib/utils";
 import { RouteParams } from "@/types/global";
 
 const CreateEvent = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  const { data: user } = await getUser({ userId: id });
+  const [userResponse, plansResponse] = await Promise.all([
+    getUser({ userId: id }),
+    getPlans(),
+  ]);
+
+  if (!userResponse.success) return redirect("/login");
 
   const { activePlan, eventCredits, isProSubscriber, proSubscriptionEndDate } =
-    user!;
+    userResponse.data!;
+  const plans = plansResponse.data!;
 
   const isActiveSubscription = isProSubscriber
     ? new Date(proSubscriptionEndDate!) > new Date()
@@ -31,6 +39,14 @@ const CreateEvent = async ({ params }: RouteParams) => {
   const { data: plan } = await getPlan({ planId: activePlan! });
 
   const planFeatures = plan?.features || [];
+
+  const isCustomBrandingEnabled = isFeatureEnabledForPlan(
+    plans,
+    activePlan!,
+    FEATURE.CUSTOM_BRANDING
+  );
+
+  console.log("isCustomBrandingEnabled", isCustomBrandingEnabled);
 
   return (
     <main className="flex min-h-screen flex-1 flex-col px-6  max-md:pb-14 sm:px-14 max-w-5xl mx-auto">
@@ -49,7 +65,10 @@ const CreateEvent = async ({ params }: RouteParams) => {
         Set up a new memories collection event for your attendees.
       </p>
 
-      <EventCreationForm planFeatures={planFeatures} />
+      <EventCreationForm
+        planFeatures={planFeatures}
+        isCustomBrandingEnabled={isCustomBrandingEnabled}
+      />
     </main>
   );
 };
